@@ -1,6 +1,7 @@
 #include "Renderer.h"
 #include<iostream>
 #include<algorithm>
+#include<functional>
 
 Renderer::Renderer(SDL_Renderer* renderer,int screenWidth, int screenHeight, float screenZ, float projectionPointZ) : m_renderer{renderer},
                                                 m_screenWidth{screenWidth}, m_screenHeight{screenHeight},
@@ -68,19 +69,28 @@ void Renderer::render(const Transform& toRender)
     const std::vector<int>& quadsIndices = toRender.getShape().getQuadsIndices();
 
     SDL_Point projected;
-    std::vector<SDL_Point> polygonVertices;
-
+    std::vector<SDL_Point> projectedPolygonVertices;
+    std::vector<std::reference_wrapper<Point3>> polygonVertices;
     for (std::vector<int>::size_type i = 0; i < quadsIndices.size(); i++) {
-        // projects the i-th point an puts it in polygonVertices
+        // projects the i-th point an puts it in projectedPolygonVertices
         project(verticesWorldPos[quadsIndices[i]], projected);
-        polygonVertices.push_back(projected);
+        projectedPolygonVertices.push_back(projected);
+
+        polygonVertices.push_back(verticesWorldPos[quadsIndices[i]]);
 
         /* Each 3 vertices the polygon is closed and drawn on the screen */
         if (i % 4 == 3) {
-            polygonVertices.push_back(polygonVertices[0]); // completes the polygon
-            SDL_SetRenderDrawColor(m_renderer, 0xFF, 0xFF, 0xFF, 0xFF);
+            projectedPolygonVertices.push_back(projectedPolygonVertices[0]); // completes the polygon
+            SDL_Color polygonColor{0xFF, 0xFF, 0xFF, 0xFF};
+            if (m_light) {
+                polygonColor = m_light->getColorForPolygon(polygonVertices, polygonColor);
+            }
 
-            fillPolygon(polygonVertices);
+            SDL_SetRenderDrawColor(m_renderer ,polygonColor.r, polygonColor.g, polygonColor.b, 0xFF);
+            fillPolygon(projectedPolygonVertices);
+
+            // Free info about just drawn polygon
+            projectedPolygonVertices.clear();
             polygonVertices.clear();
         }
         SDL_SetRenderDrawColor(m_renderer , 0xFF, 0x00, 0x00, 0xFF);

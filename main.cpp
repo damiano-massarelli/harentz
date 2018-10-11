@@ -4,6 +4,8 @@
 #include "Shape.h"
 #include "Transform.h"
 #include "Point3.h"
+#include "PointLight.h"
+#include <memory>
 
 constexpr int SCREEN_WIDTH = 640;
 constexpr int SCREEN_HEIGHT = 480;
@@ -21,15 +23,18 @@ int main(int argc, char* argv[])
     init();
 
     Renderer renderer(gRenderer, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 200);
+    renderer.setLight(std::make_unique<PointLight>(Point3{0.0f, -100.0f, 0.0f}, SDL_Color{255, 0, 0, 255}));
+
+
     Shape sCube(std::vector<Point3>{ Point3{-20.0f, -20.0f, 20.0f}, Point3{20.0f, -20.0f, 20.0f},
                                      Point3{20.0f, 20.0f, 20.0f}, Point3{-20.0f, 20.0f, 20.0f},
                                      Point3{20.0f, -20.0f, 10.0f}, Point3{20.0f, 20.0f, 10.0f},
                                      Point3{-20.0f, -20.0f, 10.0f}, Point3{-20.0f, 20.0f, 10.0f}},
-                std::vector<int>{0, 1, 2, 3, // front face
+                std::vector<int>{3, 2, 1, 0});/*, // front face
                                 1, 4, 2, 5, // right face
-                                0, 3, 7, 6}); // left face
+                                0, 3, 7, 6});*/ // left face
 
-    Transform tCube(sCube, Point3{0.0f, 100.0f, -300.0f});
+    Transform tCube(sCube, Point3{00.0f, 000.0f, -300.0f});
 
 
     //Point3 points[]{{{300, 300}, 0.001f}, {{350, 300}, 0.0005f}, {{350, 350}, 0.0005f}, {{300, 350}, 0.001f},  {{300, 300}, 0.001f}};
@@ -52,7 +57,8 @@ int main(int argc, char* argv[])
 
         SDL_RenderPresent(gRenderer);
 
-        tCube.getPosition().z += 0.5f;
+        tCube.getPosition().z += 0.05f;
+        //std::cout << tCube.getPosition().z << "\n";
         tCube.getPosition().x += 0.0f;
     }
 
