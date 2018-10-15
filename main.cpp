@@ -6,9 +6,12 @@
 #include "Point3.h"
 #include "PointLight.h"
 #include <memory>
+#include "BackfaceCulling.h"
 
 constexpr int SCREEN_WIDTH = 640;
 constexpr int SCREEN_HEIGHT = 480;
+constexpr int SCREEN_Z = 0;
+constexpr int PROJECTION_POINT_Z = -500;
 
 bool init();
 
@@ -22,22 +25,23 @@ int main(int argc, char* argv[])
 {
     init();
 
-    Renderer renderer(gRenderer, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 200);
-    renderer.setLight(std::make_unique<PointLight>(Point3{0.0f, -100.0f, 0.0f}, SDL_Color{255, 0, 0, 255}));
+    Renderer renderer(gRenderer, SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_Z, PROJECTION_POINT_Z);
 
+    renderer.setLight(std::make_unique<PointLight>(Point3{0.0f, -100.0f, -200.0f}, SDL_Color{255, 0, 0, 255}, 0.2));
 
-    Shape sCube(std::vector<Point3>{ Point3{-20.0f, -20.0f, 20.0f}, Point3{20.0f, -20.0f, 20.0f},
-                                     Point3{20.0f, 20.0f, 20.0f}, Point3{-20.0f, 20.0f, 20.0f},
-                                     Point3{20.0f, -20.0f, 10.0f}, Point3{20.0f, 20.0f, 10.0f},
-                                     Point3{-20.0f, -20.0f, 10.0f}, Point3{-20.0f, 20.0f, 10.0f}},
-                std::vector<int>{3, 2, 1, 0});/*, // front face
-                                1, 4, 2, 5, // right face
-                                0, 3, 7, 6});*/ // left face
+    renderer.setBackfaceCulling(std::make_unique<BackfaceCulling>(Point3{0.0f, 0.0f, 1.0f}));
 
-    Transform tCube(sCube, Point3{00.0f, 000.0f, -300.0f});
+    Shape sCube(std::vector<Point3>{ Point3{-20.0f, -20.0f, -20.0f}, Point3{20.0f, -20.0f, -20.0f},
+                                     Point3{20.0f, 20.0f, -20.0f}, Point3{-20.0f, 20.0f, -20.0f},
+                                     Point3{20.0f, -20.0f, 40.0f}, Point3{20.0f, 20.0f, 40.0f},
+                                     Point3{-20.0f, -20.0f, 40.0f}, Point3{-20.0f, 20.0f, 40.0f}},
+                std::vector<int>{1, 4, 5, 2, // right face
+                                0, 3, 7, 6, // left face
+                                0, 1, 2, 3, // front face
+                                0, 6, 4, 1}); // top face
 
+    Transform tCube(sCube, Point3{-100.0f, 100.0f, 900.0f});
 
-    //Point3 points[]{{{300, 300}, 0.001f}, {{350, 300}, 0.0005f}, {{350, 350}, 0.0005f}, {{300, 350}, 0.001f},  {{300, 300}, 0.001f}};
 
     bool quit = false;
     SDL_Event e;
@@ -50,16 +54,18 @@ int main(int argc, char* argv[])
         SDL_SetRenderDrawColor(gRenderer, 0x00, 0x00, 0x00, 0xFF);
         SDL_RenderClear(gRenderer);
 
+        // draw axis
+        SDL_SetRenderDrawColor(gRenderer, 0xFF, 0x00, 0x00, 0xFF);
+        SDL_RenderDrawLine(gRenderer, 0, SCREEN_HEIGHT/2, SCREEN_WIDTH, SCREEN_HEIGHT/2);
+        SDL_SetRenderDrawColor(gRenderer, 0x00, 0xFF, 0x00, 0xFF);
+        SDL_RenderDrawLine(gRenderer, SCREEN_WIDTH/2, 0, SCREEN_WIDTH/2, SCREEN_HEIGHT);
+
         renderer.render(tCube);
 
 
-        //render3d(gRenderer, &vPoint, points, 5);
-
         SDL_RenderPresent(gRenderer);
 
-        tCube.getPosition().z += 0.05f;
-        //std::cout << tCube.getPosition().z << "\n";
-        tCube.getPosition().x += 0.0f;
+        tCube.getPosition().z -= 0.05f;
     }
 
     close();

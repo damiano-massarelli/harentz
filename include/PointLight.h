@@ -3,24 +3,23 @@
 #include <SDL2/SDL.h>
 #include <vector>
 #include "Point3.h"
-#include <functional>
+#include "Polygon.h"
 
 class PointLight
 {
     private:
-        Point3 m_position;
-        SDL_Color m_color;
+        Point3 m_position; ///< Light's position
+        SDL_Color m_color; ///< Light's color
+        float m_ambientFactor; ///< a value in [0, 1]: 0 no ambient light, 1: full ambient light
 
-        Point3 getPolygonCenter(const std::vector<std::reference_wrapper<Point3>>& polygonVertices);
-
-        float getDimFactor(const std::vector<std::reference_wrapper<Point3>>& polygonVertices);
+        float getDimFactor(const Polygon& polygon);
 
     public:
         /** \brief Creates a new PointLight with a certain position and color.
           * \param pos the position of this light
           * \param color this light's color
           */
-        PointLight(const Point3& pos, const SDL_Color& color);
+        PointLight(const Point3& pos, const SDL_Color& color, float ambientFactor = 0.0);
 
         Point3& getPosition();
 
@@ -29,7 +28,7 @@ class PointLight
           * \param polygonColor the original color of the polygon
           * \return the color of the polygon when light is applied
           */
-        SDL_Color getColorForPolygon(const std::vector<std::reference_wrapper<Point3>>& polygonVertices, const SDL_Color& polygonColor);
+        SDL_Color getColorForPolygon(const Polygon& polygon, const SDL_Color& polygonColor);
 
         virtual ~PointLight();
 
