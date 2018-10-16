@@ -3,7 +3,7 @@
 #include <vector>
 #include "Point3.h"
 
-class Polygon
+class Face
 {
     /** \brief Util class to manage polygons
       * Polygon should be added in clockwise order
@@ -12,7 +12,7 @@ class Polygon
         std::vector<Point3*> m_vertices;
 
     public:
-        Polygon();
+        Face();
 
         void addVertex(Point3* vertex);
 
@@ -20,7 +20,7 @@ class Polygon
 
         Point3 getNormal() const;
 
-        virtual ~Polygon();
+        virtual ~Face();
 
 };
 

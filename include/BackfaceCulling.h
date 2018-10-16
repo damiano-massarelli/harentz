@@ -3,26 +3,25 @@
 #include "Point3.h"
 #include <vector>
 #include <functional>
-
+#include "Face.h"
 
 class BackfaceCulling
 {
     private:
-        Point3 m_sightDirection; ///< The direction in which the user's eyes are pointing
+        Point3 m_playerPosition;
+        Point3 m_viewDirection; ///< The direction in which the player's eyes are pointing
 
     public:
         /** \brief Creates an object to perform backface culling.
-          * \param sightDirection The direction in which the user's eyes are pointing
-          *
-          * When the result of the dot product between a polygon's normal and sightDirection
-          * is greater or equal to zero that polygon should not be rendered.
+          * \param viewDirection The direction in which the player's eyes are pointing
+          * \param playerPosition the position of an imaginary player in the scene
           */
-        BackfaceCulling(const Point3& sightDirection);
+        BackfaceCulling(const Point3& playerPosition, const Point3& viewDirection);
 
-        /** \brief checks whether a polygon should be rendered or not
-          * \return true if the polygon should be rendered, false otherwise
+        /** \brief checks whether a face should be rendered or not
+          * \return true if the face should be rendered, false otherwise
           */
-        bool shouldRender(const std::vector<std::reference_wrapper<Point3>>& polygonVertices);
+        bool shouldRender(const Face& face);
 
         virtual ~BackfaceCulling();
 

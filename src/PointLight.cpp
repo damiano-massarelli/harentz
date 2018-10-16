@@ -6,12 +6,12 @@ PointLight::PointLight(const Point3& pos, const SDL_Color& color, float ambientF
 
 }
 
-float PointLight::getDimFactor(const Polygon& polygon)
+float PointLight::getDimFactor(const Face& face)
 {
-    Point3 fromPolygonToLight = normalized(m_position - polygon.getCenter());
-    Point3 polygonNormal = normalized(polygon.getNormal());
+    Point3 fromfaceToLight = normalized(m_position - face.getCenter());
+    Point3 faceNormal = normalized(face.getNormal());
     // max: negative values are not good, min: with the ambient factor the result might be greater than 1.0f
-    return std::min(std::max(0.0f, dot(fromPolygonToLight, polygonNormal)) + m_ambientFactor, 1.0f);
+    return std::min(std::max(0.0f, dot(fromfaceToLight, faceNormal)) + m_ambientFactor, 1.0f);
 }
 
 
@@ -20,10 +20,10 @@ Point3& PointLight::getPosition()
     return m_position;
 }
 
-SDL_Color PointLight::getColorForPolygon(const Polygon& polygon, const SDL_Color& polygonColor)
+SDL_Color PointLight::getColorForFace(const Face& face, const SDL_Color& faceColor)
 {
-    float dimFactor = getDimFactor(polygon);
-    return SDL_Color{polygonColor.r * dimFactor, polygonColor.g * dimFactor, polygonColor.b * dimFactor, polygonColor.a};
+    float dimFactor = getDimFactor(face);
+    return SDL_Color{faceColor.r * dimFactor, faceColor.g * dimFactor, faceColor.b * dimFactor, faceColor.a};
 }
 
 PointLight::~PointLight()

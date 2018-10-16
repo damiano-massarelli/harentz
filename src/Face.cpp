@@ -1,18 +1,18 @@
-#include "Polygon.h"
+#include "Face.h"
 #include <assert.h>
 
-Polygon::Polygon()
+Face::Face()
 {
     //ctor
 }
 
-void Polygon::addVertex(Point3* vertex)
+void Face::addVertex(Point3* vertex)
 {
     m_vertices.push_back(vertex);
 }
 
 
-Point3 Polygon::getCenter() const
+Point3 Face::getCenter() const
 {
     float totX = 0.0f;
     float totY = 0.0f;
@@ -27,14 +27,14 @@ Point3 Polygon::getCenter() const
     return Point3{totX/numElem, totY/numElem, totZ/numElem};
 }
 
-Point3 Polygon::getNormal() const
+Point3 Face::getNormal() const
 {
     assert(m_vertices.size() >= 3);
     return cross(*m_vertices[0] - *m_vertices[1], *m_vertices[2] - *m_vertices[1]);
 }
 
 
-Polygon::~Polygon()
+Face::~Face()
 {
     //dtor
 }

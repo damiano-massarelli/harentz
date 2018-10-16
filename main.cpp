@@ -29,7 +29,7 @@ int main(int argc, char* argv[])
 
     renderer.setLight(std::make_unique<PointLight>(Point3{0.0f, -100.0f, -200.0f}, SDL_Color{255, 0, 0, 255}, 0.2));
 
-    renderer.setBackfaceCulling(std::make_unique<BackfaceCulling>(Point3{0.0f, 0.0f, 1.0f}));
+    renderer.setBackfaceCulling(std::make_unique<BackfaceCulling>(Point3{0.0f, 0.0f, PROJECTION_POINT_Z} ,Point3{0.0f, 0.0f, 1.0f}));
 
     Shape sCube(std::vector<Point3>{ Point3{-20.0f, -20.0f, -20.0f}, Point3{20.0f, -20.0f, -20.0f},
                                      Point3{20.0f, 20.0f, -20.0f}, Point3{-20.0f, 20.0f, -20.0f},

@@ -1,7 +1,7 @@
 #include "Renderer.h"
 #include <iostream>
 #include <algorithm>
-#include "Polygon.h"
+#include "Face.h"
 
 Renderer::Renderer(SDL_Renderer* renderer,int screenWidth, int screenHeight, float screenZ, float projectionPointZ) : m_renderer{renderer},
                                                 m_screenWidth{screenWidth}, m_screenHeight{screenHeight},
@@ -76,37 +76,34 @@ void Renderer::render(const Transform& toRender)
 
     SDL_Point projected;
     std::vector<SDL_Point> projectedPolygonVertices;
-    Polygon polygon;
+    Face face;
     for (std::vector<int>::size_type i = 0; i < quadsIndices.size(); i++) {
         // projects the i-th point an puts it in projectedPolygonVertices
         project(verticesWorldPos[quadsIndices[i]], projected);
         projectedPolygonVertices.push_back(projected);
 
-        polygon.addVertex(&verticesWorldPos[quadsIndices[i]]);
+        face.addVertex(&verticesWorldPos[quadsIndices[i]]);
 
         /* Each 3 vertices the polygon is closed and drawn on the screen */
         if (i % 4 == 3) {
 
             /* Render anyway if backface culling is disabled. If it is enabled check
             whether we should render or not */
-            //if (!m_backfaceCulling || m_backfaceCulling->shouldRender(polygonVertices)) {
+            if (!m_backfaceCulling || m_backfaceCulling->shouldRender(face)) {
                 projectedPolygonVertices.push_back(projectedPolygonVertices[0]); // completes the polygon
                 SDL_Color polygonColor{0xFF, 0xFF, 0xFF, 0xFF};
                 if (m_light) {
-                    polygonColor = m_light->getColorForPolygon(polygon, polygonColor);
+                    polygonColor = m_light->getColorForFace(face, polygonColor);
                 }
 
                 SDL_SetRenderDrawColor(m_renderer ,polygonColor.r, polygonColor.g, polygonColor.b, 0xFF);
                 fillPolygon(projectedPolygonVertices);
-            //}
+            }
 
             // Free info about just drawn polygon
             projectedPolygonVertices.clear();
-            polygon = Polygon();
+            face = Face();
         }
-        /*SDL_SetRenderDrawColor(m_renderer , 0xFF, 0x00, 0x00, 0xFF);
-        SDL_Rect pt{projected.x, projected.y, 5, 5};
-        SDL_RenderFillRect(m_renderer, &pt); */
     }
 }
 

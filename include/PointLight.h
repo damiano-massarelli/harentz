@@ -3,7 +3,7 @@
 #include <SDL2/SDL.h>
 #include <vector>
 #include "Point3.h"
-#include "Polygon.h"
+#include "Face.h"
 
 class PointLight
 {
@@ -12,7 +12,7 @@ class PointLight
         SDL_Color m_color; ///< Light's color
         float m_ambientFactor; ///< a value in [0, 1]: 0 no ambient light, 1: full ambient light
 
-        float getDimFactor(const Polygon& polygon);
+        float getDimFactor(const Face& face);
 
     public:
         /** \brief Creates a new PointLight with a certain position and color.
@@ -23,12 +23,12 @@ class PointLight
 
         Point3& getPosition();
 
-        /** \brief computes and returns the color of a given polygon.
-          * \param polygonVertices the vertices of the polygon in world space
-          * \param polygonColor the original color of the polygon
-          * \return the color of the polygon when light is applied
+        /** \brief computes and returns the color of a given face.
+          * \param face the face we want the color for
+          * \param faceColor the original color of the face
+          * \return the color of the face when light is applied
           */
-        SDL_Color getColorForPolygon(const Polygon& polygon, const SDL_Color& polygonColor);
+        SDL_Color getColorForFace(const Face& face, const SDL_Color& faceColor);
 
         virtual ~PointLight();
 

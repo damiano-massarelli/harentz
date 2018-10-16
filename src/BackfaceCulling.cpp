@@ -1,14 +1,16 @@
 #include "BackfaceCulling.h"
 
-BackfaceCulling::BackfaceCulling(const Point3& sightDirection) : m_sightDirection{sightDirection}
+BackfaceCulling::BackfaceCulling(const Point3& playerPosition, const Point3& viewDirection) : m_playerPosition{playerPosition},
+                                                                                              m_viewDirection{viewDirection}
 {
     //ctor
 }
 
-bool BackfaceCulling::shouldRender(const std::vector<std::reference_wrapper<Point3>>& polygonVertices)
+bool BackfaceCulling::shouldRender(const Face& face)
 {
-    Point3 normal = cross(polygonVertices[0] - polygonVertices[1], polygonVertices[2] - polygonVertices[1]);
-    return dot(m_sightDirection, normal) < 0.0f;
+    // Vector from the face center to the camera
+    Point3 fromFaceToCamera = m_playerPosition - face.getCenter();
+    return dot(fromFaceToCamera, face.getNormal()) > 0.0f;
 }
 
 
