@@ -8,6 +8,7 @@
 #include <memory>
 #include "BackfaceCulling.h"
 #include "DisplayManager.h"
+#include "Mat3.h"
 
 constexpr int SCREEN_WIDTH = 640;
 constexpr int SCREEN_HEIGHT = 480;
@@ -34,6 +35,7 @@ int main(int argc, char* argv[])
                                 0, 6, 4, 1}); // top face
 
     Transform tCube(sCube, Point3{-100.0f, 100.0f, 900.0f});
+    tCube.setTransformationMatrix(Mat3{Point3{1.0f, 0.0f, 0.0f}, normalized(Point3{0.0f, 1.0f, -1.0f}), normalized(Point3{0.0f, 1.0f, 1.0f})});
 
 
     bool quit = false;
@@ -58,7 +60,7 @@ int main(int argc, char* argv[])
 
         SDL_RenderPresent(displayManager.getRenderer());
 
-        tCube.getPosition().z -= 0.05f;
+        tCube.getPosition().z -= 0.5f;
     }
 
     return 0;

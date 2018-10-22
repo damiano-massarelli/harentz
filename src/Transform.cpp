@@ -1,6 +1,7 @@
 #include "Transform.h"
 
-Transform::Transform(const Shape& shape, const Point3& pos) : m_shape{shape}, m_position{pos}
+Transform::Transform(const Shape& shape, const Point3& pos) : m_shape{shape}, m_position{pos},
+                    m_transformMatrix{Point3{1.0f, 0.0f, 0.0f}, Point3{0.0f, 1.0f, 0.0f}, Point3{0.0f, 0.0f, 1.0f}}
 {
 
 }
@@ -10,11 +11,17 @@ Point3& Transform::getPosition()
     return m_position;
 }
 
+void Transform::setTransformationMatrix(const Mat3& matrix)
+{
+    m_transformMatrix = matrix;
+}
+
+
 const std::vector<Point3> Transform::getVertPositionsWorld() const
 {
     std::vector<Point3> worldSpacePoints;
     for (const auto& pt : m_shape.getVertPositions()) {
-        worldSpacePoints.push_back(Point3{pt.x + m_position.x, pt.y + m_position.y, pt.z + m_position.z});
+        worldSpacePoints.push_back(m_position + m_transformMatrix * pt);
     }
 
     return worldSpacePoints;

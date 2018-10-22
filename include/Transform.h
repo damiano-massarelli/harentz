@@ -3,12 +3,14 @@
 #include "Shape.h"
 #include "Point3.h"
 #include <vector>
+#include "Mat3.h"
 
 class Transform
 {
     private:
         Shape m_shape;
         Point3 m_position;
+        Mat3 m_transformMatrix;
 
 
     public:
@@ -17,6 +19,8 @@ class Transform
         const Point3& getPosition() const;
 
         Point3& getPosition();
+
+        void setTransformationMatrix(const Mat3& matrix);
 
         const Shape& getShape() const;
 
