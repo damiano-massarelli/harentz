@@ -1,6 +1,23 @@
 #include "DisplayManager.h"
 #include <iostream>
 
+// Static variable definition.
+std::unique_ptr<DisplayManager> DisplayManager::instance;
+
+DisplayManager* DisplayManager::create(const std::string& title, int displayWidth, int displayHeight)
+{
+    if (!instance)
+        instance = std::unique_ptr<DisplayManager>(new DisplayManager{title, displayWidth, displayHeight});
+
+
+    return instance.get();
+}
+
+DisplayManager* DisplayManager::getInstance()
+{
+    return instance.get();
+}
+
 DisplayManager::DisplayManager(const std::string& title, int displayWidth, int displayHeight)
 {
     if (SDL_Init(SDL_INIT_VIDEO) < 0)
@@ -19,6 +36,20 @@ DisplayManager::DisplayManager(const std::string& title, int displayWidth, int d
     m_renderer = renderer;
 }
 
+void DisplayManager::startMainLoop()
+{
+    m_eventManager.addListenerFor(SDL_QUIT, this);
+    while (!m_quit) {
+        m_eventManager.dispatchEvents();
+    }
+}
+
+// Override from EventListener
+void DisplayManager::onEvent(SDL_Event event) {
+    if (event.type == SDL_QUIT)
+        quit();
+}
+
 SDL_Window* DisplayManager::getWindow() const
 {
     return m_window;
@@ -31,6 +62,8 @@ SDL_Renderer* DisplayManager::getRenderer() const
 
 void DisplayManager::quit()
 {
+    m_quit = true; // quit main loop
+
     SDL_DestroyRenderer(m_renderer);
     m_renderer = nullptr;
     SDL_DestroyWindow(m_window);
@@ -39,6 +72,10 @@ void DisplayManager::quit()
     SDL_Quit();
 }
 
+EventManager& DisplayManager::getEventManager()
+{
+    return m_eventManager;
+}
 
 DisplayManager::~DisplayManager()
 {

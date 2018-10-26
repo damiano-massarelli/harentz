@@ -21,6 +21,7 @@ const std::vector<Point3> Transform::getVertPositionsWorld() const
 {
     std::vector<Point3> worldSpacePoints;
     for (const auto& pt : m_shape.getVertPositions()) {
+        // Transforms and translates pt which is a local space 3d point
         worldSpacePoints.push_back(m_position + m_transformMatrix * pt);
     }
 
