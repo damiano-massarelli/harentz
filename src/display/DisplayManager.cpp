@@ -1,14 +1,13 @@
 #include "DisplayManager.h"
+#include "EventManager.h"
 #include <iostream>
 
 // Static variable definition.
 std::unique_ptr<DisplayManager> DisplayManager::instance;
 
-DisplayManager* DisplayManager::create(const std::string& title, int displayWidth, int displayHeight)
-{
+DisplayManager* DisplayManager::create(const std::string& title, int displayWidth, int displayHeight) {
     if (!instance)
         instance = std::unique_ptr<DisplayManager>(new DisplayManager{title, displayWidth, displayHeight});
-
 
     return instance.get();
 }
@@ -34,13 +33,15 @@ DisplayManager::DisplayManager(const std::string& title, int displayWidth, int d
         std::cout << SDL_GetError() << "\n";
 
     m_renderer = renderer;
+
+    m_eventManager = new EventManager{};
 }
 
 void DisplayManager::startMainLoop()
 {
-    m_eventManager.addListenerFor(SDL_QUIT, this);
+    m_eventManager->addListenerFor(SDL_QUIT, this);
     while (!m_quit) {
-        m_eventManager.dispatchEvents();
+        m_eventManager->dispatchEvents();
     }
 }
 
@@ -69,12 +70,15 @@ void DisplayManager::quit()
     SDL_DestroyWindow(m_window);
     m_window = nullptr;
 
+    delete m_eventManager;
+    m_eventManager = nullptr;
+
     SDL_Quit();
 }
 
 EventManager& DisplayManager::getEventManager()
 {
-    return m_eventManager;
+    return *m_eventManager;
 }
 
 DisplayManager::~DisplayManager()

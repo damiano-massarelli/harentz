@@ -2,8 +2,10 @@
 #define EVENTMANAGER_H
 #include <map>
 #include <vector>
+#include <memory>
 #include <SDL2/SDL.h>
 #include "EventListener.h"
+#include "EventListenerCrumb.h"
 
 class EventManager
 {
@@ -13,15 +15,13 @@ class EventManager
     public:
         EventManager();
 
-        void addListenerFor(SDL_EventType event, EventListener* listener);
+        std::unique_ptr<EventListenerCrumb> addListenerFor(SDL_EventType event, EventListener* listener, bool wantCrumb = false);
 
         void removeListenerFor(SDL_EventType event, EventListener* listener);
 
         void dispatchEvents() const;
 
         virtual ~EventManager();
-
-
 };
 
 #endif // EVENTMANAGER_H
