@@ -1,5 +1,6 @@
 #include "DisplayManager.h"
 #include "EventManager.h"
+#include "AbstractScene.h"
 #include <iostream>
 
 // Static variable definition.
@@ -41,6 +42,7 @@ void DisplayManager::startMainLoop()
 {
     m_eventManager->addListenerFor(SDL_QUIT, this);
     while (!m_quit) {
+        m_eventManager->pushEnterFrameEvent();
         m_eventManager->dispatchEvents();
     }
 }
@@ -61,9 +63,20 @@ SDL_Renderer* DisplayManager::getRenderer() const
     return m_renderer;
 }
 
+void DisplayManager::setCurrentScene(AbstractScene* scene)
+{
+    delete currentScene;
+    currentScene = scene;
+    currentScene->onCreate(m_renderer);
+}
+
+
 void DisplayManager::quit()
 {
     m_quit = true; // quit main loop
+
+    delete currentScene;
+    currentScene = nullptr;
 
     SDL_DestroyRenderer(m_renderer);
     m_renderer = nullptr;

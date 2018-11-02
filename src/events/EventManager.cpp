@@ -2,6 +2,9 @@
 #include <algorithm>
 #include <iostream>
 
+// Static variable definition
+const SDL_EventType EventManager::ENTER_FRAME_EVENT = static_cast<SDL_EventType>(SDL_RegisterEvents(1));
+
 EventManager::EventManager()
 {
     //ctor
@@ -41,6 +44,17 @@ void EventManager::dispatchEvents() const
                 listener->onEvent(event);
         }
     }
+}
+
+void EventManager::pushEnterFrameEvent() const
+{
+    SDL_Event event;
+    SDL_memset(&event, 0, sizeof(event));
+    event.type = ENTER_FRAME_EVENT;
+    event.user.code = 0;
+    event.user.data1 = 0;
+    event.user.data2 = 0;
+    SDL_PushEvent(&event);
 }
 
 

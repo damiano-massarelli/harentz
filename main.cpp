@@ -9,6 +9,7 @@
 #include "BackfaceCulling.h"
 #include "DisplayManager.h"
 #include "Mat3.h"
+#include "GameScene.h"
 
 constexpr int SCREEN_WIDTH = 640;
 constexpr int SCREEN_HEIGHT = 480;
@@ -37,6 +38,8 @@ int main(int argc, char* argv[])
     Transform tCube(sCube, Point3{-100.0f, 100.0f, 900.0f});
     tCube.setTransformationMatrix(Mat3{Point3{1.0f, 0.0f, 0.0f}, normalized(Point3{0.0f, 1.0f, -1.0f}), normalized(Point3{0.0f, 1.0f, 1.0f})});
 
+
+    displayManager->setCurrentScene(new GameScene{});
     displayManager->startMainLoop();
 
     return 0;

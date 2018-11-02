@@ -13,6 +13,8 @@ class EventManager
         std::map<SDL_EventType, std::vector<EventListener*>> m_event2listeners;
 
     public:
+        static const SDL_EventType ENTER_FRAME_EVENT;
+
         EventManager();
 
         std::unique_ptr<EventListenerCrumb> addListenerFor(SDL_EventType event, EventListener* listener, bool wantCrumb = false);
@@ -20,6 +22,8 @@ class EventManager
         void removeListenerFor(SDL_EventType event, EventListener* listener);
 
         void dispatchEvents() const;
+
+        void pushEnterFrameEvent() const;
 
         virtual ~EventManager();
 };
