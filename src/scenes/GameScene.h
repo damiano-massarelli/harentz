@@ -1,25 +1,25 @@
 #ifndef GAMESCENE_H
 #define GAMESCENE_H
-#include "AbstractScene.h"
+#include "Scene.h"
+#include "Renderer.h"
 #include <iostream>
+#include <memory>
 
 
-class GameScene : public AbstractScene
+class GameScene : public Scene
 {
+    private:
+        std::unique_ptr<Renderer> m_3dRenderer;
+
     public:
         GameScene();
 
-        virtual void onCreate(SDL_Renderer* renderer) override {
-            // do something
-        }
+        virtual void onShow(SDL_Window* window, SDL_Renderer* renderer) override;
 
-        virtual void onEvent(SDL_Event e) override {
-            // do something, maybe
-        }
+        virtual void onEvent(SDL_Event e) override;
 
         virtual ~GameScene();
 
-    private:
 };
 
 #endif // GAMESCENE_H

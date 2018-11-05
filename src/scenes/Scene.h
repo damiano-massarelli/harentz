@@ -3,17 +3,24 @@
 #include <vector>
 #include "EventListener.h"
 #include "EventListenerCrumb.h"
-#include "Renderable.h"
 
-/** \brief An abstract class performing all the basic operations of a scene */
-class AbstractScene : public EventListener
+class AbstractRenderable;
+
+/** \brief An class performing all the basic operations of a scene */
+class Scene : public EventListener
 {
     private:
-        std::vector<Renderable* > m_renderList;
+        std::vector<AbstractRenderable* > m_renderList;
         std::unique_ptr<EventListenerCrumb> m_eventCrumb;
 
+        SDL_Color m_bgColor{0, 0, 0};
+
+        SDL_Window* m_sdlWindow = nullptr;
+        SDL_Renderer* m_sdlRenderer = nullptr;
+
+
     public:
-        AbstractScene();
+        Scene();
 
         /** \brief reacts to enter frame events
           * each time a new frame is created this method
@@ -25,15 +32,20 @@ class AbstractScene : public EventListener
         /** \brief method called when the scene is passed to the DisplayManager.
           * This method is called by the DisplayManager to pass the main SDL_Renderer
           * so that the Scene can create its own renderers using it. */
-        virtual void onCreate(SDL_Renderer* renderer) = 0;
+        virtual void onShow(SDL_Window* window, SDL_Renderer* renderer);
 
         /** \brief adds a new object to the scene */
-        void add(Renderable* renderable);
+        void add(AbstractRenderable* renderable);
 
         /** \brief removes an object from the scene */
-        void remove(Renderable* renderable);
+        void remove(AbstractRenderable* renderable);
 
-        virtual ~AbstractScene();
+        /** \brief set the scene's background color */
+        void setBgColor(const SDL_Color& color);
+
+        void getWindowSize(int* w, int* h) const;
+
+        virtual ~Scene();
 
 };
 

@@ -26,17 +26,7 @@ int main(int argc, char* argv[])
 
     renderer.setBackfaceCulling(std::make_unique<BackfaceCulling>(Point3{0.0f, 0.0f, PROJECTION_POINT_Z} ,Point3{0.0f, 0.0f, 1.0f}));
 
-    Shape sCube(std::vector<Point3>{ Point3{-20.0f, -20.0f, -20.0f}, Point3{20.0f, -20.0f, -20.0f},
-                                     Point3{20.0f, 20.0f, -20.0f}, Point3{-20.0f, 20.0f, -20.0f},
-                                     Point3{20.0f, -20.0f, 40.0f}, Point3{20.0f, 20.0f, 40.0f},
-                                     Point3{-20.0f, -20.0f, 40.0f}, Point3{-20.0f, 20.0f, 40.0f}},
-                std::vector<int>{1, 4, 5, 2, // right face
-                                0, 3, 7, 6, // left face
-                                0, 1, 2, 3, // front face
-                                0, 6, 4, 1}); // top face
 
-    Transform tCube(sCube, Point3{-100.0f, 100.0f, 900.0f});
-    tCube.setTransformationMatrix(Mat3{Point3{1.0f, 0.0f, 0.0f}, normalized(Point3{0.0f, 1.0f, -1.0f}), normalized(Point3{0.0f, 1.0f, 1.0f})});
 
 
     displayManager->setCurrentScene(new GameScene{});
@@ -62,12 +52,12 @@ int main(int argc, char* argv[])
         SDL_SetRenderDrawColor(displayManager->getRenderer(), 0x00, 0xFF, 0x00, 0xFF);
         SDL_RenderDrawLine(displayManager->getRenderer(), SCREEN_WIDTH/2, 0, SCREEN_WIDTH/2, SCREEN_HEIGHT);
 
-        renderer.render(tCube);
+        //renderer.render(tCube);
 
 
         SDL_RenderPresent(displayManager->getRenderer());
 
-        tCube.getPosition().z -= 0.5f;
+        //tCube.getPosition().z -= 0.5f;
     }
 
     return 0;

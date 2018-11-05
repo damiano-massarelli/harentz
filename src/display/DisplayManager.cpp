@@ -1,6 +1,6 @@
 #include "DisplayManager.h"
 #include "EventManager.h"
-#include "AbstractScene.h"
+#include "Scene.h"
 #include <iostream>
 
 // Static variable definition.
@@ -63,11 +63,11 @@ SDL_Renderer* DisplayManager::getRenderer() const
     return m_renderer;
 }
 
-void DisplayManager::setCurrentScene(AbstractScene* scene)
+void DisplayManager::setCurrentScene(Scene* scene)
 {
     delete currentScene;
     currentScene = scene;
-    currentScene->onCreate(m_renderer);
+    currentScene->onShow(m_window, m_renderer);
 }
 
 

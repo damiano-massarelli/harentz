@@ -10,7 +10,7 @@ Hence, while DisplayManager is being declared its complete declaration is alread
 to compile EventListenerCrumb and this is impossible. So, DisplayManager header uses a forward declaration
 for EventManager and its implementation actually uses its definition */
 class EventManager;
-class AbstractScene;
+class Scene;
 
 class DisplayManager : public EventListener
 {
@@ -21,7 +21,7 @@ class DisplayManager : public EventListener
         SDL_Renderer* m_renderer = nullptr;
 
         EventManager* m_eventManager = nullptr;
-        AbstractScene* currentScene = nullptr;
+        Scene* currentScene = nullptr;
 
         bool m_quit{false}; ///< true if should quit main loop
 
@@ -43,7 +43,7 @@ class DisplayManager : public EventListener
 
         EventManager& getEventManager();
 
-        void setCurrentScene(AbstractScene* scene);
+        void setCurrentScene(Scene* scene);
 
         void quit();
 

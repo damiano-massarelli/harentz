@@ -26,9 +26,8 @@ std::unique_ptr<EventListenerCrumb> EventManager::addListenerFor(SDL_EventType e
 
 void EventManager::removeListenerFor(SDL_EventType event, EventListener* listener)
 {
-    std::cout << "reuqest for " << event << " " << listener << "\n";
     if (m_event2listeners.count(event)) {
-        std::cout << "done\n";
+        std::cout << "deleted listener " << listener << " for event " << event <<"\n";
         std::vector<EventListener*>& listeners = m_event2listeners.at(event);
         listeners.erase(std::remove(listeners.begin(), listeners.end(), listener), listeners.end());
     }
