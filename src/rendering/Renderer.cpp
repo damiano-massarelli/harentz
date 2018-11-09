@@ -71,7 +71,7 @@ void Renderer::fillPolygon(std::vector<SDL_Point>& polygonPoints)
 
 void Renderer::render(const Transform& toRender)
 {
-    std::vector<Point3> verticesWorldPos = toRender.getVertPositionsWorld();
+    std::vector<Point3> verticesWorldPos = toRender.getVertWorldPositions();
     const std::vector<int>& quadsIndices = toRender.getShape().getQuadsIndices();
 
     SDL_Point projected;

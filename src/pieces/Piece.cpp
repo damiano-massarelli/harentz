@@ -53,7 +53,7 @@ Piece::Piece(Renderer* renderer, const std::string& shape) : m_renderer{renderer
     while(std::getline(infile, line)) {
         x = 0.0f;
         for (int height : split(line, ' ')) {
-            m_cubes.push_back(Transform{Piece::CUBE_SHAPE, Point3{x, y+100.0f, z}});
+            //m_cubes.push_back(Transform{Piece::CUBE_SHAPE, Point3{x, y+100.0f, z}});
 
             x += Piece::CUBE_SIZE;
         }
