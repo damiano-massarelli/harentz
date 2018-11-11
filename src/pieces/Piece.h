@@ -1,18 +1,17 @@
 #ifndef PIECE_H
 #define PIECE_H
-#include "AbstractRenderable.h"
 #include "Renderer.h"
 #include "Shape.h"
 #include "Transform.h"
 #include <vector>
+#include <memory>
 
-class Piece : public AbstractRenderable
+class Piece : public Transform
 {
     private:
-        static const Shape CUBE_SHAPE;
+        static const std::shared_ptr<Shape> CUBE_SHAPE;
 
-        Renderer* m_renderer = nullptr;
-        std::vector<Transform> m_cubes;
+        std::vector<std::unique_ptr<Transform>> m_cubes;
 
 
     public:
@@ -20,15 +19,7 @@ class Piece : public AbstractRenderable
 
         Piece(Renderer* renderer, const std::string& shape);
 
-        virtual void render() override {
-            if (m_renderer != nullptr) {
-                for (const auto cubeTransform : m_cubes)
-                    m_renderer->render(cubeTransform);
-            }
-        }
-
         virtual ~Piece();
-
 
 };
 

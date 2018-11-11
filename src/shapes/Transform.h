@@ -5,13 +5,15 @@
 #include <vector>
 #include "Mat4.h"
 #include "AbstractRenderable.h"
+#include <SDL2/SDL.h>
+#include <memory>
 
 class Renderer;
 
 class Transform : public AbstractRenderable
 {
     private:
-        Shape m_shape;
+        const std::shared_ptr<Shape> m_shape;
         Mat4 m_transformMatrix;
 
         std::vector<Transform*> m_children;
@@ -19,10 +21,12 @@ class Transform : public AbstractRenderable
 
         Renderer* m_renderer = nullptr;
 
+        SDL_Color m_color{255, 255, 255};
+
         void setParent(Transform* parent);
 
     public:
-        Transform(const Shape& shape);
+        Transform(const std::shared_ptr<Shape>& shape);
 
         void setRenderer(Renderer* renderer);
 
@@ -50,9 +54,13 @@ class Transform : public AbstractRenderable
 
         Mat4 getWorldTransformationMatrix() const;
 
-        const Shape& getShape() const;
+        const std::shared_ptr<Shape>& getShape() const;
 
         const std::vector<Point3> getVertWorldPositions() const;
+
+        SDL_Color getColor() const;
+
+        void setColor(SDL_Color color);
 
         virtual void render() override;
 

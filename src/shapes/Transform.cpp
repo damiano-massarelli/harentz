@@ -2,7 +2,7 @@
 #include "Renderer.h"
 #include <algorithm>
 
-Transform::Transform(const Shape& shape) : m_shape{shape}
+Transform::Transform(const std::shared_ptr<Shape>& shape) : m_shape{shape}
 {
 
 }
@@ -35,11 +35,14 @@ Mat4 Transform::getWorldTransformationMatrix() const
 const std::vector<Point3> Transform::getVertWorldPositions() const
 {
     std::vector<Point3> worldSpacePoints;
-    for (const auto& pt : m_shape.getVertPositions()) {
-        // Transforms and translates pt which is a local space 3d point
-        worldSpacePoints.push_back(getWorldTransformationMatrix() * pt);
+    // This transform might not have a shape
+    if (m_shape) {
+        const Mat4& worldMatrix = getWorldTransformationMatrix();
+        for (const auto& pt : m_shape->getVertPositions()) {
+            // Transforms and translates pt which is a local space 3d point
+            worldSpacePoints.push_back(worldMatrix * pt);
+        }
     }
-
     return worldSpacePoints;
 }
 
@@ -60,7 +63,7 @@ Point3 Transform::getWorldPosition() const
 }
 
 
-const Shape& Transform::getShape() const {
+const std::shared_ptr<Shape>& Transform::getShape() const {
     return m_shape;
 }
 
@@ -83,12 +86,25 @@ void Transform::removeChild(Transform* child)
     m_children.erase(std::remove(m_children.begin(), m_children.end(), child), m_children.end());
 }
 
+void Transform::setColor(SDL_Color color)
+{
+    m_color = color;
+}
+
+SDL_Color Transform::getColor() const
+{
+    return m_color;
+}
+
 void Transform::render()
 {
     if (m_renderer == nullptr)
         return;
 
-    m_renderer->render(*this);
+    // This transform might not have a shape
+    if (m_shape)
+        m_renderer->render(*this);
+
     for (const auto& child : m_children)
         m_renderer->render(*child);
 }

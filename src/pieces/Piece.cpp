@@ -3,7 +3,8 @@
 #include <sstream>
 #include <string>
 
-const Shape Piece::CUBE_SHAPE(std::vector<Point3>{ Point3{-Piece::CUBE_SIZE, -Piece::CUBE_SIZE, -Piece::CUBE_SIZE},
+const std::shared_ptr<Shape> Piece::CUBE_SHAPE = std::shared_ptr<Shape>(
+                                     new Shape{std::vector<Point3>{ Point3{-Piece::CUBE_SIZE, -Piece::CUBE_SIZE, -Piece::CUBE_SIZE},
                                      Point3{Piece::CUBE_SIZE, -Piece::CUBE_SIZE, -Piece::CUBE_SIZE},
                                      Point3{Piece::CUBE_SIZE, Piece::CUBE_SIZE, -Piece::CUBE_SIZE},
                                      Point3{-Piece::CUBE_SIZE, Piece::CUBE_SIZE, -Piece::CUBE_SIZE},
@@ -15,7 +16,7 @@ const Shape Piece::CUBE_SHAPE(std::vector<Point3>{ Point3{-Piece::CUBE_SIZE, -Pi
                                      1, 4, 5, 2, // right face
                                      0, 3, 7, 6, // left face
                                      0, 1, 2, 3, // front face
-                                     0, 6, 4, 1}); // top face
+                                     0, 6, 4, 1}}); // top face
 
 std::vector<int> split(const std::string &txt, char ch)
 {
@@ -27,7 +28,6 @@ std::vector<int> split(const std::string &txt, char ch)
 
     // Decompose statement
     while( pos != std::string::npos ) {
-        std::cout << txt.substr( initialPos, pos - initialPos ) << "-\n";
         strs.push_back( std::stoi( txt.substr( initialPos, pos - initialPos ) ) );
         initialPos = pos + 1;
 
@@ -35,30 +35,45 @@ std::vector<int> split(const std::string &txt, char ch)
     }
 
     // Add the last one
-    std::cout << txt.substr( initialPos, std::min( pos, txt.size() ) - initialPos + 1 ) << "-\n";
     strs.push_back( std::stoi( txt.substr( initialPos, std::min( pos, txt.size() ) - initialPos + 1 ) ) );
 
     return strs;
 }
 
 
-Piece::Piece(Renderer* renderer, const std::string& shape) : m_renderer{renderer}
+Piece::Piece(Renderer* renderer, const std::string& shape) : Transform{nullptr}
 {
-    float z = 0.0f;
-    float x = 0.0f;
-    float y = 0.0f;
+    setRenderer(renderer);
 
-    std::ifstream infile(shape);
+    float z = 0.0f;
+    float size = Piece::CUBE_SIZE * 2;
+
+    std::ifstream infile("resources/pieces/" + shape + ".piece");
     std::string line;
     while(std::getline(infile, line)) {
-        x = 0.0f;
+        float x = 0.0f;
         for (int height : split(line, ' ')) {
-            //m_cubes.push_back(Transform{Piece::CUBE_SHAPE, Point3{x, y+100.0f, z}});
+            int y = 0;
 
-            x += Piece::CUBE_SIZE;
+            /* Negative values means that the cube should be placed at that
+            height without filling the space below it */
+            if (height < 0) {
+                height = -height;
+                y = height - 1;
+            }
+            for (; y < height; y++) {
+                Transform* cube = new Transform{Piece::CUBE_SHAPE};
+                cube->setPosition(Point3{x, -y * size, z}); // -y: positive value in the file means the cube is higher
+                cube->setColor(SDL_Color{255, 0, 0});
+                addChild(cube);
+
+                m_cubes.push_back(std::unique_ptr<Transform>(cube));
+            }
+
+            x += size;
         }
 
-        z += Piece::CUBE_SIZE;
+        z -= size; // comes towards the player
     }
 }
 

@@ -32,10 +32,21 @@ Point3 operator*(const Mat4& m, const Point3& pt)
 {
     Point3 result;
 
-    result.x = dot4(m[1], pt);
-    result.y = dot4(m[2], pt);
-    result.z = dot4(m[3], pt);
-    result.w = dot4(m[4], pt);
+    result.x = dot4(m[0], pt);
+    result.y = dot4(m[1], pt);
+    result.z = dot4(m[2], pt);
+    result.w = dot4(m[3], pt);
 
     return result;
+}
+
+
+std::ostream& operator<<(std::ostream& out, const Mat4& m)
+{
+    for (const auto& row : m.rows) {
+        for (const auto& element : row)
+            out << element << " ";
+        out << "\n";
+    }
+    return out;
 }

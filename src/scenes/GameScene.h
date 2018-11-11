@@ -2,6 +2,7 @@
 #define GAMESCENE_H
 #include "Scene.h"
 #include "Renderer.h"
+#include "Piece.h"
 #include <iostream>
 #include <memory>
 
@@ -10,6 +11,8 @@ class GameScene : public Scene
 {
     private:
         std::unique_ptr<Renderer> m_3dRenderer;
+
+        Piece* ciccio;
 
     public:
         GameScene();

@@ -2,6 +2,7 @@
 #define MAT4_H
 #include <array>
 #include <vector>
+#include <iostream>
 #include <Point3.h>
 
 struct Mat4 {
@@ -15,12 +16,13 @@ struct Mat4 {
     std::array<float, 4>& operator[](int index);
 };
 
-
 /** \brief performs a matrix multiplication */
 Mat4 operator*(const Mat4& m1, const Mat4& m2);
 
 /** \brief Performs a matrix vector multiplication */
 Point3 operator*(const Mat4& m, const Point3& pt);
+
+std::ostream& operator<<(std::ostream& out, const Mat4& m);
 
 
 #endif // MAT4_H

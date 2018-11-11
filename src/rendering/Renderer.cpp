@@ -71,8 +71,10 @@ void Renderer::fillPolygon(std::vector<SDL_Point>& polygonPoints)
 
 void Renderer::render(const Transform& toRender)
 {
+    SDL_Color color = toRender.getColor();
+
     std::vector<Point3> verticesWorldPos = toRender.getVertWorldPositions();
-    const std::vector<int>& quadsIndices = toRender.getShape().getQuadsIndices();
+    const std::vector<int>& quadsIndices = toRender.getShape()->getQuadsIndices();
 
     SDL_Point projected;
     std::vector<SDL_Point> projectedPolygonVertices;
@@ -91,12 +93,11 @@ void Renderer::render(const Transform& toRender)
             whether we should render or not */
             if (!m_backfaceCulling || m_backfaceCulling->shouldRender(face)) {
                 projectedPolygonVertices.push_back(projectedPolygonVertices[0]); // completes the polygon
-                SDL_Color polygonColor{0xFF, 0xFF, 0xFF, 0xFF};
                 if (m_light) {
-                    polygonColor = m_light->getColorForFace(face, polygonColor);
+                    color = m_light->getColorForFace(face, color);
                 }
 
-                SDL_SetRenderDrawColor(m_renderer ,polygonColor.r, polygonColor.g, polygonColor.b, 0xFF);
+                SDL_SetRenderDrawColor(m_renderer, color.r, color.g, color.b, 0xFF);
                 fillPolygon(projectedPolygonVertices);
             }
 
