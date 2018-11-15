@@ -12,12 +12,6 @@ Renderer::Renderer(SDL_Renderer* renderer,int screenWidth, int screenHeight, flo
 
 void Renderer::project(const Point3& pt, SDL_Point& projectTo) const
 {
-    // This is the littlest z value. Points beyond this point won't be rendered.
-    if (pt.z <= m_projectionPointZ) {
-        projectTo.x = 0;
-        projectTo.y = 0;
-        return;
-    }
     // perspective scaling factor
     float u = (m_projectionPointZ - m_screenZ) / (m_projectionPointZ - pt.z);
     float x = pt.x * u;

@@ -27,6 +27,7 @@ void Scene::onEvent(SDL_Event e)
 
 void Scene::add(AbstractRenderable* renderable)
 {
+    renderable->setScene(this);
     m_renderList.push_back(renderable);
 }
 

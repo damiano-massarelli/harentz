@@ -5,14 +5,16 @@
 #include "Piece.h"
 #include <iostream>
 #include <memory>
+#include <vector>
 
 
 class GameScene : public Scene
 {
     private:
         std::unique_ptr<Renderer> m_3dRenderer;
+        std::vector<std::unique_ptr<Piece>> m_pieces;
 
-        Piece* ciccio;
+        int elapsedFrames = 0;
 
     public:
         GameScene();
