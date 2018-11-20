@@ -91,7 +91,7 @@ void Transform::setColor(SDL_Color color)
     m_color = color;
 }
 
-SDL_Color Transform::getColor() const
+const SDL_Color& Transform::getColor() const
 {
     return m_color;
 }

@@ -23,7 +23,7 @@ class EventManager
 
         void dispatchEvents() const;
 
-        void pushEnterFrameEvent() const;
+        void pushEnterFrameEvent(Uint32* deltaMillis) const;
 
         virtual ~EventManager();
 };

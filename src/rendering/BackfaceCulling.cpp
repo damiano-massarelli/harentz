@@ -6,11 +6,11 @@ BackfaceCulling::BackfaceCulling(const Point3& playerPosition, const Point3& vie
     //ctor
 }
 
-bool BackfaceCulling::shouldRender(const Face& face)
+bool BackfaceCulling::shouldRender(const Face* face)
 {
     // Vector from the face center to the camera
-    Point3 fromFaceToCamera = m_playerPosition - face.getCenter();
-    return dot(fromFaceToCamera, face.getNormal()) > 0.0f;
+    Point3 fromFaceToCamera = m_playerPosition - face->getCenter();
+    return dot(fromFaceToCamera, face->getNormal()) > 0.0f;
 }
 
 

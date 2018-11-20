@@ -45,13 +45,13 @@ void EventManager::dispatchEvents() const
     }
 }
 
-void EventManager::pushEnterFrameEvent() const
+void EventManager::pushEnterFrameEvent(Uint32* deltaMillis) const
 {
     SDL_Event event;
     SDL_memset(&event, 0, sizeof(event));
     event.type = ENTER_FRAME_EVENT;
     event.user.code = 0;
-    event.user.data1 = 0;
+    event.user.data1 = static_cast<void*>(deltaMillis);
     event.user.data2 = 0;
     SDL_PushEvent(&event);
 }

@@ -12,6 +12,9 @@
 class Renderer
 {
     private:
+        using pface = std::unique_ptr<Face>;
+
+
         SDL_Renderer* m_renderer;
 
         int m_screenWidth;
@@ -19,6 +22,8 @@ class Renderer
 
         float m_screenZ;                ///< the Z position of the screen
         float m_projectionPointZ;       ///< the Z position of the projection point (should be grater than m_screenZ)
+
+        std::vector<pface> m_faces;     ///< all the polygons (faces) to render
 
         std::unique_ptr<PointLight> m_light;    /// a pointer to a PointLight
 
@@ -49,8 +54,15 @@ class Renderer
 
         /** \brief Renders a Tranform object to the screen.
           * \param toRender the transform that will be rendered
+          *
+          * Prepares the faces of this transform for rendering. They will be
+          * actually drawn when renderToScreen is called
+          * \sa renderToScreen
           */
         void render(const Transform& toRender);
+
+        /** \brief Renders all the transforms passes to render on the screen */
+        void renderToScreen();
 
         /** \brief Sets the current point light for this renderer
           * \param light the point light to use for this renderer

@@ -21,6 +21,8 @@ void Scene::onEvent(SDL_Event e)
             renderable->render();
     }
 
+    onRenderingComplete();
+
     // Render
     SDL_RenderPresent(m_sdlRenderer);
 }

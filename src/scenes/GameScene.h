@@ -23,6 +23,8 @@ class GameScene : public Scene
 
         virtual void onEvent(SDL_Event e) override;
 
+        virtual void onRenderingComplete() override;
+
         virtual ~GameScene();
 
 };

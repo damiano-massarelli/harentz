@@ -29,7 +29,7 @@ DisplayManager::DisplayManager(const std::string& title, int displayWidth, int d
 
     m_window = window;
 
-    SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+    SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
     if (renderer == nullptr)
         std::cout << SDL_GetError() << "\n";
 
@@ -41,8 +41,14 @@ DisplayManager::DisplayManager(const std::string& title, int displayWidth, int d
 void DisplayManager::startMainLoop()
 {
     m_eventManager->addListenerFor(SDL_QUIT, this);
+    Uint32 delta = 0;
+    float lastTime = SDL_GetTicks();
     while (!m_quit) {
-        m_eventManager->pushEnterFrameEvent();
+        // Delta time calculations: elapsed time
+        delta = SDL_GetTicks() - lastTime;
+        lastTime = SDL_GetTicks();
+
+        m_eventManager->pushEnterFrameEvent(&delta);
         m_eventManager->dispatchEvents();
     }
 }

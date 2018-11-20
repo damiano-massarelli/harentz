@@ -58,7 +58,7 @@ class Transform : public AbstractRenderable
 
         const std::vector<Point3> getVertWorldPositions() const;
 
-        SDL_Color getColor() const;
+        const SDL_Color& getColor() const;
 
         void setColor(SDL_Color color);
 

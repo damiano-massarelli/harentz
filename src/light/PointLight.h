@@ -12,7 +12,7 @@ class PointLight
         SDL_Color m_color; ///< Light's color
         float m_ambientFactor; ///< a value in [0, 1]: 0 no ambient light, 1: full ambient light
 
-        float getDimFactor(const Face& face);
+        float getDimFactor(const Face* face);
 
     public:
         /** \brief Creates a new PointLight with a certain position and color.
@@ -28,7 +28,7 @@ class PointLight
           * \param faceColor the original color of the face
           * \return the color of the face when light is applied
           */
-        SDL_Color getColorForFace(const Face& face, const SDL_Color& faceColor);
+        SDL_Color getColorForFace(const Face* face, const SDL_Color& faceColor);
 
         virtual ~PointLight();
 

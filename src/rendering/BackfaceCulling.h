@@ -21,7 +21,7 @@ class BackfaceCulling
         /** \brief checks whether a face should be rendered or not
           * \return true if the face should be rendered, false otherwise
           */
-        bool shouldRender(const Face& face);
+        bool shouldRender(const Face* face);
 
         virtual ~BackfaceCulling();
 
