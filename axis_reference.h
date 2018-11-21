@@ -19,7 +19,7 @@
                                  /      |
                                 /       |
                                /        |
-                        user's eye   |
+                        user's eye      |
                                         |
                                         \/ Y
   negative values on the z axis means that 3D objects appear to be closer to the user */

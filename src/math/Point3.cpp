@@ -36,6 +36,6 @@ float length(const Point3& pt)
 
 
 std::ostream& operator<<(std::ostream& out, const Point3& pt) {
-    out << "(" << pt.x << ", " << pt.y << ", " << pt.z << ")";
+    out << "(" << pt.x << ", " << pt.y << ", " << pt.z << ", " << pt.w << ")";
     return out;
 }

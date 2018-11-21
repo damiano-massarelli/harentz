@@ -18,17 +18,21 @@ void Transform::setTransformationMatrix(const Mat4& matrix)
     m_transformMatrix = matrix;
 }
 
-const Mat4& Transform::getTransformationMatrix() const
+Mat4 Transform::getTransformationMatrix() const
 {
-    return m_transformMatrix;
+    Mat4 translation;
+    translation[0][3] = m_position.x;
+    translation[1][3] = m_position.y;
+    translation[2][3] = m_position.z;
+    return translation * m_transformMatrix;
 }
 
 Mat4 Transform::getWorldTransformationMatrix() const
 {
     if (m_parent == nullptr)
-        return m_transformMatrix;
+        return getTransformationMatrix();
     else
-        return m_parent->getWorldTransformationMatrix() * m_transformMatrix;
+        return m_parent->getWorldTransformationMatrix() * getTransformationMatrix();
 }
 
 
@@ -48,13 +52,11 @@ const std::vector<Point3> Transform::getVertWorldPositions() const
 
 void Transform::setPosition(const Point3& position)
 {
-    m_transformMatrix[0][3] = position.x;
-    m_transformMatrix[1][3] = position.y;
-    m_transformMatrix[2][3] = position.z;
+    m_position = position;
 }
 
 Point3 Transform::getPosition() const {
-    return getTransformationMatrix() * Point3{0.0f, 0.0f, 0.0f};
+    return m_position;
 }
 
 Point3 Transform::getWorldPosition() const

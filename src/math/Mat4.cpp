@@ -11,7 +11,7 @@ std::array<float, 4>& Mat4::operator[](int index)
 }
 
 float dot4(const std::array<float, 4>& arr, const Point3& pt) {
-    return arr[0] * pt.x + arr[1] * arr[1] * pt.y + arr[2] * pt.z + arr[3] * pt.w;
+    return arr[0] * pt.x + arr[1] * pt.y + arr[2] * pt.z + arr[3] * pt.w;
 }
 
 Mat4 operator*(const Mat4& m1, const Mat4& m2)

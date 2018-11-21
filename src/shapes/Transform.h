@@ -15,6 +15,7 @@ class Transform : public AbstractRenderable
     private:
         const std::shared_ptr<Shape> m_shape;
         Mat4 m_transformMatrix;
+        Point3 m_position;
 
         std::vector<Transform*> m_children;
         Transform* m_parent = nullptr;
@@ -31,6 +32,8 @@ class Transform : public AbstractRenderable
         void setRenderer(Renderer* renderer);
 
         void addChild(Transform* child);
+
+        const std::vector<Transform*>& getChildren() {return m_children;};
 
         void removeChild(Transform* child);
 
@@ -50,7 +53,7 @@ class Transform : public AbstractRenderable
 
         void setTransformationMatrix(const Mat4& matrix);
 
-        const Mat4& getTransformationMatrix() const;
+        Mat4 getTransformationMatrix() const;
 
         Mat4 getWorldTransformationMatrix() const;
 
