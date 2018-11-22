@@ -34,6 +34,11 @@ float length(const Point3& pt)
     return static_cast<float>(sqrt(dot(pt, pt)));
 }
 
+Point3 operator*(const Point3& pt, float factor)
+{
+    return Point3{pt.x * factor, pt.y * factor, pt.z * factor, pt.w};
+}
+
 
 std::ostream& operator<<(std::ostream& out, const Point3& pt) {
     out << "(" << pt.x << ", " << pt.y << ", " << pt.z << ", " << pt.w << ")";

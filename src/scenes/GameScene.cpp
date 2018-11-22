@@ -22,13 +22,13 @@ void GameScene::onEvent(SDL_Event e)
     std::cout << 1000.0f/ (*(static_cast<Uint32*>(e.user.data1))) << "\n";
 
     elapsedFrames++;
-    if (elapsedFrames == 1) {
-        std::unique_ptr<Piece> piece = std::make_unique<Piece>(m_3dRenderer.get(), "T");
+    if (elapsedFrames % 300 == 0) {
+        std::unique_ptr<Piece> piece = std::make_unique<Piece>(m_3dRenderer.get(), "S");
         add(piece.get());
-        piece->setPosition(Point3{-40.0f, -500.0f, 500.0f});
-        Mat4 rotation {{{1.0f, -0.0f, 0.0f, 0.0f},
-                        {0.0f, 0.707f, -0.707f, 0.0f},
-                        {0.0f, 0.707f, 0.707f, 0.0f},
+        piece->setPosition(Point3{-40.0f, 0.0f, 1500.0f});
+        Mat4 rotation {{{1.0f, 0.0f, 0.0f, 0.0f},
+                        {0.0f, 0.94f, -0.34f, 0.0f},
+                        {0.0f, 0.34f, 0.94f, 0.0f},
                         {0.0f, 0.0f, 0.0f, 1.0f}} };
 
         piece->setTransformationMatrix(rotation);
@@ -39,8 +39,7 @@ void GameScene::onEvent(SDL_Event e)
 
     for (auto& piece : m_pieces) {
         Point3 curr = piece->getPosition();
-        curr.z -= 2.0f;
-        curr.y += 2.0f;
+        curr = curr + (Point3{0.0f, (1.0f - 0.94f), -(1.0f - 0.34f)} * 8.0f);
         piece->setPosition(curr);
     }
 

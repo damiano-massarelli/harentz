@@ -8,14 +8,18 @@
 #include <memory>
 #include "PointLight.h"
 #include "BackfaceCulling.h"
+#include <functional>
+#include <drawers.h>
 
 class Renderer
 {
     private:
         using pface = std::unique_ptr<Face>;
 
-
         SDL_Renderer* m_renderer;
+
+        /// drawer, the function used to draw polygons on the screen
+        std::function<void(SDL_Renderer*, const std::vector<SDL_Point>&, const SDL_Color&)> m_drawer = outlineAndFillDrawer;
 
         int m_screenWidth;
         int m_screenHeight;
@@ -34,13 +38,6 @@ class Renderer
           * \param projectTo where pt is going to be projected. This is the output of this function.
           */
         void project(const Point3& pt, SDL_Point& projectTo) const;
-
-        /** \brief Fills a polygon with a given color
-          * \param polygonPoints 2D points representing the vertices of the polygon.
-          *
-          * The polygon must be closed. That is, polygonPoints[0] == polygonPoints[polygonPoints.size() - 1]
-          */
-        void fillPolygon(std::vector<SDL_Point>& polygonPoints);
 
     public:
         /** \brief Creates a new renderer
@@ -74,9 +71,13 @@ class Renderer
           */
         void setBackfaceCulling(std::unique_ptr<BackfaceCulling> backfaceCulling);
 
+        /** \brief Sets the function used to draw polygons
+          * \param drawer the function to be used
+          * The function passed to this method is used to draw polygons on the screen.
+          * A a polygon is a projected face. */
+        void setDrawer(std::function<void(SDL_Renderer*, const std::vector<SDL_Point>&, const SDL_Color&)>& drawer);
+
         virtual ~Renderer();
-
-
 };
 
 #endif // RENDERER_H
