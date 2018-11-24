@@ -69,6 +69,11 @@ const std::shared_ptr<Shape>& Transform::getShape() const {
     return m_shape;
 }
 
+void Transform::setShape(const std::shared_ptr<Shape>& shape)
+{
+    m_shape = shape;
+}
+
 
 void Transform::setParent(Transform* parent)
 {

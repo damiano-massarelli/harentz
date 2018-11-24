@@ -23,6 +23,12 @@ void Renderer::project(const Point3& pt, SDL_Point& projectTo) const
 }
 
 
+Point3 Renderer::inverseProjection(const SDL_Point& point, float z) const
+{
+    float u = (m_projectionPointZ - m_screenZ) / (m_projectionPointZ - z);
+    return Point3{point.x / u, point.y / u, z};
+}
+
 void Renderer::render(const Transform& toRender)
 {
     const SDL_Color& color = toRender.getColor();

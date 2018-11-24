@@ -13,7 +13,7 @@ class Renderer;
 class Transform : public AbstractRenderable
 {
     private:
-        const std::shared_ptr<Shape> m_shape;
+        std::shared_ptr<Shape> m_shape;
         Mat4 m_transformMatrix;
         Point3 m_position;
 
@@ -58,6 +58,8 @@ class Transform : public AbstractRenderable
         Mat4 getWorldTransformationMatrix() const;
 
         const std::shared_ptr<Shape>& getShape() const;
+
+        void setShape(const std::shared_ptr<Shape>& shape);
 
         const std::vector<Point3> getVertWorldPositions() const;
 

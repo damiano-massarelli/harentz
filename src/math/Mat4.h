@@ -16,6 +16,15 @@ struct Mat4 {
     std::array<float, 4>& operator[](int index);
 };
 
+/** \brief returns the rotation matrix for a rotation about x, y and z
+  * \param x the amount of rotation around x axis
+  * \param y the amount of rotation around y axis
+  * \param z the amount of rotation around z axis
+  * \return the rotation matrix describing that rotation */
+Mat4 rotation(float x, float y, float z);
+
+Mat4 scale(float x, float y, float z);
+
 /** \brief performs a matrix multiplication */
 Mat4 operator*(const Mat4& m1, const Mat4& m2);
 

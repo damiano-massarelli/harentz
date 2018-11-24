@@ -1,4 +1,5 @@
 #include "Mat4.h"
+#include <cmath>
 
 const std::array<float, 4>& Mat4::operator[](int index) const
 {
@@ -9,6 +10,22 @@ std::array<float, 4>& Mat4::operator[](int index)
 {
     return rows[index];
 }
+
+Mat4 rotation(float x, float y, float z)
+{
+    return Mat4{{ {cos(z)*cos(y), cos(z)*sin(y)*sin(x)-sin(z)*cos(x), cos(z)*sin(y)*cos(x) + sin(z)*sin(x), 0.0f},
+                  {sin(z)*cos(y), sin(z)*sin(y)*sin(x)+cos(z)*cos(x), sin(z)*sin(y)*cos(x) - cos(z)*sin(x), 0.0f},
+                  {-sin(y), cos(y)*sin(x), cos(y)*cos(x), 0.0f},
+                  {0.0f, 0.0f, 0.0f, 1.0f} }};
+}
+
+Mat4 scale(float x, float y, float z) {
+    return Mat4{{ {x, 0.0f, 0.0f, 0.0f},
+                   {0.0f, y, 0.0f, 0.0f},
+                   {0.0f, 0.0f, z, 0.0f},
+                   {0.0f, 0.0f, 0.0f, 1.0f} }};
+}
+
 
 float dot4(const std::array<float, 4>& arr, const Point3& pt) {
     return arr[0] * pt.x + arr[1] * pt.y + arr[2] * pt.z + arr[3] * pt.w;
