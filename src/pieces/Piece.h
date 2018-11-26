@@ -9,13 +9,15 @@
 class Piece : public Transform
 {
     private:
-        static const std::shared_ptr<Shape> CUBE_SHAPE;
+        static std::shared_ptr<Shape> CUBE_SHAPE;
+
+        static std::shared_ptr<Shape> getCubeShape();
 
         std::vector<std::unique_ptr<Transform>> m_cubes;
 
 
     public:
-        static constexpr int CUBE_SIZE = 20.0f;
+        static int getCubeSize();
 
         Piece(Renderer* renderer, const std::string& shape);
 

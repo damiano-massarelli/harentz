@@ -32,6 +32,9 @@ class DisplayManager : public EventListener
         static DisplayManager* create(const std::string& title, int displayWidth, int displayHeight);
         static DisplayManager* getInstance();
 
+        static int screenWidth();
+        static int screenHeight();
+
         DisplayManager(const DisplayManager& dispManager) = delete;
         DisplayManager& operator=(const DisplayManager& dispManager) = delete;
 

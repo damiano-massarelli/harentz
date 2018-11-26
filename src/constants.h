@@ -1,0 +1,6 @@
+#ifndef CONSTANTS_H_INCLUDED
+#define CONSTANTS_H_INCLUDED
+
+static constexpr int NUMBER_OF_LANES = 5;
+
+#endif // CONSTANTS_H_INCLUDED

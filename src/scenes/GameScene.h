@@ -17,7 +17,9 @@ class GameScene : public Scene
         static const float PROJECTION_POINT_Z;
         static const float SCREEN_Z;
 
+        /* Pieces and ground use two different renderers so that pieces are always drawn above the ground */
         std::unique_ptr<Renderer> m_3dRenderer;
+        std::unique_ptr<Renderer> m_groundRenderer;
         std::vector<std::unique_ptr<Piece>> m_pieces;
         std::unique_ptr<Ground> m_ground;
 

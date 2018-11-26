@@ -2,21 +2,10 @@
 #include <fstream>
 #include <sstream>
 #include <string>
+#include "DisplayManager.h"
+#include "constants.h"
 
-const std::shared_ptr<Shape> Piece::CUBE_SHAPE = std::shared_ptr<Shape>(
-                                     new Shape{std::vector<Point3>{ Point3{-Piece::CUBE_SIZE, -Piece::CUBE_SIZE, -Piece::CUBE_SIZE},
-                                     Point3{Piece::CUBE_SIZE, -Piece::CUBE_SIZE, -Piece::CUBE_SIZE},
-                                     Point3{Piece::CUBE_SIZE, Piece::CUBE_SIZE, -Piece::CUBE_SIZE},
-                                     Point3{-Piece::CUBE_SIZE, Piece::CUBE_SIZE, -Piece::CUBE_SIZE},
-                                     Point3{Piece::CUBE_SIZE, -Piece::CUBE_SIZE, Piece::CUBE_SIZE},
-                                     Point3{Piece::CUBE_SIZE, Piece::CUBE_SIZE, Piece::CUBE_SIZE},
-                                     Point3{-Piece::CUBE_SIZE, -Piece::CUBE_SIZE, Piece::CUBE_SIZE},
-                                     Point3{-Piece::CUBE_SIZE, Piece::CUBE_SIZE, Piece::CUBE_SIZE}},
-                              std::vector<int>{
-                                     1, 4, 5, 2, // right face
-                                     0, 3, 7, 6, // left face
-                                     0, 1, 2, 3, // front face
-                                     0, 6, 4, 1}}); // top face
+std::shared_ptr<Shape> Piece::CUBE_SHAPE;
 
 std::vector<int> split(const std::string &txt, char ch)
 {
@@ -40,13 +29,41 @@ std::vector<int> split(const std::string &txt, char ch)
     return strs;
 }
 
+std::shared_ptr<Shape> Piece::getCubeShape()
+{
+    if (!CUBE_SHAPE) {
+        int cubeSize = Piece::getCubeSize();
+        CUBE_SHAPE = std::shared_ptr<Shape>(
+                     new Shape{std::vector<Point3>{ Point3{-cubeSize, -cubeSize, -cubeSize},
+                     Point3{cubeSize, -cubeSize, -cubeSize},
+                     Point3{cubeSize, cubeSize, -cubeSize},
+                     Point3{-cubeSize, cubeSize, -cubeSize},
+                     Point3{cubeSize, -cubeSize, cubeSize},
+                     Point3{cubeSize, cubeSize, cubeSize},
+                     Point3{-cubeSize, -cubeSize, cubeSize},
+                     Point3{-cubeSize, cubeSize, cubeSize}},
+                  std::vector<int>{
+                         1, 4, 5, 2, // right face
+                         0, 3, 7, 6, // left face
+                         0, 1, 2, 3, // front face
+                         0, 6, 4, 1}}); // top face
+    }
+
+    return CUBE_SHAPE;
+
+}
+
+int Piece::getCubeSize()
+{
+    return (DisplayManager::screenWidth() / NUMBER_OF_LANES)/2;
+}
 
 Piece::Piece(Renderer* renderer, const std::string& shape) : Transform{nullptr}
 {
     setRenderer(renderer);
 
     float z = 0.0f;
-    float size = Piece::CUBE_SIZE * 2;
+    float size = Piece::getCubeSize() * 2;
 
     std::ifstream infile("resources/pieces/" + shape + ".piece");
     std::string line;
@@ -62,8 +79,8 @@ Piece::Piece(Renderer* renderer, const std::string& shape) : Transform{nullptr}
                 y = height - 1;
             }
             for (; y < height; y++) {
-                Transform* cube = new Transform{Piece::CUBE_SHAPE};
-                cube->setPosition(Point3{x, -y * size, z}); // -y: positive value in the file means the cube is higher
+                Transform* cube = new Transform{Piece::getCubeShape()};
+                cube->setPosition(Point3{x, (-y * size) - size/2, z}); // -y: positive value in the file means the cube is higher
                 cube->setColor(SDL_Color{255, 0, 0});
                 addChild(cube);
 

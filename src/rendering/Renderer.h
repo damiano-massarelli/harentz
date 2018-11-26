@@ -75,7 +75,7 @@ class Renderer
           * \param drawer the function to be used
           * The function passed to this method is used to draw polygons on the screen.
           * A a polygon is a projected face. */
-        void setDrawer(std::function<void(SDL_Renderer*, const std::vector<SDL_Point>&, const SDL_Color&)>& drawer);
+        void setDrawer(const std::function<void(SDL_Renderer*, const std::vector<SDL_Point>&, const SDL_Color&)>& drawer);
 
         /** \brief performs an inverse projection, from 2d to 3d.
           * \param point the 2d point to inverse-project into 3d space

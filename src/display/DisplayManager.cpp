@@ -18,6 +18,21 @@ DisplayManager* DisplayManager::getInstance()
     return instance.get();
 }
 
+int DisplayManager::screenWidth()
+{
+    int width = -1;
+    SDL_GetWindowSize(getInstance()->getWindow(), &width, nullptr);
+    return width;
+}
+
+int DisplayManager::screenHeight()
+{
+    int height = -1;
+    SDL_GetWindowSize(getInstance()->getWindow(), nullptr, &height);
+    return height;
+}
+
+
 DisplayManager::DisplayManager(const std::string& title, int displayWidth, int displayHeight)
 {
     if (SDL_Init(SDL_INIT_VIDEO) < 0)

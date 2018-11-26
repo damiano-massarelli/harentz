@@ -89,6 +89,11 @@ void Renderer::setBackfaceCulling(std::unique_ptr<BackfaceCulling>backfaceCullin
     m_backfaceCulling = std::move(backfaceCulling);
 }
 
+void Renderer::setDrawer(const std::function<void(SDL_Renderer*, const std::vector<SDL_Point>&, const SDL_Color&)>& drawer)
+{
+    m_drawer = drawer;
+}
+
 
 Renderer::~Renderer()
 {

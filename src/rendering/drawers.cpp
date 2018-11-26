@@ -5,8 +5,7 @@
 void fillDrawer(SDL_Renderer* renderer, const std::vector<SDL_Point>& polygonPoints, const SDL_Color& color) {
     // Sets the color before drawing
     SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
-    int screenHeight;
-    SDL_GetWindowSize(DisplayManager::getInstance()->getWindow(), nullptr, &screenHeight);
+    int screenHeight = DisplayManager::screenHeight();
 
     /* Fills a polygon made of polygonPoints. Consecutive points in polygonPoints
     are assumed to be the apexes of a polygon's segment. */
@@ -47,7 +46,7 @@ void fillDrawer(SDL_Renderer* renderer, const std::vector<SDL_Point>& polygonPoi
 }
 
 void outlineDrawer(SDL_Renderer* renderer, const std::vector<SDL_Point>& polygonPoints, const SDL_Color& color) {
-    SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 
     SDL_RenderDrawLines(renderer, polygonPoints.data(), polygonPoints.size());
 }
