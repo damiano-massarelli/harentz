@@ -31,6 +31,8 @@ class Transform : public AbstractRenderable
 
         void setRenderer(Renderer* renderer);
 
+        Renderer* getRenderer();
+
         void addChild(Transform* child);
 
         const std::vector<Transform*>& getChildren() {return m_children;};

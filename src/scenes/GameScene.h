@@ -26,15 +26,6 @@ class GameScene : public Scene
 
         int elapsedFrames = 0;
 
-        /** \brief computes and stores in m_rotationMatrix the rotation matrix for rotated objects
-          * this calculation is based on m_spawnPoint which specifies
-          * where the end of the ground should be.
-          *      spawn_pt
-          *      /|
-          *     / |      the angle t can be calculated as arcsin(spawn_pt.y / GROUND_DEPTH)
-          *    /t |
-          *   /)__| */
-        void computeRotationMatrix();
 
     public:
         GameScene();

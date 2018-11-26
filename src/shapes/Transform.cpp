@@ -12,6 +12,10 @@ void Transform::setRenderer(Renderer* renderer)
     m_renderer = renderer;
 }
 
+Renderer* Transform::getRenderer()
+{
+    return m_renderer;
+}
 
 void Transform::setTransformationMatrix(const Mat4& matrix)
 {

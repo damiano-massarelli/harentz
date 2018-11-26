@@ -80,7 +80,7 @@ class Renderer
         /** \brief performs an inverse projection, from 2d to 3d.
           * \param point the 2d point to inverse-project into 3d space
           * \param z the z coordinate for that point
-          * Returns a Point3 specifying which Point3 would be projected into point
+          * \return a Point3 that would be projected into point
           * given the z position of that point.
           */
         Point3 inverseProjection(const SDL_Point& point, float z) const;
