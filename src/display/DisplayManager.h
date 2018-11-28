@@ -21,7 +21,7 @@ class DisplayManager : public EventListener
         SDL_Renderer* m_renderer = nullptr;
 
         EventManager* m_eventManager = nullptr;
-        Scene* currentScene = nullptr;
+        Scene* m_currentScene = nullptr;
 
         bool m_quit{false}; ///< true if should quit main loop
 

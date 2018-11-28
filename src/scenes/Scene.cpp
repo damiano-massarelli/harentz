@@ -40,7 +40,6 @@ void Scene::remove(AbstractRenderable* renderable)
 
 void Scene::onShow(SDL_Window* window, SDL_Renderer* renderer)
 {
-    m_sdlWindow = window;
     m_sdlRenderer = renderer;
 
     // register the enter frame event
@@ -51,12 +50,6 @@ void Scene::setBgColor(const SDL_Color& color)
 {
     m_bgColor = color;
 }
-
-void Scene::getWindowSize(int* w, int* h) const
-{
-    SDL_GetWindowSize(m_sdlWindow, w, h);
-}
-
 
 Scene::~Scene()
 {

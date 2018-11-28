@@ -44,7 +44,7 @@ DisplayManager::DisplayManager(const std::string& title, int displayWidth, int d
 
     m_window = window;
 
-    SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+    SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_SOFTWARE);
     if (renderer == nullptr)
         std::cout << SDL_GetError() << "\n";
 
@@ -65,7 +65,7 @@ void DisplayManager::startMainLoop()
 
         m_eventManager->pushEnterFrameEvent(&delta);
         m_eventManager->dispatchEvents();
-    }
+     }
 }
 
 // Override from EventListener
@@ -86,9 +86,9 @@ SDL_Renderer* DisplayManager::getRenderer() const
 
 void DisplayManager::setCurrentScene(Scene* scene)
 {
-    delete currentScene;
-    currentScene = scene;
-    currentScene->onShow(m_window, m_renderer);
+    delete m_currentScene;
+    m_currentScene = scene;
+    m_currentScene->onShow(m_window, m_renderer);
 }
 
 
@@ -96,8 +96,8 @@ void DisplayManager::quit()
 {
     m_quit = true; // quit main loop
 
-    delete currentScene;
-    currentScene = nullptr;
+    delete m_currentScene;
+    m_currentScene = nullptr;
 
     SDL_DestroyRenderer(m_renderer);
     m_renderer = nullptr;

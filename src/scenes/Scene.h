@@ -15,7 +15,6 @@ class Scene : public EventListener
 
         SDL_Color m_bgColor{0, 0, 0};
 
-        SDL_Window* m_sdlWindow = nullptr;
         SDL_Renderer* m_sdlRenderer = nullptr;
 
 
@@ -47,8 +46,6 @@ class Scene : public EventListener
 
         /** \brief set the scene's background color */
         void setBgColor(const SDL_Color& color);
-
-        void getWindowSize(int* w, int* h) const;
 
         virtual ~Scene();
 

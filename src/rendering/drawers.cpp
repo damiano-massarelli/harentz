@@ -1,6 +1,8 @@
 #include "drawers.h"
 #include <algorithm>
 #include <DisplayManager.h>
+#include <SDL2/SDL2_gfxPrimitives.h>
+#include <vector>
 
 void fillDrawer(SDL_Renderer* renderer, const std::vector<SDL_Point>& polygonPoints, const SDL_Color& color) {
     // Sets the color before drawing
@@ -46,9 +48,12 @@ void fillDrawer(SDL_Renderer* renderer, const std::vector<SDL_Point>& polygonPoi
 }
 
 void outlineDrawer(SDL_Renderer* renderer, const std::vector<SDL_Point>& polygonPoints, const SDL_Color& color) {
-    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-
-    SDL_RenderDrawLines(renderer, polygonPoints.data(), polygonPoints.size());
+    for (int i = 0; i < polygonPoints.size(); ++i) {
+        const SDL_Point& pt1 = polygonPoints[i];
+        const SDL_Point& pt2 = polygonPoints[(i + 1) % polygonPoints.size()];
+        aalineRGBA(renderer, static_cast<Sint16>(pt1.x), static_cast<Sint16>(pt1.y), static_cast<Sint16>(pt2.x), static_cast<Sint16>(pt2.y),
+                   255, 255, 255, 255);
+    }
 }
 
 void outlineAndFillDrawer(SDL_Renderer* renderer, const std::vector<SDL_Point>& polygonPoints, const SDL_Color& color) {
