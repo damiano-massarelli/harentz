@@ -32,7 +32,7 @@ std::vector<int> split(const std::string &txt, char ch)
 std::shared_ptr<Shape> Piece::getCubeShape()
 {
     if (!CUBE_SHAPE) {
-        int cubeSize = Piece::getCubeSize();
+        float cubeSize = Piece::getCubeSide()/2;
         CUBE_SHAPE = std::shared_ptr<Shape>(
                      new Shape{std::vector<Point3>{ Point3{-cubeSize, -cubeSize, -cubeSize},
                      Point3{cubeSize, -cubeSize, -cubeSize},
@@ -53,9 +53,9 @@ std::shared_ptr<Shape> Piece::getCubeShape()
 
 }
 
-int Piece::getCubeSize()
+int Piece::getCubeSide()
 {
-    return (DisplayManager::screenWidth() / NUMBER_OF_LANES)/2;
+    return (DisplayManager::screenWidth() / NUMBER_OF_LANES);
 }
 
 Piece::Piece(Renderer* renderer, const std::string& shape) : Transform{nullptr}
@@ -63,7 +63,7 @@ Piece::Piece(Renderer* renderer, const std::string& shape) : Transform{nullptr}
     setRenderer(renderer);
 
     float z = 0.0f;
-    float size = Piece::getCubeSize() * 2;
+    float sideSize = static_cast<float>(Piece::getCubeSide());
 
     std::ifstream infile("resources/pieces/" + shape + ".piece");
     std::string line;
@@ -80,17 +80,17 @@ Piece::Piece(Renderer* renderer, const std::string& shape) : Transform{nullptr}
             }
             for (; y < height; y++) {
                 Transform* cube = new Transform{Piece::getCubeShape()};
-                cube->setPosition(Point3{x, (-y * size) - size/2, z}); // -y: positive value in the file means the cube is higher
+                cube->setPosition(Point3{x, (-y * sideSize) - sideSize/2, z}); // -y: positive value in the file means the cube is higher
                 cube->setColor(SDL_Color{255, 0, 0});
                 addChild(cube);
 
                 m_cubes.push_back(std::unique_ptr<Transform>(cube));
             }
 
-            x += size;
+            x += sideSize;
         }
 
-        z -= size; // comes towards the player
+        z -= sideSize; // comes towards the player
     }
 }
 

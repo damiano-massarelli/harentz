@@ -2,7 +2,6 @@
 #define EVENTLISTENERCRUMB_H
 #include "EventListener.h"
 #include "SDL2/SDL.h"
-#include "DisplayManager.h"
 
 /** \brief event listener crumbs automatically unregister an event listener when it is deleted.
   * EventListenerCrumb objects should be returned as unique_ptr and the EventListener receiving

@@ -3,14 +3,9 @@
 #include <SDL2/SDL.h>
 #include <memory>
 #include "EventListener.h"
-
-/* In order to avoid cyclic dependency: DisplayManager's declaration (header) is defined
-using EventManager whose declaration uses EventListenerCrumb that in turn imports DisplayManager.
-Hence, while DisplayManager is being declared its complete declaration is already necessary
-to compile EventListenerCrumb and this is impossible. So, DisplayManager header uses a forward declaration
-for EventManager and its implementation actually uses its definition */
-class EventManager;
-class Scene;
+#include "EventManager.h"
+#include "Scene.h"
+#include "TransitionManager.h"
 
 class DisplayManager : public EventListener
 {
@@ -19,6 +14,7 @@ class DisplayManager : public EventListener
 
         SDL_Window* m_window = nullptr;
         SDL_Renderer* m_renderer = nullptr;
+        TransitionManager* m_transitionManager = nullptr;
 
         EventManager* m_eventManager = nullptr;
         Scene* m_currentScene = nullptr;

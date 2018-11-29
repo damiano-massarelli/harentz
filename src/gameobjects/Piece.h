@@ -17,7 +17,7 @@ class Piece : public Transform
 
 
     public:
-        static int getCubeSize();
+        static int getCubeSide();
 
         Piece(Renderer* renderer, const std::string& shape);
 

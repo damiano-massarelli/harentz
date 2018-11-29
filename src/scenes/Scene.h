@@ -1,6 +1,7 @@
 #ifndef ABSTRACTSCENE_H
 #define ABSTRACTSCENE_H
 #include <vector>
+#include <memory>
 #include "EventListener.h"
 #include "EventListenerCrumb.h"
 

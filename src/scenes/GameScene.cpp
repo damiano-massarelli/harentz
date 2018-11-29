@@ -3,6 +3,7 @@
 #include "Ground.h"
 #include "drawers.h"
 #include "constants.h"
+#include "DisplayManager.h"
 
 
 const float GameScene::SCREEN_Z = 0.0f;

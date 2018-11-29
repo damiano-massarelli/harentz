@@ -1,5 +1,6 @@
 #include "EventListenerCrumb.h"
 #include "EventManager.h"
+#include "DisplayManager.h"
 
 EventListenerCrumb::EventListenerCrumb(SDL_EventType eventType, EventListener* listener) : m_eventType{eventType}, m_listener{listener}
 {

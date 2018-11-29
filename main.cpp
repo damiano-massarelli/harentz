@@ -4,15 +4,19 @@
 #include "GameScene.h"
 #include "constants.h"
 
-constexpr int SCREEN_WIDTH = 410;
-constexpr int SCREEN_HEIGHT = 700;
+#include "TransitionManager.h"
 
 int main(int argc, char* argv[])
 {
     DisplayManager* displayManager = DisplayManager::create("Harentz", INITIAL_WIDTH, INITIAL_HEIGHT);
 
     displayManager->setCurrentScene(new GameScene{});
+
+    //LinearTransition a{150.0f};
+
     displayManager->startMainLoop();
+
+
 
     return 0;
 }
