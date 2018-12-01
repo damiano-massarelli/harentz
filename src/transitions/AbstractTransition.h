@@ -4,7 +4,7 @@
 #include "EventListenerCrumb.h"
 #include <memory>
 
-class AbstractTransition : public EventListener
+class AbstractTransition
 {
     private:
         float m_elapsed{0.0f}; ///< total elapsed time from the creation of this transition
@@ -21,6 +21,8 @@ class AbstractTransition : public EventListener
         virtual void onUpdate(float f) const = 0;
 
         void cancel();
+
+        bool isCancelled();
 
         virtual ~AbstractTransition();
 };

@@ -5,7 +5,8 @@
 #include "EventListener.h"
 #include "EventManager.h"
 #include "Scene.h"
-#include "TransitionManager.h"
+
+class TransitionManager;
 
 class DisplayManager : public EventListener
 {
@@ -41,6 +42,8 @@ class DisplayManager : public EventListener
         SDL_Renderer* getRenderer() const;
 
         EventManager& getEventManager();
+
+        TransitionManager& getTransitionManager();
 
         void setCurrentScene(Scene* scene);
 

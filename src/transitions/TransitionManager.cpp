@@ -1,6 +1,20 @@
 #include "TransitionManager.h"
+#include "DisplayManager.h"
 
-void TransitionManager::addTransition(const std::string& tag, std::shared_ptr<AbstractTransition>& transition)
+TransitionManager::TransitionManager()
+{
+    //m_enterFrameCrumb = DisplayManager::getInstance()->getEventManager().addListenerFor(EventManager::ENTER_FRAME_EVENT, this, true);
+}
+
+void TransitionManager::startUpdatingTransitions()
+{
+    /* This command cannot be placed in the constructor as the TransitionManager is created
+    inside the constructor of display manager. Hence, getInstance would return null */
+    m_enterFrameCrumb = DisplayManager::getInstance()->getEventManager().addListenerFor(EventManager::ENTER_FRAME_EVENT, this, true);
+}
+
+
+void TransitionManager::addTransition(const std::string& tag, std::shared_ptr<AbstractTransition> transition)
 {
     m_tag2transition.insert(std::make_pair(tag, transition));
 }
@@ -24,6 +38,24 @@ void TransitionManager::cancelByTag(const std::string& tag)
             it->second->cancel();
             it = m_tag2transition.erase(it);
         }
-        ++it;
+        else
+            ++it;
     }
+}
+
+void TransitionManager::onEvent(SDL_Event e)
+{
+    float elapsed = *(static_cast<Uint32*>(e.user.data1));
+    for (auto it = m_tag2transition.begin(); it != m_tag2transition.end(); ) {
+        it->second->onEnterFrame(elapsed);
+        if (it->second->isCancelled()) // This transitions has expired, remove it
+            it = m_tag2transition.erase(it);
+        else
+            ++it;
+    }
+}
+
+TransitionManager::~TransitionManager()
+{
+
 }

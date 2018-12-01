@@ -1,5 +1,5 @@
 #include "DisplayManager.h"
-#include "EventManager.h"
+#include "TransitionManager.h"
 #include "Scene.h"
 #include <iostream>
 
@@ -51,6 +51,7 @@ DisplayManager::DisplayManager(const std::string& title, int displayWidth, int d
     m_renderer = renderer;
 
     m_eventManager = new EventManager{};
+    m_transitionManager = new TransitionManager{};
 }
 
 void DisplayManager::startMainLoop()
@@ -58,6 +59,9 @@ void DisplayManager::startMainLoop()
     m_eventManager->addListenerFor(SDL_QUIT, this);
     Uint32 delta = 0;
     float lastTime = SDL_GetTicks();
+
+    m_transitionManager->startUpdatingTransitions(); // Transitions are now updated as frames go by
+
     while (!m_quit) {
         // Delta time calculations: elapsed time
         delta = SDL_GetTicks() - lastTime;
@@ -96,6 +100,9 @@ void DisplayManager::quit()
 {
     m_quit = true; // quit main loop
 
+    delete m_transitionManager;
+    m_transitionManager = nullptr;
+
     delete m_currentScene;
     m_currentScene = nullptr;
 
@@ -113,6 +120,11 @@ void DisplayManager::quit()
 EventManager& DisplayManager::getEventManager()
 {
     return *m_eventManager;
+}
+
+TransitionManager& DisplayManager::getTransitionManager()
+{
+    return *m_transitionManager;
 }
 
 DisplayManager::~DisplayManager()

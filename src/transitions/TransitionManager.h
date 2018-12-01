@@ -16,11 +16,21 @@ class TransitionManager : public EventListener
     public:
         TransitionManager();
 
-        void addTransition(const std::string& tag, std::shared_ptr<AbstractTransition>& transition);
+        /** \brief After this method is called transitions are updated as frames go by */
+        void startUpdatingTransitions();
 
+        /** \brief adds a transition with a given tag name
+          * \param tag the name of the tag
+          * \param transition the transition to execute */
+        void addTransition(const std::string& tag, std::shared_ptr<AbstractTransition> transition);
+
+        /** \brief cancels all the existing transitions */
         void cancelAll();
 
+        /** \brief cancels all the transitions with that tag */
         void cancelByTag(const std::string& tag);
+
+        void onEvent(SDL_Event e) override;
 
         ~TransitionManager();
 };

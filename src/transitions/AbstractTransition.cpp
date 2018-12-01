@@ -24,6 +24,11 @@ void AbstractTransition::cancel()
     m_cancelled = true;
 }
 
+bool AbstractTransition::isCancelled()
+{
+    return m_cancelled;
+}
+
 AbstractTransition::~AbstractTransition()
 {
 
