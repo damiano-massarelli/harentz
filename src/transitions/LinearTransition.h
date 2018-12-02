@@ -6,17 +6,29 @@
 #include <memory>
 #include <functional>
 
-template <class Tc>
+template <class T>
 class LinearTransition : public AbstractTransition
 {
     private:
-        std::function<void(Tc)> m_updater;
-        Tc m_initialValue{0.0f};
-        Tc m_finalValue{0.0f};
+        T m_initialValue{0.0f};
+        T m_finalValue{0.0f};
+        std::function<void(T)> m_updater;
+
+    protected:
+        LinearTransition(T initialValue, T finalValue, std::function<void(T)> updater, float durationMS) :
+            AbstractTransition{durationMS}, m_initialValue{initialValue}, m_finalValue{finalValue}, m_updater{updater}  {}
 
     public:
-        LinearTransition(Tc initialValue, Tc finalValue, std::function<void(Tc)> updater, float durationMS) :
-            AbstractTransition{durationMS}, m_initialValue{initialValue}, m_finalValue{finalValue}, m_updater{updater}  {}
+        /** \brief Creates and returns a LinearTransition
+          * \param initValue the initial value for this transition
+          * \param finalValue the final value for the transition
+          * \param updater a function called every time the transition is updated
+          * \sa TransitionManager */
+        static std::shared_ptr<LinearTransition<T>> create(T initValue, T finalValue, std::function<void(T)> updater, float time) {
+            auto transition = std::shared_ptr<LinearTransition<T>>(new LinearTransition<T>{initValue, finalValue, updater, time});
+            DisplayManager::getInstance()->getTransitionManager().addTransition("game", transition);
+            return transition;
+        }
 
         void onUpdate(float f) const override {
             m_updater((m_finalValue - m_initialValue)*f + m_initialValue);
@@ -24,12 +36,5 @@ class LinearTransition : public AbstractTransition
 
         virtual ~LinearTransition() {}
 };
-
-template <typename T>
-std::shared_ptr<LinearTransition<T>> createLT(T initValue, T finalValue, std::function<void(T)> updater, float time) {
-    auto transition = std::shared_ptr<LinearTransition<T>>(new LinearTransition<T>{initValue, finalValue, updater, time});
-    DisplayManager::getInstance()->getTransitionManager().addTransition("game", transition);
-    return transition;
-}
 
 #endif // LINEARTRANSITION_H

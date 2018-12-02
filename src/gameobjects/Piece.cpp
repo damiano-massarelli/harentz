@@ -53,9 +53,9 @@ std::shared_ptr<Shape> Piece::getCubeShape()
 
 }
 
-int Piece::getCubeSide()
+float Piece::getCubeSide()
 {
-    return (DisplayManager::screenWidth() / NUMBER_OF_LANES);
+    return (DisplayManager::screenWidth() / static_cast<float>(NUMBER_OF_LANES));
 }
 
 Piece::Piece(Renderer* renderer, const std::string& shape) : Transform{nullptr}
@@ -63,7 +63,7 @@ Piece::Piece(Renderer* renderer, const std::string& shape) : Transform{nullptr}
     setRenderer(renderer);
 
     float z = 0.0f;
-    float sideSize = static_cast<float>(Piece::getCubeSide());
+    float sideSize = Piece::getCubeSide();
 
     std::ifstream infile("resources/pieces/" + shape + ".piece");
     std::string line;

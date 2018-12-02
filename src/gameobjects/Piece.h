@@ -17,7 +17,7 @@ class Piece : public Transform
 
 
     public:
-        static int getCubeSide();
+        static float getCubeSide();
 
         Piece(Renderer* renderer, const std::string& shape);
 

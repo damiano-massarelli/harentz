@@ -5,8 +5,7 @@
 #include "EventListener.h"
 #include "EventManager.h"
 #include "Scene.h"
-
-class TransitionManager;
+#include "TransitionManager.h"
 
 class DisplayManager : public EventListener
 {

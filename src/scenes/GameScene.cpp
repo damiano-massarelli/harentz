@@ -36,6 +36,10 @@ void GameScene::onShow(SDL_Window* window, SDL_Renderer* renderer)
     // rotation and spawn point are dictated by the rotation of the ground
     m_rotationMatrix = m_ground->getRotationMatrix();
     m_spawnPoint = m_ground->getSpawnPoint();
+
+    // Creates the player
+    m_player = std::make_unique<Player>(m_3dRenderer.get(), m_rotationMatrix);
+    add(m_player.get());
 }
 
 void GameScene::onEvent(SDL_Event e)
