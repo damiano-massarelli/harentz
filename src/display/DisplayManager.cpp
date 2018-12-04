@@ -43,7 +43,6 @@ DisplayManager::DisplayManager(const std::string& title, int displayWidth, int d
         std::cout << SDL_GetError() << "\n";
 
     m_window = window;
-
     SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_SOFTWARE);
     if (renderer == nullptr)
         std::cout << SDL_GetError() << "\n";
@@ -57,18 +56,24 @@ DisplayManager::DisplayManager(const std::string& title, int displayWidth, int d
 void DisplayManager::startMainLoop()
 {
     m_eventManager->addListenerFor(SDL_QUIT, this);
-    Uint32 delta = 0;
+    Uint32 renderDelta = 0; ///< time elapsed to render
+    Uint32 actualDelta = 0; ///< time elapsed taking into account fps capping
     float lastTime = SDL_GetTicks();
 
     m_transitionManager->startUpdatingTransitions(); // Transitions are now updated as frames go by
 
     while (!m_quit) {
         // Delta time calculations: elapsed time
-        delta = SDL_GetTicks() - lastTime;
         lastTime = SDL_GetTicks();
 
-        m_eventManager->pushEnterFrameEvent(&delta);
+        m_eventManager->pushEnterFrameEvent(&actualDelta);
         m_eventManager->dispatchEvents();
+
+        renderDelta = SDL_GetTicks() - lastTime;
+        float sleepTime = (1000.0f/FPS_CAP) - renderDelta;
+        if (sleepTime > 0) SDL_Delay(sleepTime);
+
+        actualDelta = SDL_GetTicks() - lastTime;
      }
 }
 
@@ -90,9 +95,13 @@ SDL_Renderer* DisplayManager::getRenderer() const
 
 void DisplayManager::setCurrentScene(Scene* scene)
 {
-    delete m_currentScene;
+    if (m_currentScene != nullptr) {
+        m_currentScene->onRemove();
+        delete m_currentScene;
+    }
     m_currentScene = scene;
-    m_currentScene->onShow(m_window, m_renderer);
+    if (scene != nullptr)
+        m_currentScene->onShow(m_window, m_renderer);
 }
 
 
@@ -100,11 +109,10 @@ void DisplayManager::quit()
 {
     m_quit = true; // quit main loop
 
+    setCurrentScene(nullptr);
+
     delete m_transitionManager;
     m_transitionManager = nullptr;
-
-    delete m_currentScene;
-    m_currentScene = nullptr;
 
     SDL_DestroyRenderer(m_renderer);
     m_renderer = nullptr;

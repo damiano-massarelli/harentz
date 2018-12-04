@@ -24,6 +24,38 @@ Player::Player(Renderer* renderer, const Mat4& rotationMatrix) : Piece{renderer,
 void Player::onEvent(SDL_Event e)
 {
     if (e.type == SDL_KEYDOWN) { // Should always be KEYDOWN but you never know
+        // Go up
+        if (e.key.keysym.sym == SDLK_UP && !m_flying) {
+            LinearTransition<float>::create(getPosition().y,
+                                            getPosition().y - Piece::getCubeSide()*1.0f, // enough to jump a cube
+                                            [this](float y) {
+                                                Point3 current = this->getPosition();
+                                                current.y = y;
+                                                this->setPosition(current);
+                                            },
+                                            150.0f,
+                                            nullptr,
+                                            "game"); // end first transition
+
+            m_flying = true;
+        }
+        // Go down
+        else if (e.key.keysym.sym == SDLK_DOWN && m_flying) {
+            LinearTransition<float>::create(getPosition().y,
+                                            getPosition().y + Piece::getCubeSide()*1.0f, // enough to jump a cube
+                                            [this](float y) {
+                                                Point3 current = this->getPosition();
+                                                current.y = y;
+                                                this->setPosition(current);
+                                            },
+                                            150.0f,
+                                            nullptr,
+                                            "game"); // end first transition
+
+            m_flying = false;
+        }
+
+        /* Left - right controls */
         if (e.key.keysym.sym == SDLK_RIGHT && m_currentLane < NUMBER_OF_LANES - 1)
             m_currentLane++;
         else if (e.key.keysym.sym == SDLK_LEFT && m_currentLane > 0)
@@ -43,7 +75,9 @@ void Player::onEvent(SDL_Event e)
                                                                     current.x = x;
                                                                     this->setPosition(current);
                                                                  },
-                                                                 150.0f);
+                                                                 110.0f,
+                                                                 nullptr,
+                                                                 "game");
     }
 }
 

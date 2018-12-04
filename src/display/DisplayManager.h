@@ -10,6 +10,7 @@
 class DisplayManager : public EventListener
 {
     private:
+        static constexpr float FPS_CAP = 60.0f;
         static std::unique_ptr<DisplayManager> instance;
 
         SDL_Window* m_window = nullptr;

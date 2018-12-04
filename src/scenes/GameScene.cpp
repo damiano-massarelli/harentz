@@ -5,10 +5,6 @@
 #include "constants.h"
 #include "DisplayManager.h"
 
-
-const float GameScene::SCREEN_Z = 0.0f;
-const float GameScene::PROJECTION_POINT_Z = -500.0f;
-
 GameScene::GameScene()
 {
 
@@ -46,7 +42,7 @@ void GameScene::onEvent(SDL_Event e)
 {
     Scene::onEvent(e);
 
-    //std::cout << 1000.0f/ (*(static_cast<Uint32*>(e.user.data1))) << "\n";
+    std::cout << 1000.0f/ (*(static_cast<Uint32*>(e.user.data1))) << "\n";
 
     elapsedFrames++;
     if (elapsedFrames == 1) {
@@ -76,6 +72,14 @@ void GameScene::onRenderingComplete()
     m_groundRenderer->renderToScreen();
     m_3dRenderer->renderToScreen();
 }
+
+void GameScene::onRemove()
+{
+    // deletes all the transitions generated. This is necessary as these transitions operate
+    // on objects that will be destroyed
+    DisplayManager::getInstance()->getTransitionManager().cancelByTag("game");
+}
+
 
 GameScene::~GameScene()
 {

@@ -14,9 +14,6 @@
 class GameScene : public Scene
 {
     private:
-        static const float PROJECTION_POINT_Z;
-        static const float SCREEN_Z;
-
         /* Pieces and ground use two different renderers so that pieces are always drawn above the ground */
         std::unique_ptr<Renderer> m_3dRenderer;
         std::unique_ptr<Renderer> m_groundRenderer;
@@ -38,6 +35,8 @@ class GameScene : public Scene
         virtual void onEvent(SDL_Event e) override;
 
         virtual void onRenderingComplete() override;
+
+        virtual void onRemove() override;
 
         virtual ~GameScene();
 

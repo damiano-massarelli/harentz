@@ -30,9 +30,12 @@ class Scene : public EventListener
         virtual void onEvent(SDL_Event e) override;
 
         /** \brief this function is called when all the element of the scene have been rendered
-          * This function is sometimes required by those renderer that draws on the screen once the
-          * all their elements have been drawn */
+          * This function is sometimes required by those renderer that draws on the screen once
+          * all their elements have been rendered (that is render is called on them) */
         virtual void onRenderingComplete() {};
+
+        /** \brief this function is called before the scene is removed */
+        virtual void onRemove() {};
 
         /** \brief method called when the scene is passed to the DisplayManager.
           * This method is called by the DisplayManager to pass the main SDL_Renderer

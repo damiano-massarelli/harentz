@@ -2,7 +2,8 @@
 #include "DisplayManager.h"
 #include "EventManager.h"
 
-AbstractTransition::AbstractTransition(float durationMS) : m_totalDuration{durationMS}
+AbstractTransition::AbstractTransition(float durationMS, std::function<void()> onComplete)
+            : m_totalDuration{durationMS}, m_onCompleteCallback{onComplete}
 {
 
 }
@@ -17,6 +18,11 @@ void AbstractTransition::onEnterFrame(float elapsed)
         cancel();
     }
     onUpdate(f);
+
+    /* If the transitions is complete, onComplete callback is called */
+    if (isCancelled() && m_onCompleteCallback != nullptr)
+        m_onCompleteCallback();
+
 }
 
 void AbstractTransition::cancel()

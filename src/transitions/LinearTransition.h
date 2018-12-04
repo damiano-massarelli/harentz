@@ -15,8 +15,8 @@ class LinearTransition : public AbstractTransition
         std::function<void(T)> m_updater;
 
     protected:
-        LinearTransition(T initialValue, T finalValue, std::function<void(T)> updater, float durationMS) :
-            AbstractTransition{durationMS}, m_initialValue{initialValue}, m_finalValue{finalValue}, m_updater{updater}  {}
+        LinearTransition(T initialValue, T finalValue, std::function<void(T)> updater, float durationMS, std::function<void()> onComplete) :
+            AbstractTransition{durationMS, onComplete}, m_initialValue{initialValue}, m_finalValue{finalValue}, m_updater{updater}  {}
 
     public:
         /** \brief Creates and returns a LinearTransition
@@ -24,9 +24,10 @@ class LinearTransition : public AbstractTransition
           * \param finalValue the final value for the transition
           * \param updater a function called every time the transition is updated
           * \sa TransitionManager */
-        static std::shared_ptr<LinearTransition<T>> create(T initValue, T finalValue, std::function<void(T)> updater, float time) {
-            auto transition = std::shared_ptr<LinearTransition<T>>(new LinearTransition<T>{initValue, finalValue, updater, time});
-            DisplayManager::getInstance()->getTransitionManager().addTransition("game", transition);
+        static std::shared_ptr<LinearTransition<T>> create(T initValue, T finalValue, std::function<void(T)> updater,
+                                                           float time, std::function<void()> onComplete = nullptr, const std::string& tag = "") {
+            auto transition = std::shared_ptr<LinearTransition<T>>(new LinearTransition<T>{initValue, finalValue, updater, time, onComplete});
+            DisplayManager::getInstance()->getTransitionManager().addTransition(tag, transition);
             return transition;
         }
 

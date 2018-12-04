@@ -4,8 +4,6 @@
 #include "GameScene.h"
 #include "constants.h"
 
-#include "LinearTransition.h"
-
 int main(int argc, char* argv[])
 {
 
