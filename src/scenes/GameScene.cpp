@@ -46,7 +46,7 @@ void GameScene::onEvent(SDL_Event e)
 
     elapsedFrames++;
     if (elapsedFrames == 1) {
-        std::unique_ptr<Piece> piece = std::make_unique<Piece>(m_3dRenderer.get(), "S");
+        std::unique_ptr<Piece> piece = std::make_unique<Piece>(m_3dRenderer.get(), "T");
         add(piece.get());
         piece->setPosition(Point3{0.0f, m_spawnPoint.y, m_spawnPoint.z});
 

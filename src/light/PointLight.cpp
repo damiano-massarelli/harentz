@@ -1,4 +1,5 @@
 #include "PointLight.h"
+#include "colorUtils.h"
 
 PointLight::PointLight(const Point3& pos, const SDL_Color& color, float ambientFactor) : m_position{pos},
                         m_color{color}, m_ambientFactor{ambientFactor}
@@ -23,11 +24,8 @@ Point3& PointLight::getPosition()
 SDL_Color PointLight::getColorForFace(const Face* face, const SDL_Color& faceColor)
 {
     float dimFactor = getDimFactor(face);
-    // Convert light color to [0.0, 1.0]
-    float lightR = m_color.r/255.0f;
-    float lightG = m_color.g/255.0f;
-    float lightB = m_color.b/255.0f;
-    return SDL_Color{faceColor.r * dimFactor * lightR, faceColor.g * dimFactor * lightG, faceColor.b * dimFactor * lightB, faceColor.a};
+
+    return (faceColor * m_color) * dimFactor;
 }
 
 PointLight::~PointLight()

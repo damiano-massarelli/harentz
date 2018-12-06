@@ -1,6 +1,7 @@
 #include "Transform.h"
 #include "Renderer.h"
 #include <algorithm>
+#include <colorUtils.h>
 
 Transform::Transform(const std::shared_ptr<Shape>& shape) : m_shape{shape}
 {
@@ -102,8 +103,11 @@ void Transform::setColor(SDL_Color color)
     m_color = color;
 }
 
-const SDL_Color& Transform::getColor() const
+SDL_Color Transform::getColor() const
 {
+    // Color modulation with parent's color
+    if (m_parent != nullptr)
+        return m_parent->getColor() * m_color;
     return m_color;
 }
 

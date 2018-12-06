@@ -4,29 +4,25 @@
 #include <string>
 #include "DisplayManager.h"
 #include "constants.h"
+#include <sstream>
+#include <functional>
 
 std::shared_ptr<Shape> Piece::CUBE_SHAPE;
 
-std::vector<int> split(const std::string &txt, char ch)
+template<typename T>
+std::vector<T> split(const std::string &toSplit, char ch, std::function<T(std::string& str)> converter)
 {
-    std::vector<int> strs;
+    std::stringstream ss(toSplit);
+    std::vector<T> result;
 
-    size_t pos = txt.find( ch );
-    size_t initialPos = 0;
-    strs.clear();
-
-    // Decompose statement
-    while( pos != std::string::npos ) {
-        strs.push_back( std::stoi( txt.substr( initialPos, pos - initialPos ) ) );
-        initialPos = pos + 1;
-
-        pos = txt.find( ch, initialPos );
+    while( ss.good() )
+    {
+        std::string substr;
+        getline(ss, substr, ch);
+        result.push_back(converter(substr));
     }
 
-    // Add the last one
-    strs.push_back( std::stoi( txt.substr( initialPos, std::min( pos, txt.size() ) - initialPos + 1 ) ) );
-
-    return strs;
+    return result;
 }
 
 std::shared_ptr<Shape> Piece::getCubeShape()
@@ -58,6 +54,19 @@ float Piece::getCubeSide()
     return (DisplayManager::screenWidth() / static_cast<float>(NUMBER_OF_LANES));
 }
 
+SDL_Color Piece::readPieceColor(const std::string& shape)
+{
+    // For names like T-down gets T
+    std::string colorFileName = split<std::string>(shape, '-', [](std::string& str) { return str; })[0];
+
+    std::ifstream colorFile("resources/pieces/" + colorFileName + ".color");
+    std::stringstream buffer;
+    buffer << colorFile.rdbuf();
+    std::vector<Uint8> channels = split<Uint8>(buffer.str(), ',', [](std::string& str) { return static_cast<Uint8>(std::stoi(str)); } );
+    return SDL_Color{channels[0], channels[1], channels[2], channels[3]};
+}
+
+
 Piece::Piece(Renderer* renderer, const std::string& shape) : Transform{nullptr}
 {
     setRenderer(renderer);
@@ -69,7 +78,7 @@ Piece::Piece(Renderer* renderer, const std::string& shape) : Transform{nullptr}
     std::string line;
     while(std::getline(infile, line)) {
         float x = 0.0f;
-        for (int height : split(line, ' ')) {
+        for (int height : split<int>(line, ' ', [](std::string& str) { return std::stoi(str); })) {
             int y = 0;
 
             /* Negative values means that the cube should be placed at that
@@ -81,7 +90,6 @@ Piece::Piece(Renderer* renderer, const std::string& shape) : Transform{nullptr}
             for (; y < height; y++) {
                 Transform* cube = new Transform{Piece::getCubeShape()};
                 cube->setPosition(Point3{x, (-y * sideSize) - sideSize/2, z}); // -y: positive value in the file means the cube is higher
-                cube->setColor(SDL_Color{255, 0, 0});
                 addChild(cube);
 
                 m_cubes.push_back(std::unique_ptr<Transform>(cube));
@@ -92,6 +100,7 @@ Piece::Piece(Renderer* renderer, const std::string& shape) : Transform{nullptr}
 
         z -= sideSize; // comes towards the player
     }
+    setColor(readPieceColor(shape));
 }
 
 
