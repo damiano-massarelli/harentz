@@ -19,6 +19,12 @@ Point3 normalized(const Point3& pt)
     return Point3{pt.x/len, pt.y/len, pt.z/len};
 }
 
+float distance(const Point3& pt1, const Point3& pt2)
+{
+    return length(pt2 - pt1);
+}
+
+
 Point3 operator-(const Point3& pt1, const Point3& pt2)
 {
     return Point3{pt1.x - pt2.x, pt1.y - pt2.y, pt1.z - pt2.z};

@@ -18,6 +18,7 @@ Player::Player(Renderer* renderer, const Mat4& rotationMatrix) : Piece{renderer,
     Point3 moveBy = (rotationMatrix * Point3{0.0f, 0.0f, 1.0f}) * MOVE_BY;
     setPosition(Point3{xPosition, yPosition, 0.0f} + moveBy);
     setTransformationMatrix(rotationMatrix); // rotates the player
+    m_upDirection = rotationMatrix * Point3{0.0f, -1.0f, 0.0f};
     setColor(SDL_Color{25, 190, 10});
 }
 
@@ -26,12 +27,10 @@ void Player::onEvent(SDL_Event e)
     if (e.type == SDL_KEYDOWN) { // Should always be KEYDOWN but you never know
         // Go up
         if (e.key.keysym.sym == SDLK_UP && !m_flying) {
-            LinearTransition<float>::create(getPosition().y,
-                                            getPosition().y - Piece::getCubeSide()*1.0f, // enough to jump a cube
-                                            [this](float y) {
-                                                Point3 current = this->getPosition();
-                                                current.y = y;
-                                                this->setPosition(current);
+            LinearTransition<Point3>::create(getPosition(),
+                                            getPosition() + m_upDirection * (Piece::getCubeSide()*1.0f), // enough to jump a cube
+                                            [this](Point3 pt) {
+                                                this->setPosition(pt);
                                             },
                                             150.0f,
                                             nullptr,
@@ -41,12 +40,10 @@ void Player::onEvent(SDL_Event e)
         }
         // Go down
         else if (e.key.keysym.sym == SDLK_DOWN && m_flying) {
-            LinearTransition<float>::create(getPosition().y,
-                                            getPosition().y + Piece::getCubeSide()*1.0f, // enough to jump a cube
-                                            [this](float y) {
-                                                Point3 current = this->getPosition();
-                                                current.y = y;
-                                                this->setPosition(current);
+            LinearTransition<Point3>::create(getPosition(),
+                                            getPosition() - m_upDirection * Piece::getCubeSide()*1.0f, // enough to jump a cube
+                                            [this](Point3 pt) {
+                                                this->setPosition(pt);
                                             },
                                             150.0f,
                                             nullptr,

@@ -2,10 +2,11 @@
 #include <iostream>
 #include <algorithm>
 #include "Face.h"
+#include "BSPTree.h"
 
 Renderer::Renderer(SDL_Renderer* renderer,int screenWidth, int screenHeight, float screenZ, float projectionPointZ) : m_renderer{renderer},
                                                 m_screenWidth{screenWidth}, m_screenHeight{screenHeight},
-                                                m_projectionPointZ{projectionPointZ} ,m_screenZ{screenZ}
+                                                m_projectionPointZ{projectionPointZ}, m_screenZ{screenZ}
 {
 
 }
@@ -56,9 +57,15 @@ void Renderer::render(const Transform& toRender)
 
 void Renderer::renderToScreen()
 {
-    std::sort(m_faces.begin(), m_faces.end(), [](const auto& f1, const auto&f2) {return f1->getCenter().z > f2->getCenter().z;});
+    std::sort(m_faces.begin(), m_faces.end(),
+            [](const auto& f1, const auto& f2) {
+                return f1->getCenter().z > f2->getCenter().z;
+            }
+    );
 
-    for (const auto& f : m_faces) {
+    BSPTree renderTree{m_faces};
+
+    renderTree.walk(Point3{0,0,-500}, [this](Face* f) {
         std::vector<SDL_Point> projectedPoints;
         SDL_Point projected;
         SDL_Color faceColor = f->getColor();
@@ -68,13 +75,13 @@ void Renderer::renderToScreen()
         }
         projectedPoints.push_back(projectedPoints[0]);
 
-        if (m_light)
-            faceColor = m_light->getColorForFace(f.get(), faceColor);
+        if (this->m_light)
+            faceColor = m_light->getColorForFace(f, faceColor);
 
-        if (m_drawer)
+        if (this->m_drawer)
             m_drawer(m_renderer, projectedPoints, faceColor);
-    }
-    // drawn faces are not needed anymore
+    });
+    // drawn faces are not needed anymore */
     m_faces.clear();
 }
 

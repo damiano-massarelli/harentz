@@ -22,6 +22,8 @@ Point3 cross(const Point3& pt1, const Point3& pt2);
 
 Point3 normalized(const Point3& pt);
 
+float distance(const Point3& pt1, const Point3& pt2);
+
 Point3 operator-(const Point3& pt1, const Point3& pt2);
 
 Point3 operator+(const Point3& pt1, const Point3& pt2);

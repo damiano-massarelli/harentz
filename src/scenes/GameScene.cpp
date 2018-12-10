@@ -18,7 +18,7 @@ void GameScene::onShow(SDL_Window* window, SDL_Renderer* renderer)
     int screenHeight = DisplayManager::screenHeight();
 
     m_3dRenderer = std::make_unique<Renderer>(renderer, screenWidth, screenHeight, SCREEN_Z, PROJECTION_POINT_Z);
-    m_3dRenderer->setLight(std::make_unique<PointLight>(Point3{0.0f, -120.0f, 0.0f}, SDL_Color{255, 255, 255, 255}, 0.25f));
+    m_3dRenderer->setLight(std::make_unique<PointLight>(Point3{0.0f, -120.0f, 0.0f}, SDL_Color{255, 255, 255, 255}, 0.15f));
     m_3dRenderer->setBackfaceCulling(std::make_unique<BackfaceCulling>(Point3{0.0f, 0.0f, PROJECTION_POINT_Z}, Point3{0.0f, 0.0f, 1.0f}));
 
     // Creates the renderer for the ground
@@ -42,11 +42,11 @@ void GameScene::onEvent(SDL_Event e)
 {
     Scene::onEvent(e);
 
-    std::cout << 1000.0f/ (*(static_cast<Uint32*>(e.user.data1))) << "\n";
+    std::cout << Piece::getCubeSide() << "\n";
 
     elapsedFrames++;
     if (elapsedFrames == 1) {
-        std::unique_ptr<Piece> piece = std::make_unique<Piece>(m_3dRenderer.get(), "T");
+        std::unique_ptr<Piece> piece = std::make_unique<Piece>(m_3dRenderer.get(), "T-up");
         add(piece.get());
         piece->setPosition(Point3{0.0f, m_spawnPoint.y, m_spawnPoint.z});
 
@@ -58,7 +58,9 @@ void GameScene::onEvent(SDL_Event e)
 
     for (auto& piece : m_pieces) {
         Point3 curr = piece->getPosition();
-        curr = curr + (m_rotationMatrix * Point3{0.0f, 0.0f, -1.0f} * 5);
+        int x;
+        SDL_GetMouseState(&x, nullptr);
+        curr = curr + (m_rotationMatrix * Point3{0.0f, 0.0f, -1.0f} * ((x/10)-1) * 0.3f);
         piece->setPosition(curr);
     }
 
