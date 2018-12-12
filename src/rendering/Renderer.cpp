@@ -37,6 +37,7 @@ void Renderer::render(const Transform& toRender)
     std::vector<Point3> verticesWorldPos = toRender.getVertWorldPositions();
     const std::vector<int>& quadsIndices = toRender.getShape()->getQuadsIndices();
 
+    /* Creates the faces of the object to render */
     pface face = std::make_unique<Face>();
     for (std::vector<int>::size_type i = 0; i < quadsIndices.size(); i++) {
         face->addVertex(verticesWorldPos[quadsIndices[i]]);
@@ -50,34 +51,32 @@ void Renderer::render(const Transform& toRender)
             if (!m_backfaceCulling || m_backfaceCulling->shouldRender(face.get()))
                 m_faces.push_back(std::move(face));
 
-            face = std::make_unique<Face>();
+            face = std::make_unique<Face>(); // Resets face for the following iterations
         }
     }
 }
 
 void Renderer::renderToScreen()
 {
-    std::sort(m_faces.begin(), m_faces.end(),
-            [](const auto& f1, const auto& f2) {
-                return f1->getCenter().z > f2->getCenter().z;
-            }
-    );
-
     BSPTree renderTree{m_faces};
 
-    renderTree.walk(Point3{0,0,-500}, [this](Face* f) {
+    // Walks through the bsptree and projects the faces
+    renderTree.walk(Point3{0,0, m_projectionPointZ}, [this](Face* f) {
         std::vector<SDL_Point> projectedPoints;
         SDL_Point projected;
         SDL_Color faceColor = f->getColor();
+        // Iterates through the vertices and projects them onto the screen.
         for (const auto& vertex : f->getVertices()) {
             project(vertex, projected);
             projectedPoints.push_back(projected);
         }
+        // A face has only three edges (despite its 4 vertices). The last edge from the last vertex to the first one is added here
         projectedPoints.push_back(projectedPoints[0]);
 
         if (this->m_light)
             faceColor = m_light->getColorForFace(f, faceColor);
 
+        // If a drawer is not defined for this renderer it is not possible to draw
         if (this->m_drawer)
             m_drawer(m_renderer, projectedPoints, faceColor);
     });

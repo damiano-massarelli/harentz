@@ -42,11 +42,11 @@ void GameScene::onEvent(SDL_Event e)
 {
     Scene::onEvent(e);
 
-    std::cout << Piece::getCubeSide() << "\n";
+    std::cout << 1000.0f/ (*(static_cast<Uint32*>(e.user.data1))) << "\n";
 
     elapsedFrames++;
     if (elapsedFrames == 1) {
-        std::unique_ptr<Piece> piece = std::make_unique<Piece>(m_3dRenderer.get(), "T-up");
+        std::unique_ptr<Piece> piece = std::make_unique<Piece>(m_3dRenderer.get(), "Z");
         add(piece.get());
         piece->setPosition(Point3{0.0f, m_spawnPoint.y, m_spawnPoint.z});
 
