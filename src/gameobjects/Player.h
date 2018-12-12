@@ -19,10 +19,6 @@ class Player : public Piece, public EventListener
         std::unique_ptr<EventListenerCrumb> m_keydownListenerCrumb; ///< crumb for key events
         std::shared_ptr<LinearTransition<float>> m_horizontalTransition;
 
-
-        /** \brief returns the x coordinate for lane */
-        float xForLane(int lane) const;
-
     public:
         Player(Renderer* renderer, const Mat4& rotationMatrix);
 

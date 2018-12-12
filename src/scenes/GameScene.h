@@ -10,6 +10,7 @@
 #include "Point3.h"
 #include "Mat4.h"
 #include "Player.h"
+#include "PieceManager.h"
 
 class GameScene : public Scene
 {
@@ -20,6 +21,8 @@ class GameScene : public Scene
         std::vector<std::unique_ptr<Piece>> m_pieces;
         std::unique_ptr<Ground> m_ground;
         std::unique_ptr<Player> m_player;
+
+        std::unique_ptr<PieceManager> m_pieceManager;
 
         Point3 m_spawnPoint; ///< the point where new pieces are spawned, only y and z are relevant.
         Mat4 m_rotationMatrix; ///< the matrix used by all the rotated objects

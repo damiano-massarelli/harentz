@@ -17,6 +17,7 @@ void GameScene::onShow(SDL_Window* window, SDL_Renderer* renderer)
     int screenWidth = DisplayManager::screenWidth();
     int screenHeight = DisplayManager::screenHeight();
 
+    // Renderer for pieces
     m_3dRenderer = std::make_unique<Renderer>(renderer, screenWidth, screenHeight, SCREEN_Z, PROJECTION_POINT_Z);
     m_3dRenderer->setLight(std::make_unique<PointLight>(Point3{0.0f, -120.0f, 0.0f}, SDL_Color{255, 255, 255, 255}, 0.15f));
     m_3dRenderer->setBackfaceCulling(std::make_unique<BackfaceCulling>(Point3{0.0f, 0.0f, PROJECTION_POINT_Z}, Point3{0.0f, 0.0f, 1.0f}));
@@ -36,24 +37,21 @@ void GameScene::onShow(SDL_Window* window, SDL_Renderer* renderer)
     // Creates the player
     m_player = std::make_unique<Player>(m_3dRenderer.get(), m_rotationMatrix);
     add(m_player.get());
+
+    // Piece manager
+    m_pieceManager = std::make_unique<PieceManager>(m_3dRenderer.get(), m_spawnPoint, m_rotationMatrix);
 }
 
 void GameScene::onEvent(SDL_Event e)
 {
     Scene::onEvent(e);
+    float delta = 1000.0f/ (*(static_cast<Uint32*>(e.user.data1)));
+    std::cout << delta << std::endl;
 
-    std::cout << 1000.0f/ (*(static_cast<Uint32*>(e.user.data1))) << "\n";
-
-    elapsedFrames++;
-    if (elapsedFrames == 1) {
-        std::unique_ptr<Piece> piece = std::make_unique<Piece>(m_3dRenderer.get(), "Z");
+    std::unique_ptr<Piece> piece = m_pieceManager->generatePiece(delta);
+    if (piece != nullptr) {
         add(piece.get());
-        piece->setPosition(Point3{0.0f, m_spawnPoint.y, m_spawnPoint.z});
-
-        piece->setTransformationMatrix(m_rotationMatrix);
-
         m_pieces.push_back(std::move(piece));
-
     }
 
     for (auto& piece : m_pieces) {

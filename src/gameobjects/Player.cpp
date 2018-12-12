@@ -78,12 +78,6 @@ void Player::onEvent(SDL_Event e)
     }
 }
 
-float Player::xForLane(int lane) const
-{
-    return (lane * Piece::getCubeSide()) - DisplayManager::screenWidth()/2.0f + Piece::getCubeSide()/2;
-}
-
-
 Player::~Player()
 {
 

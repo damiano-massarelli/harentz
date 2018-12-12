@@ -78,7 +78,10 @@ Piece::Piece(Renderer* renderer, const std::string& shape) : Transform{nullptr}
     std::string line;
     while(std::getline(infile, line)) {
         float x = 0.0f;
-        for (int height : split<int>(line, ' ', [](std::string& str) { return std::stoi(str); })) {
+        std::vector<int> cubesHeights = split<int>(line, ' ', [](std::string& str) { return std::stoi(str); });
+        m_horizontalCubes = std::max(m_horizontalCubes, static_cast<int>(cubesHeights.size())); // updates the number of horizontal cubes
+
+        for (int height : cubesHeights) {
             int y = 0;
 
             /* Negative values means that the cube should be placed at that
@@ -94,13 +97,21 @@ Piece::Piece(Renderer* renderer, const std::string& shape) : Transform{nullptr}
 
                 m_cubes.push_back(std::unique_ptr<Transform>(cube));
             }
-
             x += sideSize;
         }
-
         z -= sideSize; // comes towards the player
     }
     setColor(readPieceColor(shape));
+}
+
+float Piece::xForLane(int lane) const
+{
+    return (lane * Piece::getCubeSide()) - DisplayManager::screenWidth()/2.0f + Piece::getCubeSide()/2;
+}
+
+int Piece::getNumOfHorizontalCubes() const
+{
+    return m_horizontalCubes;
 }
 
 
