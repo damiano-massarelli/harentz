@@ -48,6 +48,7 @@ DisplayManager::DisplayManager(const std::string& title, int displayWidth, int d
         std::cout << SDL_GetError() << "\n";
 
     m_renderer = renderer;
+    SDL_SetRenderDrawBlendMode(m_renderer, SDL_BLENDMODE_BLEND);
 
     m_eventManager = new EventManager{};
     m_transitionManager = new TransitionManager{};

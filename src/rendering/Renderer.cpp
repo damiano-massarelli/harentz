@@ -72,7 +72,6 @@ void Renderer::renderToScreen()
         }
         // A face has only three edges (despite its 4 vertices). The last edge from the last vertex to the first one is added here
         projectedPoints.push_back(projectedPoints[0]);
-
         if (this->m_light)
             faceColor = m_light->getColorForFace(f, faceColor);
 

@@ -6,6 +6,7 @@
 #include "constants.h"
 #include <sstream>
 #include <functional>
+#include <LinearTransition.h>
 
 std::shared_ptr<Shape> Piece::CUBE_SHAPE;
 
@@ -101,7 +102,15 @@ Piece::Piece(Renderer* renderer, const std::string& shape) : Transform{nullptr}
         }
         z -= sideSize; // comes towards the player
     }
-    setColor(readPieceColor(shape));
+    SDL_Color finalColor = readPieceColor(shape);
+    setColor(finalColor);
+    // Changes the opacity of this object, from 0 to what is specified in finalColor
+    LinearTransition<int>::create(0, static_cast<int>(finalColor.a),
+                             [this](int alpha) {
+                                SDL_Color current = this->getColor();
+                                current.a = alpha;
+                                this->setColor(current);
+                            },200.0f, nullptr, "game");
 }
 
 float Piece::xForLane(int lane) const

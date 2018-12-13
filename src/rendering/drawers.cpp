@@ -4,8 +4,11 @@
 #include <SDL2/SDL2_gfxPrimitives.h>
 #include <vector>
 
+#include<iostream>
+
 void fillDrawer(SDL_Renderer* renderer, const std::vector<SDL_Point>& polygonPoints, const SDL_Color& color) {
     // Sets the color before drawing
+    SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
     SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
     int screenHeight = DisplayManager::screenHeight();
 

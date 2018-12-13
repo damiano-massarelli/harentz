@@ -45,6 +45,7 @@ void GameScene::onShow(SDL_Window* window, SDL_Renderer* renderer)
 void GameScene::onEvent(SDL_Event e)
 {
     Scene::onEvent(e);
+
     float delta = 1000.0f/ (*(static_cast<Uint32*>(e.user.data1)));
     std::cout << delta << std::endl;
 
@@ -58,7 +59,7 @@ void GameScene::onEvent(SDL_Event e)
         Point3 curr = piece->getPosition();
         int x;
         SDL_GetMouseState(&x, nullptr);
-        curr = curr + (m_rotationMatrix * Point3{0.0f, 0.0f, -1.0f} * ((x/10)-1) * 0.3f);
+        curr = curr + (m_rotationMatrix * Point3{0.0f, 0.0f, -1.0f} * ((x/10)-1) * 0.9f);
         piece->setPosition(curr);
     }
 

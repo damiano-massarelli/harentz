@@ -13,9 +13,9 @@
 class PieceManager
 {
     private:
-        static constexpr float GENERATE_INITIAL_INTERVAL = 15000.0f;
-        static constexpr float GENERATE_MIN_INTERVAL = 3000.0f;
-        static constexpr float GENERATE_DECREASE_FACTOR = 0.97;
+        static constexpr float GENERATE_INITIAL_INTERVAL = 3000.0f;
+        static constexpr float GENERATE_MIN_INTERVAL = 1500.0f;
+        static constexpr float GENERATE_DECREASE_FACTOR = 0.98;
 
         float m_generateEveryMS = GENERATE_INITIAL_INTERVAL; ///< how frequently a new piece is generated
         float m_elapsedFromLast = 0.0f; ///< time elapsed from the last generated piece

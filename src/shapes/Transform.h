@@ -22,7 +22,7 @@ class Transform : public AbstractRenderable
 
         Renderer* m_renderer = nullptr;
 
-        SDL_Color m_color{255, 255, 255};
+        SDL_Color m_color{255, 255, 255, 255};
 
         void setParent(Transform* parent);
 

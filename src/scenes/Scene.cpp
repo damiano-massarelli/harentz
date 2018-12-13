@@ -51,6 +51,12 @@ void Scene::setBgColor(const SDL_Color& color)
     m_bgColor = color;
 }
 
+SDL_Renderer* Scene::getSDLRenderer()
+{
+    return m_sdlRenderer;
+}
+
+
 Scene::~Scene()
 {
 

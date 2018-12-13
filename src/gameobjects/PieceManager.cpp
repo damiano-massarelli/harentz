@@ -28,6 +28,10 @@ std::unique_ptr<Piece> PieceManager::generatePiece(float deltaMS)
         piece->setTransformationMatrix(m_rotationMatrix);
 
         m_elapsedFromLast = 0.0f; // reset elapsed time
+        m_generateEveryMS *= GENERATE_DECREASE_FACTOR;
+        float max_ = GENERATE_MIN_INTERVAL;
+        std::cout << max_ << "\n";
+        m_generateEveryMS = std::max(m_generateEveryMS, max_);
     }
 
     return piece;

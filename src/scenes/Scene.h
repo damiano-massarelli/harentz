@@ -51,6 +51,9 @@ class Scene : public EventListener
         /** \brief set the scene's background color */
         void setBgColor(const SDL_Color& color);
 
+        /** \brief returns the current sdl renderer */
+        SDL_Renderer* getSDLRenderer();
+
         virtual ~Scene();
 
 };
