@@ -1,5 +1,4 @@
 #include "GameScene.h"
-#include<algorithm>
 #include "Ground.h"
 #include "drawers.h"
 #include "constants.h"
@@ -55,7 +54,9 @@ void GameScene::onEvent(SDL_Event e)
         m_pieces.push_back(std::move(piece));
     }
 
-    for (auto& piece : m_pieces) {
+    m_pieceManager->movePieces(m_pieces, delta);
+
+    /*for (auto& piece : m_pieces) {
         Point3 curr = piece->getPosition();
         int x;
         SDL_GetMouseState(&x, nullptr);
@@ -65,6 +66,7 @@ void GameScene::onEvent(SDL_Event e)
 
     m_pieces.erase(std::remove_if(m_pieces.begin(), m_pieces.end(),
                                    [](const auto& p) {return p->getPosition().z <= -200.0f;}), m_pieces.end());
+    */
 
 }
 

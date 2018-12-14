@@ -24,6 +24,7 @@ class Piece : public Transform
         SDL_Color readPieceColor(const std::string& shape);
 
     public:
+        /** \brief returns the size of a side of the cube */
         static float getCubeSide();
 
         Piece(Renderer* renderer, const std::string& shape);

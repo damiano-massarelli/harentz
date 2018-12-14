@@ -13,9 +13,10 @@
 class PieceManager
 {
     private:
-        static constexpr float GENERATE_INITIAL_INTERVAL = 3000.0f;
-        static constexpr float GENERATE_MIN_INTERVAL = 1500.0f;
-        static constexpr float GENERATE_DECREASE_FACTOR = 0.98;
+        static const float GENERATE_INITIAL_INTERVAL; ///< Initial piece generation interval
+        static const float GENERATE_MIN_INTERVAL; ///< min piece generation interval
+        static const float GENERATE_DECREASE_FACTOR; ///< generation interval decrease factor
+        static const float SPEED; ///< Speed of pieces, pixels per second
 
         float m_generateEveryMS = GENERATE_INITIAL_INTERVAL; ///< how frequently a new piece is generated
         float m_elapsedFromLast = 0.0f; ///< time elapsed from the last generated piece
@@ -36,7 +37,7 @@ class PieceManager
         std::unique_ptr<Piece> generatePiece(float deltaMS);
 
         /** \brief moves the pieces using the current speed */
-        void movePieces(const std::vector<std::unique_ptr<Piece>>& pieces, float deltaMS) const;
+        void movePieces(std::vector<std::unique_ptr<Piece>>& pieces, float deltaMS) const;
 
         virtual ~PieceManager();
 

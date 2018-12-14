@@ -33,10 +33,8 @@ void Player::onEvent(SDL_Event e)
                                                 this->setPosition(pt);
                                             },
                                             150.0f,
-                                            nullptr,
+                                            [this](){ this->m_flying = true; },
                                             "game"); // end first transition
-
-            m_flying = true;
         }
         // Go down
         else if (e.key.keysym.sym == SDLK_DOWN && m_flying) {
@@ -46,10 +44,8 @@ void Player::onEvent(SDL_Event e)
                                                 this->setPosition(pt);
                                             },
                                             150.0f,
-                                            nullptr,
+                                            [this](){ this->m_flying = false; },
                                             "game"); // end first transition
-
-            m_flying = false;
         }
 
         /* Left - right controls */
@@ -72,7 +68,7 @@ void Player::onEvent(SDL_Event e)
                                                                     current.x = x;
                                                                     this->setPosition(current);
                                                                  },
-                                                                 110.0f,
+                                                                 75.0f,
                                                                  nullptr,
                                                                  "game");
     }
