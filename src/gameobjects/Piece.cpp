@@ -118,11 +118,18 @@ float Piece::xForLane(int lane) const
     return (lane * Piece::getCubeSide()) - DisplayManager::screenWidth()/2.0f + Piece::getCubeSide()/2;
 }
 
+void Piece::removeCube(int index)
+{
+    if (index < m_cubes.size()) { // Just in case
+        removeChild(m_cubes[index].get()); // Removes it visually
+        m_cubes.erase(m_cubes.begin() + index); // Free its memory
+    }
+}
+
 int Piece::getNumOfHorizontalCubes() const
 {
     return m_horizontalCubes;
 }
-
 
 Piece::~Piece()
 {

@@ -3,6 +3,7 @@
 #include "drawers.h"
 #include "constants.h"
 #include "DisplayManager.h"
+#include "collisionDetection.h"
 
 GameScene::GameScene()
 {
@@ -46,7 +47,7 @@ void GameScene::onEvent(SDL_Event e)
     Scene::onEvent(e);
 
     float delta = 1000.0f/ (*(static_cast<Uint32*>(e.user.data1)));
-    std::cout << delta << std::endl;
+    //std::cout << delta << std::endl;
 
     std::unique_ptr<Piece> piece = m_pieceManager->generatePiece(delta);
     if (piece != nullptr) {
@@ -56,18 +57,11 @@ void GameScene::onEvent(SDL_Event e)
 
     m_pieceManager->movePieces(m_pieces, delta);
 
-    /*for (auto& piece : m_pieces) {
-        Point3 curr = piece->getPosition();
-        int x;
-        SDL_GetMouseState(&x, nullptr);
-        curr = curr + (m_rotationMatrix * Point3{0.0f, 0.0f, -1.0f} * ((x/10)-1) * 0.9f);
-        piece->setPosition(curr);
+    for (auto& piece : m_pieces) {
+        int collidingCubeIndex = collidingCube(piece.get(), m_player.get());
+        if (collidingCubeIndex != -1)
+            piece->removeCube(collidingCubeIndex);
     }
-
-    m_pieces.erase(std::remove_if(m_pieces.begin(), m_pieces.end(),
-                                   [](const auto& p) {return p->getPosition().z <= -200.0f;}), m_pieces.end());
-    */
-
 }
 
 void GameScene::onRenderingComplete()

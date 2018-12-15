@@ -35,7 +35,7 @@ class Transform : public AbstractRenderable
 
         void addChild(Transform* child);
 
-        const std::vector<Transform*>& getChildren() {return m_children;};
+        const std::vector<Transform*>& getChildren() const {return m_children;};
 
         void removeChild(Transform* child);
 
