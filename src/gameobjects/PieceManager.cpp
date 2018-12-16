@@ -5,9 +5,9 @@
 #include "constants.h"
 
 const float PieceManager::GENERATE_DECREASE_FACTOR = 0.98f;
-const float PieceManager::GENERATE_INITIAL_INTERVAL = 3000.0f;
-const float PieceManager::GENERATE_MIN_INTERVAL = 1500.0f;
-const float PieceManager::SPEED = 400.0f;
+const float PieceManager::GENERATE_INITIAL_INTERVAL = 1500.0f;
+const float PieceManager::GENERATE_MIN_INTERVAL = 500.0f;
+const float PieceManager::SPEED = 1200.0f;
 
 const std::vector<std::string> PieceManager::m_pieceNames{"I-side", "I-up", "J", "J-up", "L", "L-up", "O-side", "O-up",
                                                     "S", "T-down", "T-up", "Z"};
@@ -43,13 +43,14 @@ std::unique_ptr<Piece> PieceManager::generatePiece(float deltaMS)
 
 void PieceManager::movePieces(std::vector<std::unique_ptr<Piece>>& pieces, float deltaMS) const
 {
-    float speed = (deltaMS/1000) * SPEED;
-    if (speed > 10000.0f) return; // sometimes (e.g first frame) this value can be too high, ignore it
+    std::cout << "num of pieces " << pieces.size() << "\n";
+    float speed = SPEED * (deltaMS/1000);
 
+    if (speed > 100000.0f || std::isnan(speed)) return; // sometimes (e.g first frame) this value can be too high, ignore it
     /* Iterates through the pieces moving them and removing the elements whose z is less than -200.0f */
     for (auto it = pieces.begin(); it != pieces.end(); ) {
-        Point3 curr = (*it)->getPosition();
-        curr = curr + (m_rotationMatrix * Point3{0.0f, 0.0f, -1.0f} * speed);
+        Point3 curr = (*it)->getWorldPosition();
+        curr = curr + ((m_rotationMatrix * Point3{0.0f, 0.0f, -1.0f}) * speed);
         (*it)->setPosition(curr);
         if (curr.z <= -200.0f)
             it = pieces.erase(it);

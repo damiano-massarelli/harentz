@@ -13,7 +13,7 @@ void Transform::setRenderer(Renderer* renderer)
     m_renderer = renderer;
 }
 
-Renderer* Transform::getRenderer()
+Renderer* Transform::getRenderer() const
 {
     return m_renderer;
 }

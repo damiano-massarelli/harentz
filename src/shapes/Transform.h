@@ -31,7 +31,7 @@ class Transform : public AbstractRenderable
 
         void setRenderer(Renderer* renderer);
 
-        Renderer* getRenderer();
+        Renderer* getRenderer() const;
 
         void addChild(Transform* child);
 

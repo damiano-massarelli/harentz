@@ -46,8 +46,8 @@ void GameScene::onEvent(SDL_Event e)
 {
     Scene::onEvent(e);
 
-    float delta = 1000.0f/ (*(static_cast<Uint32*>(e.user.data1)));
-    //std::cout << delta << std::endl;
+    float delta = (*(static_cast<Uint32*>(e.user.data1)));
+    std::cout << "fps " << 1000/delta << std::endl;
 
     std::unique_ptr<Piece> piece = m_pieceManager->generatePiece(delta);
     if (piece != nullptr) {
@@ -56,18 +56,17 @@ void GameScene::onEvent(SDL_Event e)
     }
 
     m_pieceManager->movePieces(m_pieces, delta);
-
-    for (auto& piece : m_pieces) {
-        int collidingCubeIndex = collidingCube(piece.get(), m_player.get());
-        if (collidingCubeIndex != -1)
-            piece->removeCube(collidingCubeIndex);
-    }
 }
 
 void GameScene::onRenderingComplete()
 {
     m_groundRenderer->renderToScreen();
     m_3dRenderer->renderToScreen();
+    for (auto& piece : m_pieces) {
+        int collidingCubeIndex = collidingCube(piece.get(), m_player.get());
+        if (collidingCubeIndex != -1)
+            piece->removeCube(collidingCubeIndex);
+    }
 }
 
 void GameScene::onRemove()

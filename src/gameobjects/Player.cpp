@@ -28,7 +28,7 @@ void Player::onEvent(SDL_Event e)
         // Go up
         if (e.key.keysym.sym == SDLK_UP && !m_flying) {
             LinearTransition<Point3>::create(getPosition(),
-                                            getPosition() + m_upDirection * (Piece::getCubeSide()*1.0f), // enough to jump a cube
+                                            getPosition() + m_upDirection * (Piece::getCubeSide()), // enough to jump a cube
                                             [this](Point3 pt) {
                                                 this->setPosition(pt);
                                             },
@@ -39,7 +39,7 @@ void Player::onEvent(SDL_Event e)
         // Go down
         else if (e.key.keysym.sym == SDLK_DOWN && m_flying) {
             LinearTransition<Point3>::create(getPosition(),
-                                            getPosition() - m_upDirection * Piece::getCubeSide()*1.0f, // enough to jump a cube
+                                            getPosition() - m_upDirection * Piece::getCubeSide(), // enough to jump a cube
                                             [this](Point3 pt) {
                                                 this->setPosition(pt);
                                             },
