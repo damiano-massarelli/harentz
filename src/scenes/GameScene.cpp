@@ -4,6 +4,7 @@
 #include "constants.h"
 #include "DisplayManager.h"
 #include "collisionDetection.h"
+#include "BreakingParticles.h"
 
 GameScene::GameScene()
 {
@@ -49,12 +50,14 @@ void GameScene::onEvent(SDL_Event e)
     float delta = (*(static_cast<Uint32*>(e.user.data1)));
     std::cout << "fps " << 1000/delta << std::endl;
 
+    // Generates a new piece, if possible
     std::unique_ptr<Piece> piece = m_pieceManager->generatePiece(delta);
     if (piece != nullptr) {
         add(piece.get());
         m_pieces.push_back(std::move(piece));
     }
 
+    // Moves all the pieces towards the player
     m_pieceManager->movePieces(m_pieces, delta);
 }
 
@@ -64,8 +67,12 @@ void GameScene::onRenderingComplete()
     m_3dRenderer->renderToScreen();
     for (auto& piece : m_pieces) {
         int collidingCubeIndex = collidingCube(piece.get(), m_player.get());
-        if (collidingCubeIndex != -1)
+        if (collidingCubeIndex != -1) {
+            Point3 collisionPoint = piece->getChildren()[collidingCubeIndex]->getWorldPosition();
+            SDL_Color particleColor = piece->getChildren()[collidingCubeIndex]->getColor();
+            add(BreakingParticles::create(m_3dRenderer.get(), collisionPoint, particleColor, 10));
             piece->removeCube(collidingCubeIndex);
+        }
     }
 }
 

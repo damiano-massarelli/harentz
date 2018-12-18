@@ -5,8 +5,8 @@
 class Scene;
 
 /** \brief An Abstract Class representing all the elements that can be added to a scene and rendered.
-  * Renderable objects must implement render method in which their render their content using
-  * a any renderer. */
+  * Renderable objects must implement render method in which they render their content using
+  * a renderer. */
 class AbstractRenderable
 {
     private:

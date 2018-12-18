@@ -53,7 +53,7 @@ void PieceManager::movePieces(std::vector<std::unique_ptr<Piece>>& pieces, float
         curr = curr + ((m_rotationMatrix * Point3{0.0f, 0.0f, -1.0f}) * speed);
         (*it)->setPosition(curr);
         if (curr.z <= -200.0f)
-            it = pieces.erase(it);
+            it = pieces.erase(it); // Renderable objects remove themselves from the scene when they are destroyed
         else
             ++it;
     }

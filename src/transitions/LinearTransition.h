@@ -15,6 +15,7 @@ class LinearTransition : public AbstractTransition
         std::function<void(T)> m_updater;
 
     protected:
+        // Moves the lambda so that it can store unique_ptrs without problems
         LinearTransition(T initialValue, T finalValue, std::function<void(T)> updater, float durationMS, std::function<void()> onComplete) :
             AbstractTransition{durationMS, onComplete}, m_initialValue{initialValue}, m_finalValue{finalValue}, m_updater{updater}  {}
 
