@@ -19,7 +19,6 @@ Player::Player(Renderer* renderer, const Mat4& rotationMatrix) : Piece{renderer,
     setPosition(Point3{xPosition, yPosition, 0.0f} + moveBy);
     setTransformationMatrix(rotationMatrix); // rotates the player
     m_upDirection = rotationMatrix * Point3{0.0f, -1.0f, 0.0f};
-    setColor(SDL_Color{25, 190, 10, 255});
 }
 
 void Player::onEvent(SDL_Event e)

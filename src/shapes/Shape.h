@@ -15,6 +15,7 @@ class Shape
         Shape(const std::vector<Point3>& vertPositions, const std::vector<int>& quadsIndices);
 
         const std::vector<Point3>& getVertPositions() const;
+        std::vector<Point3>& getVertexPositions();
 
         const std::vector<int>& getQuadsIndices() const;
 

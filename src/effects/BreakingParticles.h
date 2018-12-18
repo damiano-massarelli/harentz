@@ -4,10 +4,14 @@
 #include "AbstractRenderable.h"
 #include <vector>
 #include <memory>
+#include "Shape.h"
 
 class BreakingParticles : AbstractRenderable
 {
     private:
+        static const float CUBE_SIDE_SIZE;
+        static std::shared_ptr<Shape> CUBE_SHAPE;
+
         std::vector<std::unique_ptr<Transform>> m_particles; ///< particles to display
         std::vector<std::pair<Point3, Point3>> m_directions; ///< the direction of the corresponding (same index) particle (represented as initial and final positions)
         Renderer* m_renderer;

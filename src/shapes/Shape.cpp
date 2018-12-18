@@ -10,6 +10,12 @@ const std::vector<Point3>& Shape::getVertPositions() const
     return m_vertPositions;
 }
 
+std::vector<Point3>& Shape::getVertexPositions()
+{
+    return m_vertPositions;
+}
+
+
 const std::vector<int>& Shape::getQuadsIndices() const
 {
     return m_quadIndices;
