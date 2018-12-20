@@ -4,6 +4,7 @@
 #include <cmath>
 #include "Shape.h"
 #include "Mat4.h"
+#include "randomUtils.h"
 
 const float BreakingParticles::CUBE_SIDE_SIZE = 10.0f;
 std::shared_ptr<Shape> BreakingParticles::CUBE_SHAPE = std::shared_ptr<Shape>(
@@ -23,11 +24,6 @@ std::shared_ptr<Shape> BreakingParticles::CUBE_SHAPE = std::shared_ptr<Shape>(
                          0, 1, 2, 3, // front face
                          0, 6, 4, 1}}); // top face
 
-float randRange(float start, float end) {
-    float f = static_cast<float>(std::rand())/(RAND_MAX + 1u);
-    return start + (end - start)*f;
-}
-
 AbstractRenderable* BreakingParticles::create(Renderer* renderer, const Point3& position, const SDL_Color& color, int numOfPieces)
 {
     BreakingParticles* particleEffect = new BreakingParticles{renderer, position, color, numOfPieces};
@@ -38,14 +34,15 @@ AbstractRenderable* BreakingParticles::create(Renderer* renderer, const Point3& 
                              [particle = std::shared_ptr<BreakingParticles>(particleEffect)](float f) {
                                 particle->update(f);
                              },
-                             10000.0f,
+                             500.0f,
                              nullptr,
                              "game");
 
     return particleEffect;
 }
 
-BreakingParticles::BreakingParticles(Renderer* renderer, const Point3& position, const SDL_Color& color, int numOfPieces) : m_renderer{renderer}
+BreakingParticles::BreakingParticles(Renderer* renderer, const Point3& position, const SDL_Color& color, int numOfPieces)
+        : m_renderer{renderer}, m_initialColor{color}
 {
     /** builds a circle whose radius is the min between screenWidth and screenHeight. The destination
       * of each particle is on this circle */
@@ -77,7 +74,7 @@ void BreakingParticles::update(float f)
         // updates color, when the animation is over alpha = 0
         SDL_Color currentFill = m_particles[i]->getFillColor();
         SDL_Color currentOutline = m_particles[i]->getOutlineColor();
-        float alpha = 255 * (1.0f - f);
+        float alpha = m_initialColor.a * (1.0f - f); // From initial alpha to 0
         currentFill.a = alpha;
         currentOutline.a = alpha;
         m_particles[i]->setFillColor(currentFill);

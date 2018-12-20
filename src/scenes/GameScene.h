@@ -11,6 +11,7 @@
 #include "Mat4.h"
 #include "Player.h"
 #include "PieceManager.h"
+#include "StarField.h"
 
 class GameScene : public Scene
 {
@@ -23,6 +24,8 @@ class GameScene : public Scene
         std::unique_ptr<Player> m_player;
 
         std::unique_ptr<PieceManager> m_pieceManager;
+
+        std::unique_ptr<StarField> m_starFieldEffect;
 
         Point3 m_spawnPoint; ///< the point where new pieces are spawned, only y and z are relevant.
         Mat4 m_rotationMatrix; ///< the matrix used by all the rotated objects

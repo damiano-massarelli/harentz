@@ -42,6 +42,9 @@ void GameScene::onShow(SDL_Window* window, SDL_Renderer* renderer)
 
     // Piece manager
     m_pieceManager = std::make_unique<PieceManager>(m_3dRenderer.get(), m_spawnPoint, m_rotationMatrix);
+
+    m_starFieldEffect = std::make_unique<StarField>(renderer);
+    add(m_starFieldEffect.get());
 }
 
 void GameScene::onEvent(SDL_Event e)
@@ -50,6 +53,8 @@ void GameScene::onEvent(SDL_Event e)
 
     float delta = (*(static_cast<Uint32*>(e.user.data1)));
     std::cout << "fps " << 1000/delta << std::endl;
+
+    m_starFieldEffect->update(delta);
 
     // Generates a new piece, if possible
     std::unique_ptr<Piece> piece = m_pieceManager->generatePiece(delta);

@@ -16,6 +16,8 @@ class BreakingParticles : AbstractRenderable
         std::vector<std::pair<Point3, Point3>> m_directions; ///< the direction of the corresponding (same index) particle (represented as initial and final positions)
         Renderer* m_renderer;
 
+        SDL_Color m_initialColor;
+
         /** \brief Constructor. Private so that a smart pointer can be created
           * \sa create */
         BreakingParticles(Renderer* renderer, const Point3& position, const SDL_Color& color, int numOfPieces);
