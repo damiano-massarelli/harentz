@@ -98,18 +98,32 @@ void Transform::removeChild(Transform* child)
     m_children.erase(std::remove(m_children.begin(), m_children.end(), child), m_children.end());
 }
 
-void Transform::setColor(SDL_Color color)
+void Transform::setFillColor(SDL_Color color)
 {
-    m_color = color;
+    m_fillColor = color;
 }
 
-SDL_Color Transform::getColor() const
+void Transform::setOutlineColor(SDL_Color color)
+{
+    m_outlineColor = color;
+}
+
+
+SDL_Color Transform::getFillColor() const
 {
     // Color modulation with parent's color
     if (m_parent != nullptr)
-        return m_parent->getColor() * m_color;
-    return m_color;
+        return m_parent->getFillColor() * m_fillColor;
+    return m_fillColor;
 }
+
+SDL_Color Transform::getOutlineColor() const
+{
+    if (m_parent != nullptr)
+        return m_parent->getOutlineColor() * m_outlineColor;
+    return m_outlineColor;
+}
+
 
 void Transform::render()
 {

@@ -103,13 +103,13 @@ Piece::Piece(Renderer* renderer, const std::string& shape) : Transform{nullptr}
         z -= sideSize; // comes towards the player
     }
     SDL_Color finalColor = readPieceColor(shape);
-    setColor(finalColor);
+    setFillColor(finalColor);
     // Changes the opacity of this object, from 0 to what is specified in finalColor
     LinearTransition<int>::create(0, static_cast<int>(finalColor.a),
                              [this](int alpha) {
-                                SDL_Color current = this->getColor();
+                                SDL_Color current = this->getFillColor();
                                 current.a = alpha;
-                                this->setColor(current);
+                                this->setFillColor(current);
                             },200.0f, nullptr, "game");
 }
 

@@ -22,7 +22,8 @@ class Transform : public AbstractRenderable
 
         Renderer* m_renderer = nullptr;
 
-        SDL_Color m_color{255, 255, 255, 255};
+        SDL_Color m_fillColor{255, 255, 255, 255};
+        SDL_Color m_outlineColor{255, 255, 255, 255};
 
         void setParent(Transform* parent);
 
@@ -65,9 +66,11 @@ class Transform : public AbstractRenderable
 
         const std::vector<Point3> getVertWorldPositions() const;
 
-        SDL_Color getColor() const;
+        SDL_Color getFillColor() const;
+        SDL_Color getOutlineColor() const;
 
-        void setColor(SDL_Color color);
+        void setFillColor(SDL_Color color);
+        void setOutlineColor(SDL_Color color);
 
         virtual void render() override;
 

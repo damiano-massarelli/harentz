@@ -5,6 +5,8 @@
 #include "DisplayManager.h"
 #include "collisionDetection.h"
 #include "BreakingParticles.h"
+#include "BspRenderer.h"
+#include "PaintersRenderer.h"
 
 GameScene::GameScene()
 {
@@ -19,13 +21,12 @@ void GameScene::onShow(SDL_Window* window, SDL_Renderer* renderer)
     int screenHeight = DisplayManager::screenHeight();
 
     // Renderer for pieces
-    m_3dRenderer = std::make_unique<Renderer>(renderer, screenWidth, screenHeight, SCREEN_Z, PROJECTION_POINT_Z);
+    m_3dRenderer = std::make_unique<BspRenderer>(renderer, screenWidth, screenHeight, SCREEN_Z, PROJECTION_POINT_Z);
     m_3dRenderer->setLight(std::make_unique<PointLight>(Point3{0.0f, -120.0f, 0.0f}, SDL_Color{255, 255, 255, 255}, 0.15f));
     m_3dRenderer->setBackfaceCulling(std::make_unique<BackfaceCulling>(Point3{0.0f, 0.0f, PROJECTION_POINT_Z}, Point3{0.0f, 0.0f, 1.0f}));
 
     // Creates the renderer for the ground
-    m_groundRenderer = std::make_unique<Renderer>(renderer, screenWidth, screenHeight, SCREEN_Z, PROJECTION_POINT_Z);
-    m_groundRenderer->setDrawer(outlineDrawer);
+    m_groundRenderer = std::make_unique<PaintersRenderer>(renderer, screenWidth, screenHeight, SCREEN_Z, PROJECTION_POINT_Z);
 
     // creates and adds the ground to the scene
     m_ground = std::make_unique<Ground>(m_groundRenderer.get(), screenWidth, screenHeight, NUMBER_OF_LANES);
@@ -69,8 +70,8 @@ void GameScene::onRenderingComplete()
         int collidingCubeIndex = collidingCube(piece.get(), m_player.get());
         if (collidingCubeIndex != -1) {
             Point3 collisionPoint = piece->getChildren()[collidingCubeIndex]->getWorldPosition();
-            SDL_Color particleColor = piece->getChildren()[collidingCubeIndex]->getColor();
-            add(BreakingParticles::create(m_3dRenderer.get(), collisionPoint, particleColor, 10));
+            SDL_Color particleColor = piece->getChildren()[collidingCubeIndex]->getFillColor();
+            add(BreakingParticles::create(m_groundRenderer.get(), collisionPoint, particleColor, 10));
             piece->removeCube(collidingCubeIndex);
         }
     }

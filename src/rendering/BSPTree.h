@@ -24,7 +24,7 @@ class BSPTree
         std::unique_ptr<BSPTreeNode> buildTree(std::vector<std::unique_ptr<Face>>& faces);
 
         /** \brief just a utility */
-        void recursiveWalk(const BSPTreeNode* current, const Point3& cameraPos, std::function<void(Face*)> visitor);
+        void recursiveWalk(const BSPTreeNode* current, const Point3& cameraPos, std::function<void(const Face*)> visitor);
 
 
         bool splitFace(const Face* face, const Face* plane, std::unique_ptr<Face>& outFront, std::unique_ptr<Face>& outBack);
@@ -54,7 +54,7 @@ class BSPTree
           * The tree is visited from back to front for faces that are in front of the
           * camera and from front to back for those that are behind it. This prevents
           * overlaps and glitches from happening */
-        void walk(const Point3& cameraPos, std::function<void(Face*)> visitor);
+        void walk(const Point3& cameraPos, std::function<void(const Face*)> visitor);
 
         virtual ~BSPTree();
 

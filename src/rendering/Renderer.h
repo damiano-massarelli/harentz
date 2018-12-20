@@ -9,17 +9,14 @@
 #include "PointLight.h"
 #include "BackfaceCulling.h"
 #include <functional>
-#include <drawers.h>
 
 class Renderer
 {
+    protected:
+        using pface = std::unique_ptr<Face>; ///< just a shorthand
+
     private:
-        using pface = std::unique_ptr<Face>;
-
         SDL_Renderer* m_renderer;
-
-        /// drawer, the function used to draw polygons on the screen
-        std::function<void(SDL_Renderer*, const std::vector<SDL_Point>&, const SDL_Color&)> m_drawer = outlineAndFillDrawer;
 
         int m_screenWidth;
         int m_screenHeight;
@@ -27,17 +24,24 @@ class Renderer
         float m_screenZ;                ///< the Z position of the screen
         float m_projectionPointZ;       ///< the Z position of the projection point (should be grater than m_screenZ)
 
-        std::vector<pface> m_faces;     ///< all the polygons (faces) to render
-
         std::unique_ptr<PointLight> m_light;    /// a pointer to a PointLight
 
         std::unique_ptr<BackfaceCulling> m_backfaceCulling; /// a pointer to a backface culling object
+
+        std::vector<pface> m_faces;     ///< all the polygons (faces) to render
 
         /** \brief Projects a 3D point to a 2D point
           * \param pt the point to project
           * \param projectTo where pt is going to be projected. This is the output of this function.
           */
         void project(const Point3& pt, SDL_Point& projectTo) const;
+
+    protected:
+         /** \brief draws the passed faces sorting them as to provide a depth effect */
+        virtual void renderFaces(std::vector<pface>& faces) = 0;
+
+        /** \brief actually draws the face on the screen */
+        void drawFace(const Face* face);
 
     public:
         /** \brief Creates a new renderer
@@ -66,16 +70,13 @@ class Renderer
           */
         void setLight(std::unique_ptr<PointLight> light);
 
+
         /** \brief Adds backface culling capabilities to this renderer
           * \param backfaceCulling the object to use for backface culling
           */
         void setBackfaceCulling(std::unique_ptr<BackfaceCulling> backfaceCulling);
 
-        /** \brief Sets the function used to draw polygons
-          * \param drawer the function to be used
-          * The function passed to this method is used to draw polygons on the screen.
-          * A a polygon is a projected face. */
-        void setDrawer(const std::function<void(SDL_Renderer*, const std::vector<SDL_Point>&, const SDL_Color&)>& drawer);
+        float getProjectionPointZ() const;
 
         /** \brief performs an inverse projection, from 2d to 3d.
           * \param point the 2d point to inverse-project into 3d space

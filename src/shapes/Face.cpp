@@ -6,15 +6,24 @@ Face::Face()
     //ctor
 }
 
-void Face::setColor(const SDL_Color& color)
+void Face::setFillColor(const SDL_Color& color)
 {
-    m_color = color;
+    m_fillColor = color;
 }
 
-
-const SDL_Color& Face::getColor() const
+void Face::setOutlineColor(const SDL_Color& color)
 {
-    return m_color;
+    m_outlineColor = color;
+}
+
+const SDL_Color& Face::getFillColor() const
+{
+    return m_fillColor;
+}
+
+const SDL_Color& Face::getOutlineColor() const
+{
+    return m_outlineColor;
 }
 
 

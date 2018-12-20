@@ -11,14 +11,17 @@ class Face
       */
     private:
         std::vector<Point3> m_vertices;
-        SDL_Color m_color;
+        SDL_Color m_fillColor;
+        SDL_Color m_outlineColor;
 
     public:
         Face();
 
-        void setColor(const SDL_Color& color);
+        void setFillColor(const SDL_Color& color);
+        void setOutlineColor(const SDL_Color& color);
 
-        const SDL_Color& getColor() const;
+        const SDL_Color& getFillColor() const;
+        const SDL_Color& getOutlineColor() const;
 
         void addVertex(Point3 vertex);
 

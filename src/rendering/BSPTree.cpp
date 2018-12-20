@@ -81,7 +81,7 @@ RelPos BSPTree::classifyFace(const Face* face, const Face* plane)
     return RelPos::SPANNING;
 }
 
-void BSPTree::recursiveWalk(const BSPTreeNode* current, const Point3& cameraPos, std::function<void(Face*)>visitor)
+void BSPTree::recursiveWalk(const BSPTreeNode* current, const Point3& cameraPos, std::function<void(const Face*)>visitor)
 {
     if (current == nullptr) return;
     RelPos camPos = classifyPoint(cameraPos, current->splitter.get());
@@ -97,7 +97,7 @@ void BSPTree::recursiveWalk(const BSPTreeNode* current, const Point3& cameraPos,
 }
 
 
-void BSPTree::walk(const Point3& cameraPos, std::function<void(Face*)> visitor)
+void BSPTree::walk(const Point3& cameraPos, std::function<void(const Face*)> visitor)
 {
     recursiveWalk(m_root.get(), cameraPos, visitor);
 }
@@ -106,8 +106,10 @@ bool BSPTree::splitFace(const Face* face, const Face* plane, std::unique_ptr<Fac
 {
     outFront = std::make_unique<Face>();
     outBack = std::make_unique<Face>();
-    outFront->setColor(face->getColor()); // Copies the color of the original face
-    outBack->setColor(face->getColor());
+    outFront->setFillColor(face->getFillColor()); // Copies the color of the original face
+    outFront->setOutlineColor(face->getOutlineColor());
+    outBack->setFillColor(face->getFillColor()); // Copies the color of the original face
+    outBack->setOutlineColor(face->getOutlineColor());
 
     const std::vector<Point3>& vertices = face->getVertices();
     int numOfVertices = vertices.size();

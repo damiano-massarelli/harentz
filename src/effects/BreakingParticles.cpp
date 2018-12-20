@@ -17,7 +17,7 @@ std::shared_ptr<Shape> BreakingParticles::CUBE_SHAPE = std::shared_ptr<Shape>(
                      Point3{-BreakingParticles::CUBE_SIDE_SIZE, -BreakingParticles::CUBE_SIDE_SIZE, BreakingParticles::CUBE_SIDE_SIZE},
                      Point3{-BreakingParticles::CUBE_SIDE_SIZE, BreakingParticles::CUBE_SIDE_SIZE, BreakingParticles::CUBE_SIDE_SIZE}},
                   std::vector<int>{
-                         1, 5, 7, 3, // up face
+                         0, 6, 4, 1, // up face
                          1, 4, 5, 2, // right face
                          0, 3, 7, 6, // left face
                          0, 1, 2, 3, // front face
@@ -38,7 +38,7 @@ AbstractRenderable* BreakingParticles::create(Renderer* renderer, const Point3& 
                              [particle = std::shared_ptr<BreakingParticles>(particleEffect)](float f) {
                                 particle->update(f);
                              },
-                             500.0f,
+                             10000.0f,
                              nullptr,
                              "game");
 
@@ -59,7 +59,7 @@ BreakingParticles::BreakingParticles(Renderer* renderer, const Point3& position,
         std::unique_ptr<Transform> cubeParticle = std::make_unique<Transform>(CUBE_SHAPE);
         m_directions.push_back(std::make_pair(position, Point3{finalX, finalY, finalZ})); // Direction of each particle represented by start and end point
 
-        cubeParticle->setColor(color); // color of the broken piece
+        cubeParticle->setFillColor(color); // color of the broken piece
         float randomRotation = randRange(-M_PI/2.0f, M_PI/2.0f);
         cubeParticle->setTransformationMatrix(rotation(randomRotation, randomRotation, randomRotation));
         m_particles.push_back(std::move(cubeParticle));
@@ -75,9 +75,13 @@ void BreakingParticles::update(float f)
         m_particles[i]->setPosition((dst - src)*f + src);
 
         // updates color, when the animation is over alpha = 0
-        SDL_Color current = m_particles[i]->getColor();
-        current.a = 255 * (1.0f - f);
-        m_particles[i]->setColor(current);
+        SDL_Color currentFill = m_particles[i]->getFillColor();
+        SDL_Color currentOutline = m_particles[i]->getOutlineColor();
+        float alpha = 255 * (1.0f - f);
+        currentFill.a = alpha;
+        currentOutline.a = alpha;
+        m_particles[i]->setFillColor(currentFill);
+        m_particles[i]->setOutlineColor(currentOutline);
     }
 }
 

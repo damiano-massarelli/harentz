@@ -6,10 +6,10 @@
 
 #include<iostream>
 
-void fillDrawer(SDL_Renderer* renderer, const std::vector<SDL_Point>& polygonPoints, const SDL_Color& color) {
+void fillDrawer(SDL_Renderer* renderer, const std::vector<SDL_Point>& polygonPoints, const SDL_Color& fillColor) {
     // Sets the color before drawing
     SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
-    SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
+    SDL_SetRenderDrawColor(renderer, fillColor.r, fillColor.g, fillColor.b, fillColor.a);
     int screenHeight = DisplayManager::screenHeight();
 
     /* Fills a polygon made of polygonPoints. Consecutive points in polygonPoints
@@ -50,16 +50,19 @@ void fillDrawer(SDL_Renderer* renderer, const std::vector<SDL_Point>& polygonPoi
     }
 }
 
-void outlineDrawer(SDL_Renderer* renderer, const std::vector<SDL_Point>& polygonPoints, const SDL_Color& color) {
+void outlineDrawer(SDL_Renderer* renderer, const std::vector<SDL_Point>& polygonPoints, const SDL_Color& outlineColor) {
     for (int i = 0; i < polygonPoints.size(); ++i) {
         const SDL_Point& pt1 = polygonPoints[i];
         const SDL_Point& pt2 = polygonPoints[(i + 1) % polygonPoints.size()];
         aalineRGBA(renderer, static_cast<Sint16>(pt1.x), static_cast<Sint16>(pt1.y), static_cast<Sint16>(pt2.x), static_cast<Sint16>(pt2.y),
-                   255, 255, 255, 255);
+                   outlineColor.r, outlineColor.g, outlineColor.b, outlineColor.a);
     }
 }
 
-void outlineAndFillDrawer(SDL_Renderer* renderer, const std::vector<SDL_Point>& polygonPoints, const SDL_Color& color) {
-    fillDrawer(renderer, polygonPoints, color);
-    outlineDrawer(renderer, polygonPoints, SDL_Color{255, 255, 255, 255});
+void outlineAndFillDrawer(SDL_Renderer* renderer, const std::vector<SDL_Point>& polygonPoints,
+                          const SDL_Color& fillColor, const SDL_Color& outlineColor) {
+    if (fillColor.a != 0) // Don't bother if invisible
+        fillDrawer(renderer, polygonPoints, fillColor);
+    if (outlineColor.a != 0)
+        outlineDrawer(renderer, polygonPoints, outlineColor);
 }
