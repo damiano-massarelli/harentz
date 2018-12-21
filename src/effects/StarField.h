@@ -20,6 +20,8 @@ class StarField : public AbstractRenderable
         SDL_Renderer* m_renderer;
         std::vector<std::unique_ptr<Star>> m_stars;
 
+        float m_updatePositionSpeed = 0; ///< the speed to use to update the position of the stars. Based on elapsedMs (see update)
+
     public:
         StarField(SDL_Renderer* renderer, int numOfStars = 200);
 
@@ -28,8 +30,6 @@ class StarField : public AbstractRenderable
         void update(float elapsedMs);
 
         virtual ~StarField();
-
-
 };
 
 #endif // STARFIELD_H

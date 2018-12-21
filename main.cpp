@@ -6,7 +6,6 @@
 
 int main(int argc, char* argv[])
 {
-
     DisplayManager* displayManager = DisplayManager::create("Harentz", INITIAL_WIDTH, INITIAL_HEIGHT);
     displayManager->setCurrentScene(new GameScene{});
 
