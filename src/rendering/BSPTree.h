@@ -23,9 +23,8 @@ class BSPTree
 
         std::unique_ptr<BSPTreeNode> buildTree(std::vector<std::unique_ptr<Face>>& faces);
 
-        /** \brief just a utility */
+        /** \brief just an utility */
         void recursiveWalk(const BSPTreeNode* current, const Point3& cameraPos, std::function<void(const Face*)> visitor);
-
 
         bool splitFace(const Face* face, const Face* plane, std::unique_ptr<Face>& outFront, std::unique_ptr<Face>& outBack);
 

@@ -16,6 +16,8 @@ class StarField : public AbstractRenderable
 {
     private:
         static const float SPEED; ///< pixels per second
+        static const SDL_Color INITIAL_COLOR;
+        static const SDL_Color FINAL_COLOR;
 
         SDL_Renderer* m_renderer;
         std::vector<std::unique_ptr<Star>> m_stars;

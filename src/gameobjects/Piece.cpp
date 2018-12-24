@@ -1,12 +1,11 @@
 #include "Piece.h"
-#include <fstream>
 #include <sstream>
 #include <string>
 #include "DisplayManager.h"
 #include "constants.h"
-#include <sstream>
 #include <functional>
 #include <LinearTransition.h>
+#include "ioUtils.h"
 
 std::shared_ptr<Shape> Piece::CUBE_SHAPE;
 
@@ -47,7 +46,6 @@ std::shared_ptr<Shape> Piece::getCubeShape()
     }
 
     return CUBE_SHAPE;
-
 }
 
 float Piece::getCubeSide()
@@ -60,10 +58,8 @@ SDL_Color Piece::readPieceColor(const std::string& shape)
     // For names like T-down gets T
     std::string colorFileName = split<std::string>(shape, '-', [](std::string& str) { return str; })[0];
 
-    std::ifstream colorFile("resources/pieces/" + colorFileName + ".color");
-    std::stringstream buffer;
-    buffer << colorFile.rdbuf();
-    std::vector<Uint8> channels = split<Uint8>(buffer.str(), ',', [](std::string& str) { return static_cast<Uint8>(std::stoi(str)); } );
+    std::stringstream colorString = readFile("resources/pieces/" + colorFileName + ".color");
+    std::vector<Uint8> channels = split<Uint8>(colorString.str(), ',', [](std::string& str) { return static_cast<Uint8>(std::stoi(str)); } );
     return SDL_Color{channels[0], channels[1], channels[2], channels[3]};
 }
 
@@ -75,7 +71,7 @@ Piece::Piece(Renderer* renderer, const std::string& shape) : Transform{nullptr}
     float z = 0.0f;
     float sideSize = Piece::getCubeSide();
 
-    std::ifstream infile("resources/pieces/" + shape + ".piece");
+    std::stringstream infile = readFile("resources/pieces/" + shape + ".piece");
     std::string line;
     while(std::getline(infile, line)) {
         float x = 0.0f;

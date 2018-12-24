@@ -2,6 +2,7 @@
 #include <cstdlib>
 #include <ctime>
 #include <algorithm>
+#include <cmath>
 #include "constants.h"
 
 const float PieceManager::GENERATE_DECREASE_FACTOR = 0.98f;
