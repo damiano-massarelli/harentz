@@ -4,6 +4,7 @@
 #include <memory>
 #include "EventListener.h"
 #include "EventListenerCrumb.h"
+#include <SDL_gpu.h>
 
 class AbstractRenderable;
 
@@ -16,7 +17,7 @@ class Scene : public EventListener
 
         SDL_Color m_bgColor{0, 0, 0};
 
-        SDL_Renderer* m_sdlRenderer = nullptr;
+        GPU_Target* m_screen = nullptr;
 
 
     public:
@@ -38,9 +39,9 @@ class Scene : public EventListener
         virtual void onRemove() {};
 
         /** \brief method called when the scene is passed to the DisplayManager.
-          * This method is called by the DisplayManager to pass the main SDL_Renderer
+          * This method is called by the DisplayManager to pass the main screen
           * so that the Scene can create its own renderers using it. */
-        virtual void onShow(SDL_Window* window, SDL_Renderer* renderer);
+        virtual void onShow(GPU_Target* screen);
 
         /** \brief adds a new object to the scene */
         void add(AbstractRenderable* renderable);
@@ -51,8 +52,8 @@ class Scene : public EventListener
         /** \brief set the scene's background color */
         void setBgColor(const SDL_Color& color);
 
-        /** \brief returns the current sdl renderer */
-        SDL_Renderer* getSDLRenderer();
+        /** \brief returns the current screen */
+        GPU_Target* getScreen();
 
         virtual ~Scene();
 

@@ -1,6 +1,7 @@
 #ifndef RENDERER_H
 #define RENDERER_H
-#include<SDL2/SDL.h>
+#include <SDL.h>
+#include <SDL_gpu.h>
 #include<vector>
 #include "Transform.h"
 #include "Point3.h"
@@ -16,7 +17,7 @@ class Renderer
         using pface = std::unique_ptr<Face>; ///< just a shorthand
 
     private:
-        SDL_Renderer* m_renderer;
+        GPU_Target* m_screen;
 
         int m_screenWidth;
         int m_screenHeight;
@@ -29,6 +30,8 @@ class Renderer
         std::unique_ptr<BackfaceCulling> m_backfaceCulling; /// a pointer to a backface culling object
 
         std::vector<pface> m_faces;     ///< all the polygons (faces) to render
+        std::vector<float> m_vertexBatch; ///< vertex data for batches
+        std::vector<unsigned short> m_indexBatch; ///< indices for the vertices of a batch
 
         /** \brief Projects a 3D point to a 2D point
           * \param pt the point to project
@@ -40,8 +43,13 @@ class Renderer
          /** \brief draws the passed faces sorting them as to provide a depth effect */
         virtual void renderFaces(std::vector<pface>& faces) = 0;
 
-        /** \brief actually draws the face on the screen */
-        void drawFace(const Face* face);
+        /** \brief adds the face to the batch of faces to draw
+          * \sa drawBatch */
+        void addToBatch(const Face* face);
+
+        /** \brief draws the current batch of faces to the screen
+          * \sa addToBatch */
+        void drawBatch();
 
     public:
         /** \brief Creates a new renderer
@@ -51,7 +59,7 @@ class Renderer
           * \param screenZ the z position of the virtual screen
           * \param projectionPointZ z coordinate of the projection point. This is the highest value for a point's z coord.
           */
-        Renderer(SDL_Renderer* renderer, int screenWidth, int screenHeight, float screenZ, float projectionPointZ);
+        Renderer(GPU_Target* screen, int screenWidth, int screenHeight, float screenZ, float projectionPointZ);
 
         /** \brief Renders a Tranform object to the screen.
           * \param toRender the transform that will be rendered

@@ -1,6 +1,7 @@
 #ifndef DISPLAYMANAGER_H
 #define DISPLAYMANAGER_H
-#include <SDL2/SDL.h>
+#include <SDL.h>
+#include <SDL_gpu.h>
 #include <memory>
 #include "EventListener.h"
 #include "EventManager.h"
@@ -13,8 +14,7 @@ class DisplayManager : public EventListener
         static constexpr float FPS_CAP = 60.0f;
         static std::unique_ptr<DisplayManager> instance;
 
-        SDL_Window* m_window = nullptr;
-        SDL_Renderer* m_renderer = nullptr;
+        GPU_Target* m_screen;
         TransitionManager* m_transitionManager = nullptr;
 
         EventManager* m_eventManager = nullptr;
@@ -37,9 +37,7 @@ class DisplayManager : public EventListener
 
         void startMainLoop();
 
-        SDL_Window* getWindow() const;
-
-        SDL_Renderer* getRenderer() const;
+        GPU_Target* getScreen() const;
 
         EventManager& getEventManager();
 
@@ -52,7 +50,6 @@ class DisplayManager : public EventListener
         virtual void onEvent(SDL_Event event) override;
 
         virtual ~DisplayManager();
-
 };
 
 #endif // DISPLAYMANAGER_H

@@ -40,7 +40,6 @@ class BreakingParticles : AbstractRenderable
         virtual void render() override;
 
         virtual ~BreakingParticles();
-
 };
 
 #endif // BREAKINGPARTICLES_H

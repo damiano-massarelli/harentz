@@ -12,6 +12,7 @@
 #include "Player.h"
 #include "PieceManager.h"
 #include "StarField.h"
+#include <SDL_gpu.h>
 
 class GameScene : public Scene
 {
@@ -36,7 +37,7 @@ class GameScene : public Scene
     public:
         GameScene();
 
-        virtual void onShow(SDL_Window* window, SDL_Renderer* renderer) override;
+        virtual void onShow(GPU_Target* screen) override;
 
         virtual void onEvent(SDL_Event e) override;
 

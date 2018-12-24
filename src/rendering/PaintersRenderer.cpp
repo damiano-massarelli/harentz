@@ -1,8 +1,8 @@
 #include "PaintersRenderer.h"
 #include <algorithm>
 
-PaintersRenderer::PaintersRenderer(SDL_Renderer* renderer, int screenWidth, int screenHeight, float screenZ, float projectionPointZ)
-    : Renderer{renderer, screenWidth, screenHeight, screenZ, projectionPointZ}
+PaintersRenderer::PaintersRenderer(GPU_Target* screen, int screenWidth, int screenHeight, float screenZ, float projectionPointZ)
+    : Renderer{screen, screenWidth, screenHeight, screenZ, projectionPointZ}
 {
     //ctor
 }
@@ -17,7 +17,9 @@ void PaintersRenderer::renderFaces(std::vector<pface>& faces)
     );
 
     for (const auto& face : faces)
-        drawFace(face.get());
+        addToBatch(face.get());
+
+    drawBatch();
 }
 
 

@@ -40,8 +40,6 @@ class PieceManager
         void movePieces(std::vector<std::unique_ptr<Piece>>& pieces, float deltaMS) const;
 
         virtual ~PieceManager();
-
-
 };
 
 #endif // PIECEGENERATOR_H

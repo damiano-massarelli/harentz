@@ -2,12 +2,12 @@
 #define PAINTERSRENDERER_H
 #include "Renderer.h"
 #include <vector>
-#include "SDL2/SDL.h"
+#include <SDL_gpu.h>
 
 class PaintersRenderer : public Renderer
 {
     public:
-        PaintersRenderer(SDL_Renderer* renderer, int screenWidth, int screenHeight, float screenZ, float projectionPointZ);
+        PaintersRenderer(GPU_Target* screen, int screenWidth, int screenHeight, float screenZ, float projectionPointZ);
 
         virtual void renderFaces(std::vector<pface>& faces) override;
 

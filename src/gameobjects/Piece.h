@@ -5,7 +5,7 @@
 #include "Transform.h"
 #include <vector>
 #include <memory>
-#include <SDL2/SDL.h>
+#include <SDL.h>
 
 class Piece : public Transform
 {

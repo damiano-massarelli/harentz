@@ -14,7 +14,7 @@ int collidingCube(const Piece* piece, const Player* player)
       * of it. Hence, we use the only cube the player has to detect collisions */
     const Transform* playerCube = player->getChildren()[0];
 
-    for (int i = 0; i < children.size(); i++) {
+    for (std::size_t i = 0; i < children.size(); i++) {
         if (sphereDetection(children[i], playerCube, (Piece::getCubeSide()/2) * 0.9f)) { // Collision found return the index
             return i;
         }

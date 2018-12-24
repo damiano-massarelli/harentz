@@ -1,6 +1,6 @@
 #ifndef POINTLIGHT_H
 #define POINTLIGHT_H
-#include <SDL2/SDL.h>
+#include <SDL.h>
 #include <vector>
 #include "Point3.h"
 #include "Face.h"

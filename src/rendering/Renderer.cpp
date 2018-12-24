@@ -4,7 +4,7 @@
 #include "Face.h"
 #include <drawers.h>
 
-Renderer::Renderer(SDL_Renderer* renderer,int screenWidth, int screenHeight, float screenZ, float projectionPointZ) : m_renderer{renderer},
+Renderer::Renderer(GPU_Target* screen, int screenWidth, int screenHeight, float screenZ, float projectionPointZ) : m_screen{screen},
                                                 m_screenWidth{screenWidth}, m_screenHeight{screenHeight},
                                                 m_projectionPointZ{projectionPointZ}, m_screenZ{screenZ}
 {
@@ -79,26 +79,47 @@ void Renderer::renderToScreen()
     m_faces.clear(); // Clears the faces created in the method render
 }
 
-void Renderer::drawFace(const Face* face)
+void Renderer::addToBatch(const Face* face)
 {
-    std::vector<SDL_Point> projectedPoints;
     SDL_Point projected;
     SDL_Color faceColor = face->getFillColor();
-    // Iterates through the vertices and projects them onto the screen.
-    for (const auto& vertex : face->getVertices()) {
-        project(vertex, projected);
-        projectedPoints.push_back(projected);
-    }
-    // A face has only three edges (despite its 4 vertices). The last edge from the last vertex to the first one is added here
-    projectedPoints.push_back(projectedPoints[0]);
+
     if (this->m_light)
         faceColor = m_light->getColorForFace(face, faceColor);
 
-    outlineAndFillDrawer(m_renderer, projectedPoints, faceColor, face->getOutlineColor());
+    // The current number of vertices. /6: each vertex is represented by 6 values x, y, r, g, b, a
+    unsigned short i = static_cast<unsigned short>(m_vertexBatch.size()/6);
+
+    // Iterates through the vertices and projects them onto the screen.
+    for (const auto& vertex : face->getVertices()) {
+        project(vertex, projected);
+
+        // adds the projected vertex and the color for that vertex (which is actually the color of the face "normalized")
+        m_vertexBatch.insert(m_vertexBatch.end(), {projected.x/1.0f, projected.y/1.0f,
+                             faceColor.r/255.0f, faceColor.g/255.0f, faceColor.b/255.0f, faceColor.a/255.0f});
+    }
+
+    // Adds the indices of the vertices in order to create two triangles
+    m_indexBatch.insert(m_indexBatch.end(), {i, static_cast<unsigned short>(i+1),
+                        static_cast<unsigned short>(i+2), i,
+                        static_cast<unsigned short>(i+2), static_cast<unsigned short>(i+3)});
 }
 
+void Renderer::drawBatch()
+{
+    unsigned short numVertices = static_cast<unsigned short>(m_vertexBatch.size()/6);
+    unsigned int numIndices = static_cast<unsigned int>(m_indexBatch.size());
+
+    // Draws triangles in batches
+    GPU_TriangleBatch(nullptr, m_screen, numVertices, m_vertexBatch.data(), numIndices, m_indexBatch.data(), GPU_BATCH_XY_RGBA);
+
+    // Clears the data for already drawn batches
+    m_vertexBatch.clear();
+    m_indexBatch.clear();
+}
 
 Renderer::~Renderer()
 {
 
 }
+

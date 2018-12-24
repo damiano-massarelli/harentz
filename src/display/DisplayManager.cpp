@@ -20,35 +20,18 @@ DisplayManager* DisplayManager::getInstance()
 
 int DisplayManager::screenWidth()
 {
-    int width = -1;
-    SDL_GetWindowSize(getInstance()->getWindow(), &width, nullptr);
-    return width;
+    return getInstance()->m_screen->w;
 }
 
 int DisplayManager::screenHeight()
 {
-    int height = -1;
-    SDL_GetWindowSize(getInstance()->getWindow(), nullptr, &height);
-    return height;
+    return getInstance()->m_screen->h;
 }
 
 
 DisplayManager::DisplayManager(const std::string& title, int displayWidth, int displayHeight)
 {
-    if (SDL_Init(SDL_INIT_VIDEO) < 0)
-        std::cout << SDL_GetError();
-
-    SDL_Window *window = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, displayWidth, displayHeight, SDL_WINDOW_SHOWN);
-    if (window == nullptr)
-        std::cout << SDL_GetError() << "\n";
-
-    m_window = window;
-    SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_SOFTWARE);
-    if (renderer == nullptr)
-        std::cout << SDL_GetError() << "\n";
-
-    m_renderer = renderer;
-    SDL_SetRenderDrawBlendMode(m_renderer, SDL_BLENDMODE_BLEND);
+    m_screen = GPU_Init(displayWidth, displayHeight, GPU_DEFAULT_INIT_FLAGS);
 
     m_eventManager = new EventManager{};
     m_transitionManager = new TransitionManager{};
@@ -84,14 +67,9 @@ void DisplayManager::onEvent(SDL_Event event) {
         quit();
 }
 
-SDL_Window* DisplayManager::getWindow() const
+GPU_Target* DisplayManager::getScreen() const
 {
-    return m_window;
-}
-
-SDL_Renderer* DisplayManager::getRenderer() const
-{
-    return m_renderer;
+    return m_screen;
 }
 
 void DisplayManager::setCurrentScene(Scene* scene)
@@ -102,7 +80,7 @@ void DisplayManager::setCurrentScene(Scene* scene)
     }
     m_currentScene = scene;
     if (scene != nullptr)
-        m_currentScene->onShow(m_window, m_renderer);
+        m_currentScene->onShow(m_screen);
 }
 
 
@@ -115,15 +93,10 @@ void DisplayManager::quit()
     delete m_transitionManager;
     m_transitionManager = nullptr;
 
-    SDL_DestroyRenderer(m_renderer);
-    m_renderer = nullptr;
-    SDL_DestroyWindow(m_window);
-    m_window = nullptr;
-
     delete m_eventManager;
     m_eventManager = nullptr;
 
-    SDL_Quit();
+    GPU_Quit();
 }
 
 EventManager& DisplayManager::getEventManager()
@@ -138,5 +111,6 @@ TransitionManager& DisplayManager::getTransitionManager()
 
 DisplayManager::~DisplayManager()
 {
-    quit();
+    if (!m_quit)
+        quit();
 }

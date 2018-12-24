@@ -13,8 +13,7 @@ Scene::Scene()
 void Scene::onEvent(SDL_Event e)
 {
     // Clears the screen
-    SDL_SetRenderDrawColor(m_sdlRenderer, m_bgColor.r, m_bgColor.g, m_bgColor.b, 255);
-    SDL_RenderClear(m_sdlRenderer);
+    GPU_ClearColor(m_screen, m_bgColor);
 
     if (e.type == EventManager::ENTER_FRAME_EVENT) {
         for (auto& renderable : m_renderList)
@@ -24,7 +23,7 @@ void Scene::onEvent(SDL_Event e)
     onRenderingComplete();
 
     // Render
-    SDL_RenderPresent(m_sdlRenderer);
+    GPU_Flip(m_screen);
 }
 
 void Scene::add(AbstractRenderable* renderable)
@@ -38,9 +37,9 @@ void Scene::remove(AbstractRenderable* renderable)
     m_renderList.erase(std::remove(m_renderList.begin(), m_renderList.end(), renderable), m_renderList.end());
 }
 
-void Scene::onShow(SDL_Window* window, SDL_Renderer* renderer)
+void Scene::onShow(GPU_Target* screen)
 {
-    m_sdlRenderer = renderer;
+    m_screen = screen;
 
     // register the enter frame event
     m_eventCrumb = DisplayManager::getInstance()->getEventManager().addListenerFor(EventManager::ENTER_FRAME_EVENT, this, true);
@@ -51,9 +50,9 @@ void Scene::setBgColor(const SDL_Color& color)
     m_bgColor = color;
 }
 
-SDL_Renderer* Scene::getSDLRenderer()
+GPU_Target* Scene::getScreen()
 {
-    return m_sdlRenderer;
+    return m_screen;
 }
 
 

@@ -1,7 +1,8 @@
 #ifndef STARFIELD_H
 #define STARFIELD_H
 #include "Point3.h"
-#include "SDL2/SDL.h"
+#include <SDL.h>
+#include <SDL_gpu.h>
 #include "AbstractRenderable.h"
 #include <memory>
 #include <vector>
@@ -19,13 +20,13 @@ class StarField : public AbstractRenderable
         static const SDL_Color INITIAL_COLOR;
         static const SDL_Color FINAL_COLOR;
 
-        SDL_Renderer* m_renderer;
+        GPU_Target* m_screen;
         std::vector<std::unique_ptr<Star>> m_stars;
 
         float m_updatePositionSpeed = 0; ///< the speed to use to update the position of the stars. Based on elapsedMs (see update)
 
     public:
-        StarField(SDL_Renderer* renderer, int numOfStars = 200);
+        StarField(GPU_Target* screen, int numOfStars = 200);
 
         virtual void render() override;
 

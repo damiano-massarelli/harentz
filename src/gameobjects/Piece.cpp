@@ -63,7 +63,6 @@ SDL_Color Piece::readPieceColor(const std::string& shape)
     return SDL_Color{channels[0], channels[1], channels[2], channels[3]};
 }
 
-
 Piece::Piece(Renderer* renderer, const std::string& shape) : Transform{nullptr}
 {
     setRenderer(renderer);
@@ -106,7 +105,7 @@ Piece::Piece(Renderer* renderer, const std::string& shape) : Transform{nullptr}
                                 SDL_Color current = this->getFillColor();
                                 current.a = alpha;
                                 this->setFillColor(current);
-                            },200.0f, nullptr, "game");
+                            }, 200.0f, nullptr, "game");
 }
 
 float Piece::xForLane(int lane) const

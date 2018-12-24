@@ -13,20 +13,20 @@ GameScene::GameScene()
 
 }
 
-void GameScene::onShow(SDL_Window* window, SDL_Renderer* renderer)
+void GameScene::onShow(GPU_Target* screen)
 {
-    Scene::onShow(window, renderer);
+    Scene::onShow(screen);
 
     int screenWidth = DisplayManager::screenWidth();
     int screenHeight = DisplayManager::screenHeight();
 
     // Renderer for pieces
-    m_3dRenderer = std::make_unique<BspRenderer>(renderer, screenWidth, screenHeight, SCREEN_Z, PROJECTION_POINT_Z);
+    m_3dRenderer = std::make_unique<BspRenderer>(screen, screenWidth, screenHeight, SCREEN_Z, PROJECTION_POINT_Z);
     m_3dRenderer->setLight(std::make_unique<PointLight>(Point3{0.0f, -120.0f, 0.0f}, SDL_Color{255, 255, 255, 255}, 0.15f));
     m_3dRenderer->setBackfaceCulling(std::make_unique<BackfaceCulling>(Point3{0.0f, 0.0f, PROJECTION_POINT_Z}, Point3{0.0f, 0.0f, 1.0f}));
 
     // Creates the renderer for the ground
-    m_groundRenderer = std::make_unique<PaintersRenderer>(renderer, screenWidth, screenHeight, SCREEN_Z, PROJECTION_POINT_Z);
+    m_groundRenderer = std::make_unique<PaintersRenderer>(screen, screenWidth, screenHeight, SCREEN_Z, PROJECTION_POINT_Z);
 
     // creates and adds the ground to the scene
     m_ground = std::make_unique<Ground>(m_groundRenderer.get(), screenWidth, screenHeight, NUMBER_OF_LANES);
@@ -43,7 +43,7 @@ void GameScene::onShow(SDL_Window* window, SDL_Renderer* renderer)
     // Piece manager
     m_pieceManager = std::make_unique<PieceManager>(m_3dRenderer.get(), m_spawnPoint, m_rotationMatrix);
 
-    m_starFieldEffect = std::make_unique<StarField>(renderer);
+    m_starFieldEffect = std::make_unique<StarField>(screen);
     add(m_starFieldEffect.get());
 }
 
