@@ -11,7 +11,7 @@ Renderer::Renderer(GPU_Target* screen, int screenWidth, int screenHeight, float 
 
 }
 
-void Renderer::project(const Point3& pt, SDL_Point& projectTo) const
+void Renderer::project(const Point3& pt, float& outX, float& outY) const
 {
     // perspective scaling factor
     float u = (m_projectionPointZ - m_screenZ) / (m_projectionPointZ - pt.z);
@@ -19,8 +19,8 @@ void Renderer::project(const Point3& pt, SDL_Point& projectTo) const
     float y = pt.y * u;
 
     // centers the projected points
-    projectTo.x = static_cast<int>(x + m_screenWidth/2);
-    projectTo.y = static_cast<int>(y + m_screenHeight/2);
+    outX = x + m_screenWidth/2;
+    outY = y + m_screenHeight/2;
 }
 
 
@@ -91,12 +91,21 @@ void Renderer::addToBatch(const Face* face)
     unsigned short i = static_cast<unsigned short>(m_vertexBatch.size()/6);
 
     // Iterates through the vertices and projects them onto the screen.
+    float projectedX = 0;
+    float projectedY = 0;
     for (const auto& vertex : face->getVertices()) {
-        project(vertex, projected);
+        project(vertex, projectedX, projectedY);
 
         // adds the projected vertex and the color for that vertex (which is actually the color of the face "normalized")
-        m_vertexBatch.insert(m_vertexBatch.end(), {projected.x/1.0f, projected.y/1.0f,
+        m_vertexBatch.insert(m_vertexBatch.end(), {projectedX, projectedY,
                              faceColor.r/255.0f, faceColor.g/255.0f, faceColor.b/255.0f, faceColor.a/255.0f});
+    }
+
+    // TODO: move this at the end of the batch rendering
+    for (int loopIndex = 0; loopIndex <= 3; loopIndex++) {
+        int sIndex = i*6 + loopIndex * 6;
+        int eIndex = i*6 + ((loopIndex + 1) % 4) * 6;
+        GPU_Line(m_screen, m_vertexBatch[sIndex], m_vertexBatch[sIndex + 1], m_vertexBatch[eIndex], m_vertexBatch[eIndex+1], face->getOutlineColor());
     }
 
     // Adds the indices of the vertices in order to create two triangles

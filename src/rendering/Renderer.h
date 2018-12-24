@@ -35,9 +35,10 @@ class Renderer
 
         /** \brief Projects a 3D point to a 2D point
           * \param pt the point to project
-          * \param projectTo where pt is going to be projected. This is the output of this function.
+          * \param outX the x position of the projected point. This is the output of this function.
+          * \param outY the y position of the projected point. This is the output of this function.
           */
-        void project(const Point3& pt, SDL_Point& projectTo) const;
+        void project(const Point3& pt, float& outX, float& outY) const;
 
     protected:
          /** \brief draws the passed faces sorting them as to provide a depth effect */
