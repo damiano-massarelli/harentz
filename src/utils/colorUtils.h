@@ -1,6 +1,6 @@
 #ifndef COLORUTILS_H
 #define COLORUTILS_H
-#include <SDL2/SDL.h>
+#include <SDL.h>
 #include <iostream>
 
 SDL_Color operator*(const SDL_Color& color1, const SDL_Color& color2);

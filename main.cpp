@@ -1,5 +1,6 @@
 #include <iostream>
-#include <SDL2/SDL.h>
+#include <SDL.h>
+#include <SDL_gpu.h>
 #include "DisplayManager.h"
 #include "GameScene.h"
 #include "constants.h"

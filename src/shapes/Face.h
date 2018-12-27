@@ -2,7 +2,7 @@
 #define POLYGON_H
 #include <vector>
 #include "Point3.h"
-#include <SDL2/SDL.h>
+#include <SDL.h>
 
 class Face
 {

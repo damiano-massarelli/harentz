@@ -3,6 +3,7 @@
 #include <algorithm>
 #include "Face.h"
 #include <drawers.h>
+#include <utility>
 
 Renderer::Renderer(GPU_Target* screen, int screenWidth, int screenHeight, float screenZ, float projectionPointZ) : m_screen{screen},
                                                 m_screenWidth{screenWidth}, m_screenHeight{screenHeight},
@@ -81,37 +82,71 @@ void Renderer::renderToScreen()
 
 void Renderer::addToBatch(const Face* face)
 {
-    SDL_Point projected;
+    std::vector<std::pair<float, float>> projectedPoints; // 2d projected points: used to draw outline
     SDL_Color faceColor = face->getFillColor();
 
     if (this->m_light)
         faceColor = m_light->getColorForFace(face, faceColor);
 
     // The current number of vertices. /6: each vertex is represented by 6 values x, y, r, g, b, a
-    unsigned short i = static_cast<unsigned short>(m_vertexBatch.size()/6);
+    unsigned short firstVertIndex = static_cast<unsigned short>(m_vertexBatch.size()/6);
 
     // Iterates through the vertices and projects them onto the screen.
     float projectedX = 0;
     float projectedY = 0;
     for (const auto& vertex : face->getVertices()) {
         project(vertex, projectedX, projectedY);
+        projectedPoints.push_back(std::make_pair(projectedX, projectedY));
 
         // adds the projected vertex and the color for that vertex (which is actually the color of the face "normalized")
         m_vertexBatch.insert(m_vertexBatch.end(), {projectedX, projectedY,
                              faceColor.r/255.0f, faceColor.g/255.0f, faceColor.b/255.0f, faceColor.a/255.0f});
     }
 
-    // TODO: move this at the end of the batch rendering
-    for (int loopIndex = 0; loopIndex <= 3; loopIndex++) {
-        int sIndex = i*6 + loopIndex * 6;
-        int eIndex = i*6 + ((loopIndex + 1) % 4) * 6;
-        GPU_Line(m_screen, m_vertexBatch[sIndex], m_vertexBatch[sIndex + 1], m_vertexBatch[eIndex], m_vertexBatch[eIndex+1], face->getOutlineColor());
-    }
-
     // Adds the indices of the vertices in order to create two triangles
-    m_indexBatch.insert(m_indexBatch.end(), {i, static_cast<unsigned short>(i+1),
-                        static_cast<unsigned short>(i+2), i,
-                        static_cast<unsigned short>(i+2), static_cast<unsigned short>(i+3)});
+    m_indexBatch.insert(m_indexBatch.end(), {
+                        firstVertIndex, static_cast<unsigned short>(firstVertIndex+1), static_cast<unsigned short>(firstVertIndex+2), // First tri
+                        firstVertIndex, static_cast<unsigned short>(firstVertIndex+2), static_cast<unsigned short>(firstVertIndex+3)}); // Second tri
+
+    addOutlineToBatch(projectedPoints, face->getOutlineColor());
+}
+
+void Renderer::addOutlineToBatch(const std::vector<std::pair<float, float>>& verts, const SDL_Color& color)
+{
+    if (color.a == 0) return; // do not draw
+
+    const float lineWidth = 1.0f;
+
+    float r = color.r/255.0f;
+    float g = color.g/255.0f;
+    float b = color.b/255.0f;
+    float a = color.a/255.0f;
+
+    for (std::size_t i = 0; i < verts.size(); ++i) {
+        // The current number of vertices. /6: each vertex is represented by 6 values x, y, r, g, b, a
+        unsigned short firstVertIndex = static_cast<unsigned short>(m_vertexBatch.size()/6);
+
+        const auto& start = verts[i];
+        const auto& end = verts[(i+1) % verts.size()];
+
+        // What follows are the components of a *2D* vector representing the line (its direction is the direction of the line)
+        Point3 lineVec{start.first - end.first, start.second - end.second, 0, 0};
+
+        // What follows are the component of a *2D* vector that is perpendicular to the lineVec one.
+        Point3 normVec = normalized(Point3{-lineVec.y, lineVec.x, 0, 0});
+
+        // Specifies how much to move from start and end to create the vertices of the triangles
+        Point3 moveVec = normVec * lineWidth;
+        m_vertexBatch.insert(m_vertexBatch.end(), {start.first - moveVec.x / 2, start.second - moveVec.y / 2, r, g, b, a});
+        m_vertexBatch.insert(m_vertexBatch.end(), {start.first + moveVec.x / 2, start.second + moveVec.y / 2, r, g, b, a});
+
+        m_vertexBatch.insert(m_vertexBatch.end(), {end.first - moveVec.x / 2, end.second - moveVec.y / 2, r, g, b, a});
+        m_vertexBatch.insert(m_vertexBatch.end(), {end.first + moveVec.x / 2, end.second + moveVec.y / 2, r, g, b, a});
+
+        // Creates a line using two triangles
+        m_indexBatch.insert(m_indexBatch.end(), {firstVertIndex, static_cast<unsigned short>(firstVertIndex+1),  static_cast<unsigned short>(firstVertIndex+2), // first tri
+                             static_cast<unsigned short>(firstVertIndex+2),  static_cast<unsigned short>(firstVertIndex+1),  static_cast<unsigned short>(firstVertIndex+3)});
+    }
 }
 
 void Renderer::drawBatch()

@@ -1,7 +1,7 @@
 #include "drawers.h"
 #include <algorithm>
 #include "DisplayManager.h"
-#include <SDL2/SDL2_gfxPrimitives.h>
+#include <SDL2_gfxPrimitives.h>
 #include <vector>
 
 #include<iostream>

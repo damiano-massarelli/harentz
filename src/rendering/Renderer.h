@@ -44,6 +44,12 @@ class Renderer
          /** \brief draws the passed faces sorting them as to provide a depth effect */
         virtual void renderFaces(std::vector<pface>& faces) = 0;
 
+        /** \brief adds the lines that are used to outline a face to the batch
+          * \param verts the 2d vertices of the face
+          * \param color the color of the lines
+          * Lines are also represented as triangles so that they can be batched together with the faces */
+        void addOutlineToBatch(const std::vector<std::pair<float, float>>& verts, const SDL_Color& color);
+
         /** \brief adds the face to the batch of faces to draw
           * \sa drawBatch */
         void addToBatch(const Face* face);

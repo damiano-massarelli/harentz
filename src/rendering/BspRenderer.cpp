@@ -1,7 +1,7 @@
 #include "BspRenderer.h"
 #include "Face.h"
 #include "drawers.h"
-#include "SDL2/SDL.h"
+#include <SDL.h>
 #include <vector>
 #include "BSPTree.h"
 

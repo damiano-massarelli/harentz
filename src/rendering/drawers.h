@@ -1,7 +1,7 @@
 #ifndef DRAWERS_H
 #define DRAWERS_H
 #include <vector>
-#include <SDL2/SDL.h>
+#include <SDL.h>
 
 /** \brief fills the given polygon.
   * \param the vertices of a *closed* polygon (the last vertex must coincide with the first)

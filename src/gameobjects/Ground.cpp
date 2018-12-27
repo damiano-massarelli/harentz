@@ -1,7 +1,6 @@
 #include "Ground.h"
 #include <vector>
 #include "Mat4.h"
-
 #include <cmath>
 
 /*

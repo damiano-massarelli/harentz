@@ -5,7 +5,7 @@
 #include <vector>
 #include "Mat4.h"
 #include "AbstractRenderable.h"
-#include <SDL2/SDL.h>
+#include <SDL.h>
 #include <memory>
 
 class Renderer;

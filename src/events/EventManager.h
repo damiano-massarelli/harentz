@@ -3,7 +3,7 @@
 #include <map>
 #include <vector>
 #include <memory>
-#include <SDL2/SDL.h>
+#include <SDL.h>
 #include "EventListener.h"
 #include "EventListenerCrumb.h"
 

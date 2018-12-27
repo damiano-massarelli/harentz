@@ -3,7 +3,7 @@
 #include "EventManager.h"
 #include "AbstractRenderable.h"
 #include <algorithm>
-#include <SDL2/SDL.h>
+#include <SDL.h>
 
 Scene::Scene()
 {

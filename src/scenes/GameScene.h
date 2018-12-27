@@ -31,9 +31,6 @@ class GameScene : public Scene
         Point3 m_spawnPoint; ///< the point where new pieces are spawned, only y and z are relevant.
         Mat4 m_rotationMatrix; ///< the matrix used by all the rotated objects
 
-        int elapsedFrames = 0;
-
-
     public:
         GameScene();
 

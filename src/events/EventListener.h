@@ -1,6 +1,6 @@
 #ifndef EVENTLISTENER_H
 #define EVENTLISTENER_H
-#include <SDL2/SDL.h>
+#include <SDL.h>
 
 /** \brief A simple interface for objects desiring to receive event notifications */
 class EventListener
