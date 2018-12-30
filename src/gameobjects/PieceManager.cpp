@@ -44,7 +44,6 @@ std::unique_ptr<Piece> PieceManager::generatePiece(float deltaMS)
 
 void PieceManager::movePieces(std::vector<std::unique_ptr<Piece>>& pieces, float deltaMS) const
 {
-    std::cout << "num of pieces " << pieces.size() << "\n";
     float speed = SPEED * (deltaMS/1000);
 
     if (speed > 100000.0f || std::isnan(speed)) return; // sometimes (e.g first frame) this value can be too high, ignore it

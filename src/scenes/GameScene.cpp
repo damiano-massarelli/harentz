@@ -8,6 +8,8 @@
 #include "BspRenderer.h"
 #include "PaintersRenderer.h"
 
+#include "Text.h"
+
 GameScene::GameScene()
 {
 
@@ -45,6 +47,10 @@ void GameScene::onShow(GPU_Target* screen)
 
     m_starFieldEffect = std::make_unique<StarField>(screen);
     add(m_starFieldEffect.get());
+
+    Text* t = new Text{screen, "resources/font/ciccio"};
+    t->setText("ciao come va? io sto bene");
+    add(t);
 }
 
 void GameScene::onEvent(SDL_Event e)
@@ -69,8 +75,8 @@ void GameScene::onEvent(SDL_Event e)
 
 void GameScene::onRenderingComplete()
 {
-    m_groundRenderer->renderToScreen();
-    m_3dRenderer->renderToScreen();
+    //m_groundRenderer->renderToScreen();
+    //m_3dRenderer->renderToScreen();
     for (auto& piece : m_pieces) {
         int collidingCubeIndex = collidingCube(piece.get(), m_player.get());
         if (collidingCubeIndex != -1) {
@@ -78,6 +84,11 @@ void GameScene::onRenderingComplete()
             SDL_Color particleColor = piece->getChildren()[collidingCubeIndex]->getFillColor();
             add(BreakingParticles::create(m_groundRenderer.get(), collisionPoint, particleColor, 10));
             piece->removeCube(collidingCubeIndex);
+
+            // Change the number of lives of the player
+            if (m_player->getLives() > 0)
+                m_player->setLives(m_player->getLives() - 1);
+            // TODO: else explode the player and game over
         }
     }
 }

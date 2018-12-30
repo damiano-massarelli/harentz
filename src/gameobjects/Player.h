@@ -14,6 +14,8 @@ class Player : public Piece, public EventListener
         static const int MOVE_BY = 150.f; ///< defines how much the player is moved inwards (distance from bottom of screen)
         int m_currentLane;  ///< the lane of the player
         bool m_flying = false; ///< is the player flying?
+        int m_lives = 3;
+
         Point3 m_upDirection; ///< the direction to follow when the cube is moved upwards
 
         std::unique_ptr<EventListenerCrumb> m_keydownListenerCrumb; ///< crumb for key events
@@ -23,6 +25,10 @@ class Player : public Piece, public EventListener
         Player(Renderer* renderer, const Mat4& rotationMatrix);
 
         void onEvent(SDL_Event e) override;
+
+        void setLives(int lives);
+
+        int getLives();
 
         virtual ~Player();
 };
