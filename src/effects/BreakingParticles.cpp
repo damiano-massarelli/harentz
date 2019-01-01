@@ -34,7 +34,7 @@ AbstractRenderable* BreakingParticles::create(Renderer* renderer, const Point3& 
                              [particle = std::shared_ptr<BreakingParticles>(particleEffect)](float f) {
                                 particle->update(f);
                              },
-                             500.0f,
+                             575.0f,
                              nullptr,
                              "game");
 

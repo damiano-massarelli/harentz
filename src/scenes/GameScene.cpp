@@ -48,8 +48,8 @@ void GameScene::onShow(GPU_Target* screen)
     m_starFieldEffect = std::make_unique<StarField>(screen);
     add(m_starFieldEffect.get());
 
-    Text* t = new Text{screen, "resources/font/ciccio"};
-    t->setText("ciao come va? io sto bene");
+    Text* t = new Text{screen, "resources/font/pixelUnicode"};
+    t->setText("Hi there! I'm a text\nAnd I'm a new line. How exciting");
     add(t);
 }
 
@@ -75,8 +75,8 @@ void GameScene::onEvent(SDL_Event e)
 
 void GameScene::onRenderingComplete()
 {
-    //m_groundRenderer->renderToScreen();
-    //m_3dRenderer->renderToScreen();
+    m_groundRenderer->renderToScreen();
+    m_3dRenderer->renderToScreen();
     for (auto& piece : m_pieces) {
         int collidingCubeIndex = collidingCube(piece.get(), m_player.get());
         if (collidingCubeIndex != -1) {

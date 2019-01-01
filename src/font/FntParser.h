@@ -15,7 +15,8 @@ struct CharData {
     int xadvance; ///< how much the cursor should advance
 };
 
-/** \brief a parser for .fnt files */
+/** \brief a parser for .fnt files
+  * .fnt files can be generated using http://www.angelcode.com/products/bmfont/documentation.html */
 class FntParser
 {
     private:
@@ -24,8 +25,10 @@ class FntParser
         static std::regex CHAR_REG; ///< matches the "char" part
         static std::regex NUM_OF_CHARS_REG; ///< matches the "chars count" part
         static std::regex PAGE_REG; ///< matches the "page" part
+        static std::regex KERNINGS_REG; ///< matches for "kernings" page
 
         std::map<int, CharData> m_char2data; ///< data for each char
+        std::map<std::pair<int, int>, int> m_kernings; ///< maps a pair of char codes to the amount the second should be moved on the x axis
         std::string m_textureFileName;
         int m_lineHeight = 0; ///< the height of each line
         float m_spaceWidth = 0.0f; ///< the width of a space (to increase the cursor)
@@ -46,6 +49,9 @@ class FntParser
         /** \brief parses the "page" part of a .fnt file */
         void parsePage(const std::smatch& matches);
 
+        /** \brief parses the "kerning" part of a .fnt file */
+        void parseKerning(const std::smatch& matches);
+
     public:
         FntParser(const std::string& fontName);
 
@@ -59,8 +65,17 @@ class FntParser
           * \sa CharData */
         const CharData* getDataForChar(int charId) const;
 
+        /** \brief returns the kerning distance between two characters
+          * \param prevChar the character preceding the current one
+          * \param currentChar the character that is being rendered
+          * \return the kerning distance for these two characters. 0 if it is not defined */
+        const int getKerningSpace(int prevChar, int currentChar) const;
+
         /** \brief returns the x offset for the space character */
         const float getOffsetForSpace() const;
+
+        /** \brief returns the height of a line */
+        const int getLineHeight() const;
 
         virtual ~FntParser();
 

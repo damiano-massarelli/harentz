@@ -6,6 +6,7 @@ std::regex FntParser::COMMON_REG("common\\s+lineHeight=(\\d+)\\s+base=(\\d+)\\s+
 std::regex FntParser::CHAR_REG("char\\s+id=(\\d+)\\s+x=(\\d+)\\s+y=(\\d+)\\s+width=(\\d+)\\s+height=(\\d+)\\s+xoffset=(-?\\d+)\\s+yoffset=(-?\\d+)\\s+xadvance=(\\d+)\\s+page=(\\d+)\\s+chnl=(\\d+)");
 std::regex FntParser::NUM_OF_CHARS_REG("chars count=(\\d+)");
 std::regex FntParser::PAGE_REG("page\\s+id=(\\d+)\\s+file=\"(.*)\"");
+std::regex FntParser::KERNINGS_REG("kerning\\s+first=(\\d+)\\s+second=(\\d+)\\s+amount=(-?\\d+)");
 
 FntParser::FntParser(const std::string& fontName)
 {
@@ -44,6 +45,9 @@ void FntParser::parseFnt(std::stringstream& fontConfig)
         else if (std::regex_search(line, matches, CHAR_REG)) {
             parseChar(matches);
             numOfCharsFound++;
+        }
+        else if (std::regex_search(line, matches, KERNINGS_REG)) {
+            parseKerning(matches);
         }
     }
 
@@ -89,6 +93,15 @@ void FntParser::parseChar(const std::smatch& matches)
     m_char2data.insert(std::make_pair(id, data));
 }
 
+void FntParser::parseKerning(const std::smatch& matches)
+{
+    int prev = std::stoi(matches.str(1));
+    int current = std::stoi(matches.str(2));
+
+    int offset = std::stoi(matches.str(3));
+    m_kernings.insert(std::make_pair(std::make_pair(prev, current), offset));
+}
+
 const std::string& FntParser::getTextureFileName() const
 {
     return m_textureFileName;
@@ -103,9 +116,23 @@ const CharData* FntParser::getDataForChar(int charId) const
     return nullptr; // Not found :(
 }
 
+const int FntParser::getKerningSpace(int prevChar, int currentChar) const
+{
+    const auto& iter = m_kernings.find(std::make_pair(prevChar, currentChar));
+    if (iter == m_kernings.end())
+        return 0; // not found
+
+    return iter->second;
+}
+
 const float FntParser::getOffsetForSpace() const
 {
     return m_spaceWidth;
+}
+
+const int FntParser::getLineHeight() const
+{
+    return m_lineHeight;
 }
 
 FntParser::~FntParser()
