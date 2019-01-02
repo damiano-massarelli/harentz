@@ -83,6 +83,10 @@ void DisplayManager::setCurrentScene(Scene* scene)
         m_currentScene->onShow(m_screen);
 }
 
+Scene* DisplayManager::getCurrentScene()
+{
+    return m_currentScene;
+}
 
 void DisplayManager::quit()
 {

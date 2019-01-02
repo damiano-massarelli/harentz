@@ -45,6 +45,8 @@ class DisplayManager : public EventListener
 
         void setCurrentScene(Scene* scene);
 
+        Scene* getCurrentScene();
+
         void quit();
 
         virtual void onEvent(SDL_Event event) override;

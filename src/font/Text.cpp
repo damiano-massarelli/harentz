@@ -1,8 +1,6 @@
 #include "Text.h"
 #include "ioUtils.h"
 
-
-#include<iostream>
 Text::Text(GPU_Target* screen, const std::string& fontName) : m_screen{screen}, m_fntParser{fontName}
 {
     // Loads the texture

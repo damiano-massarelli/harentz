@@ -4,10 +4,13 @@
 #include <memory>
 #include <array>
 #include "Piece.h"
+#include "Player.h"
 #include "Renderer.h"
 #include "Point3.h"
 #include "Mat4.h"
 #include <string>
+
+class GameScene;
 
 /** \brief creates and moves pieces */
 class PieceManager
@@ -25,19 +28,23 @@ class PieceManager
         const Point3 m_spawnPoint;
         const Mat4 m_rotationMatrix;
 
+        std::vector<std::unique_ptr<Piece>> m_pieces;
+
+        /** \brief generates a new piece if enough time is elapsed
+          * \param deltaMS ms elapsed since last frame */
+        void generatePiece(float deltaMS, GameScene* GameScene);
+
+        /** \brief checks collision between a piece and the player */
+        void checkCollision(Piece* piece, Player* player);
+
     public:
         // Lists all the available pieces
         static const std::vector<std::string> m_pieceNames;
 
         PieceManager(Renderer* renderer, const Point3& spawnPoint, const Mat4& rotationMatrix);
 
-        /** \brief generates and returns a new piece
-          * \param deltaMS ms elapsed since last frame
-          * \return unique ptr to created piece or nullptr if a piece was not created. */
-        std::unique_ptr<Piece> generatePiece(float deltaMS);
-
-        /** \brief moves the pieces using the current speed */
-        void movePieces(std::vector<std::unique_ptr<Piece>>& pieces, float deltaMS) const;
+        /** \brief moves the pieces using the current speed and creates new ones if necessary */
+        void update(float deltaMS, GameScene* gameScene);
 
         virtual ~PieceManager();
 };

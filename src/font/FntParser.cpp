@@ -135,6 +135,7 @@ const int FntParser::getLineHeight() const
     return m_lineHeight;
 }
 
+
 FntParser::~FntParser()
 {
     //dtor

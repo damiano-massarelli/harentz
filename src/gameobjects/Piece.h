@@ -38,6 +38,9 @@ class Piece : public Transform
         /** \brief removes one of the cubes of this piece */
         void removeCube(int index);
 
+        /** \brief handles the collision with the player */
+        virtual void handleCollision(int collidedCubeIndex);
+
         virtual ~Piece();
 
 };

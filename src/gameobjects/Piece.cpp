@@ -6,6 +6,8 @@
 #include <functional>
 #include <LinearTransition.h>
 #include "ioUtils.h"
+#include "GameScene.h"
+#include "BreakingParticles.h"
 
 std::shared_ptr<Shape> Piece::CUBE_SHAPE;
 
@@ -124,6 +126,23 @@ void Piece::removeCube(int index)
 int Piece::getNumOfHorizontalCubes() const
 {
     return m_horizontalCubes;
+}
+
+void Piece::handleCollision(int collidedCubeIndex)
+{
+    GameScene* gameScene = static_cast<GameScene*>(DisplayManager::getInstance()->getCurrentScene()); // it must be the game scene
+
+    /* Creates the particle effect */
+    Point3 collisionPoint = getChildren()[collidedCubeIndex]->getWorldPosition();
+    SDL_Color particleColor = getChildren()[collidedCubeIndex]->getFillColor();
+    gameScene->add(BreakingParticles::create(gameScene->getEffectRenderer(), collisionPoint, particleColor, 10));
+
+    /* removes the cube that collided */
+    removeCube(collidedCubeIndex);
+
+    /* Decreases the number of lives of the player */
+    Player* player = gameScene->getPlayer();
+    player->setLives(player->getLives() - 1);
 }
 
 Piece::~Piece()

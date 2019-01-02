@@ -19,7 +19,7 @@ class GameScene : public Scene
     private:
         /* Pieces and ground use two different renderers so that pieces are always drawn above the ground */
         std::unique_ptr<Renderer> m_3dRenderer;
-        std::unique_ptr<Renderer> m_groundRenderer;
+        std::unique_ptr<Renderer> m_effectRenderer;
         std::vector<std::unique_ptr<Piece>> m_pieces;
         std::unique_ptr<Ground> m_ground;
         std::unique_ptr<Player> m_player;
@@ -41,6 +41,10 @@ class GameScene : public Scene
         virtual void onRenderingComplete() override;
 
         virtual void onRemove() override;
+
+        Renderer* getEffectRenderer();
+
+        Player* getPlayer();
 
         virtual ~GameScene();
 
