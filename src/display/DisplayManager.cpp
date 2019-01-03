@@ -64,7 +64,7 @@ void DisplayManager::startMainLoop()
 // Override from EventListener
 void DisplayManager::onEvent(SDL_Event event) {
     if (event.type == SDL_QUIT)
-        quit();
+        m_quit = true;
 }
 
 GPU_Target* DisplayManager::getScreen() const
@@ -90,8 +90,6 @@ Scene* DisplayManager::getCurrentScene()
 
 void DisplayManager::quit()
 {
-    m_quit = true; // quit main loop
-
     setCurrentScene(nullptr);
 
     delete m_transitionManager;
@@ -115,6 +113,5 @@ TransitionManager& DisplayManager::getTransitionManager()
 
 DisplayManager::~DisplayManager()
 {
-    if (!m_quit)
-        quit();
+    quit();
 }

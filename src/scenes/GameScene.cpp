@@ -1,6 +1,5 @@
 #include "GameScene.h"
 #include "Ground.h"
-#include "drawers.h"
 #include "constants.h"
 #include "DisplayManager.h"
 #include "BspRenderer.h"
@@ -56,7 +55,7 @@ void GameScene::onEvent(SDL_Event e)
     Scene::onEvent(e);
 
     float delta = (*(static_cast<Uint32*>(e.user.data1)));
-    std::cout << "fps " << 1000/delta << std::endl;
+    //std::cout << "fps " << 1000/delta << std::endl;
 
     m_starFieldEffect->update(delta);
 

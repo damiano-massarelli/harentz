@@ -10,7 +10,11 @@
 class EventManager
 {
     private:
+        /** m_event2listeners cannot be modified while iterating it. Two other support
+          * maps are used to temporarily store values to add and remove */
         std::map<SDL_EventType, std::vector<EventListener*>> m_event2listeners;
+        std::map<SDL_EventType, std::vector<EventListener*>> m_toAdd;
+        std::map<SDL_EventType, std::vector<EventListener*>> m_toRemove;
 
     public:
         static const SDL_EventType ENTER_FRAME_EVENT;
@@ -21,7 +25,7 @@ class EventManager
 
         void removeListenerFor(SDL_EventType event, EventListener* listener);
 
-        void dispatchEvents() const;
+        void dispatchEvents();
 
         void pushEnterFrameEvent(Uint32* deltaMillis) const;
 

@@ -6,6 +6,7 @@
 #include "constants.h"
 #include "GameScene.h"
 #include "collisionDetection.h"
+#include "BonusPiece.h"
 
 const float PieceManager::GENERATE_DECREASE_FACTOR = 0.98f;
 const float PieceManager::GENERATE_INITIAL_INTERVAL = 1500.0f;
@@ -27,7 +28,8 @@ void PieceManager::generatePiece(float deltaMS, GameScene* gameScene)
     std::unique_ptr<Piece> piece;
     if (m_elapsedFromLast > m_generateEveryMS) {
         int pieceIndex = (std::rand() / ((RAND_MAX + 1u)/m_pieceNames.size()));
-        piece = std::make_unique<Piece>(m_renderer, m_pieceNames[pieceIndex]);
+        //piece = std::make_unique<Piece>(m_renderer, m_pieceNames[pieceIndex]);
+        piece = std::make_unique<BonusPiece>(m_renderer);
 
         // Selects a lane for the piece
         int lane = (std::rand() / ((RAND_MAX + 1u)/(NUMBER_OF_LANES - piece->getNumOfHorizontalCubes() + 1)));
