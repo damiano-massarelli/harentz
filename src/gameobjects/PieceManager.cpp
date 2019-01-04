@@ -7,6 +7,8 @@
 #include "GameScene.h"
 #include "collisionDetection.h"
 #include "BonusPiece.h"
+#include "constants.h"
+#include "randomUtils.h"
 
 const float PieceManager::GENERATE_DECREASE_FACTOR = 0.98f;
 const float PieceManager::GENERATE_INITIAL_INTERVAL = 1500.0f;
@@ -27,12 +29,12 @@ void PieceManager::generatePiece(float deltaMS, GameScene* gameScene)
     m_elapsedFromLast += deltaMS;
     std::unique_ptr<Piece> piece;
     if (m_elapsedFromLast > m_generateEveryMS) {
-        int pieceIndex = (std::rand() / ((RAND_MAX + 1u)/m_pieceNames.size()));
+        int pieceIndex = randRangeInt(0, m_pieceNames.size());
         //piece = std::make_unique<Piece>(m_renderer, m_pieceNames[pieceIndex]);
         piece = std::make_unique<BonusPiece>(m_renderer);
 
         // Selects a lane for the piece
-        int lane = (std::rand() / ((RAND_MAX + 1u)/(NUMBER_OF_LANES - piece->getNumOfHorizontalCubes() + 1)));
+        int lane = randRangeInt(0, NUMBER_OF_LANES - piece->getNumOfHorizontalCubes() + 1);
 
         // Place and rotate the piece
         piece->setPosition(Point3{piece->xForLane(lane), m_spawnPoint.y, m_spawnPoint.z});
@@ -60,11 +62,24 @@ void PieceManager::update(float deltaMS, GameScene* gameScene)
     if (speed > 100000.0f || std::isnan(speed)) return; // sometimes (e.g first frame) this value can be too high, ignore it
     /* Iterates through the pieces moving them and removing the elements whose z is less than -200.0f */
     for (auto it = m_pieces.begin(); it != m_pieces.end(); ) {
-        Point3 curr = (*it)->getWorldPosition();
-        curr = curr + ((m_rotationMatrix * Point3{0.0f, 0.0f, -1.0f}) * speed);
-        (*it)->setPosition(curr);
+        Point3 currPos = (*it)->getWorldPosition();
+        Point3 nextPos = currPos + ((m_rotationMatrix * Point3{0.0f, 0.0f, -1.0f}) * speed);
+
+        /* Adds score if the piece has gone behind the player
+         * The score added is the result of SCORE_PER_PIECE multiplied by the
+         * number of cubes composing the piece */
+        float playerZ = gameScene->getPlayer()->getWorldPosition().z;
+        if (currPos.z > playerZ && nextPos.z < playerZ)
+            gameScene->incrementScore(SCORE_PER_PIECE * (*it)->getChildren().size());
+
+        // Updates the position
+        (*it)->setPosition(nextPos);
+
+        // Checks collisions
         checkCollision((*it).get(), gameScene->getPlayer());
-        if (curr.z <= -200.0f)
+
+        // Removes pieces that are too far away
+        if (nextPos.z <= -200.0f)
             it = m_pieces.erase(it); // Renderable objects remove themselves from the scene when they are destroyed
         else
             ++it;

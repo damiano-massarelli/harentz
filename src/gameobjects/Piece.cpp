@@ -44,6 +44,7 @@ std::shared_ptr<Shape> Piece::getCubeShape()
                          1, 4, 5, 2, // right face
                          0, 3, 7, 6, // left face
                          0, 1, 2, 3, // front face
+                         7, 5, 4, 6, // back face
                          0, 6, 4, 1}}); // top face
     }
 

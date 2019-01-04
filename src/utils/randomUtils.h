@@ -7,4 +7,6 @@
   * \return a value in [start, end) */
 float randRange(float start, float end);
 
+int randRangeInt(int start, int end);
+
 #endif // RANDOM_H

@@ -4,8 +4,7 @@
 #include "DisplayManager.h"
 #include "BspRenderer.h"
 #include "PaintersRenderer.h"
-
-#include "Text.h"
+#include <sstream>
 
 GameScene::GameScene()
 {
@@ -45,9 +44,9 @@ void GameScene::onShow(GPU_Target* screen)
     m_starFieldEffect = std::make_unique<StarField>(screen);
     add(m_starFieldEffect.get());
 
-    Text* t = new Text{screen, "resources/font/pixelUnicode"};
-    t->setText("Hi there! I'm a text\nAnd I'm a new line. How exciting");
-    add(t);
+    m_scoreText = std::make_unique<Text>(screen, "resources/font/pixelUnicode");
+    m_scoreText->setText("Score: 0");
+    add(m_scoreText.get());
 }
 
 void GameScene::onEvent(SDL_Event e)
@@ -61,6 +60,9 @@ void GameScene::onEvent(SDL_Event e)
 
     // Moves all the pieces towards the player
     m_pieceManager->update(delta, this);
+
+    // Updates the
+    m_scoreText->setText("Score: " + std::to_string(m_score));
 }
 
 void GameScene::onRenderingComplete()
@@ -84,6 +86,11 @@ Renderer* GameScene::getEffectRenderer()
 Player* GameScene::getPlayer()
 {
     return m_player.get();
+}
+
+void GameScene::incrementScore(int inc)
+{
+    m_score += inc;
 }
 
 GameScene::~GameScene()

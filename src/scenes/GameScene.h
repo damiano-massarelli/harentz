@@ -3,16 +3,18 @@
 #include "Scene.h"
 #include "Renderer.h"
 #include "Piece.h"
-#include <iostream>
 #include <memory>
-#include <vector>
 #include "Ground.h"
 #include "Point3.h"
 #include "Mat4.h"
 #include "Player.h"
 #include "PieceManager.h"
 #include "StarField.h"
+#include "Text.h"
+#include "constants.h"
 #include <SDL_gpu.h>
+#include <vector>
+#include <iostream>
 
 class GameScene : public Scene
 {
@@ -28,8 +30,12 @@ class GameScene : public Scene
 
         std::unique_ptr<StarField> m_starFieldEffect;
 
+        std::unique_ptr<Text> m_scoreText; ///< the text containing the current score
+
         Point3 m_spawnPoint; ///< the point where new pieces are spawned, only y and z are relevant.
         Mat4 m_rotationMatrix; ///< the matrix used by all the rotated objects
+
+        int m_score = 0; ///< the score of the player
 
     public:
         GameScene();
@@ -45,6 +51,8 @@ class GameScene : public Scene
         Renderer* getEffectRenderer();
 
         Player* getPlayer();
+
+        void incrementScore(int inc = SCORE_PER_PIECE);
 
         virtual ~GameScene();
 

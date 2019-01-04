@@ -40,6 +40,7 @@ void StarField::render()
 
         // Linearly interpolates two colors (the equation is written that way to avoid Uint8 overflows)
         SDL_Color starColor = FINAL_COLOR * factor + (INITIAL_COLOR - INITIAL_COLOR * factor);
+        starColor.a = alpha;
 
         // Renders the star on the screen
         GPU_RectangleFilled2(m_screen, starRect, starColor);

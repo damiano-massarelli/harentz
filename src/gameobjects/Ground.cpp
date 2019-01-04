@@ -30,7 +30,7 @@ Ground::Ground(Renderer* renderer, int screenWidth, int screenHeight, int numOfL
 
     setShape(std::make_shared<Shape>(vertices, indices));
 
-    setFillColor(SDL_Color{0, 0, 0, 0}); // Please don't draw as a solid object (alpha = 0)
+    setFillColor(SDL_Color{0, 0, 0, 255});
 
     /* Calculate the rotation of the ground */
     computeRotation();

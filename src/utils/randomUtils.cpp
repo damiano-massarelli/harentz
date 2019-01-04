@@ -5,3 +5,8 @@ float randRange(float start, float end) {
     float f = static_cast<float>(std::rand())/(RAND_MAX + 1u);
     return start + (end - start)*f;
 }
+
+int randRangeInt(int start, int end)
+{
+    return static_cast<int>(randRange(start, end));
+}
