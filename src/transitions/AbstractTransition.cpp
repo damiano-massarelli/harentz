@@ -17,6 +17,7 @@ void AbstractTransition::onEnterFrame(float elapsed)
         f = 1.0f;
         cancel();
     }
+
     onUpdate(f);
 
     /* If the transitions is complete, onComplete callback is called */

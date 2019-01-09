@@ -30,8 +30,11 @@ void PieceManager::generatePiece(float deltaMS, GameScene* gameScene)
     std::unique_ptr<Piece> piece;
     if (m_elapsedFromLast > m_generateEveryMS) {
         int pieceIndex = randRangeInt(0, m_pieceNames.size());
-        //piece = std::make_unique<Piece>(m_renderer, m_pieceNames[pieceIndex]);
-        piece = std::make_unique<BonusPiece>(m_renderer);
+        if (randRange(1, 10) < 2)
+            piece = std::make_unique<BonusPiece>(m_renderer);
+        else
+            piece = std::make_unique<Piece>(m_renderer, m_pieceNames[pieceIndex]);
+
 
         // Selects a lane for the piece
         int lane = randRangeInt(0, NUMBER_OF_LANES - piece->getNumOfHorizontalCubes() + 1);
@@ -103,6 +106,10 @@ void PieceManager::checkCollision(Piece* piece, Player* player)
     piece->handleCollision(collidedCubeIndex);
 }
 
+std::vector<std::unique_ptr<Piece>>& PieceManager::getPieces()
+{
+    return m_pieces;
+}
 
 PieceManager::~PieceManager()
 {

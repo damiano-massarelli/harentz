@@ -19,11 +19,13 @@ class StarField : public AbstractRenderable
         static const float SPEED; ///< pixels per second
         static const SDL_Color INITIAL_COLOR;
         static const SDL_Color FINAL_COLOR;
+        static const SDL_Color FINAL_COLOR_BONUS;
 
         GPU_Target* m_screen;
         std::vector<std::unique_ptr<Star>> m_stars;
 
         float m_updatePositionSpeed = 0; ///< the speed to use to update the position of the stars. Based on elapsedMs (see update)
+        SDL_Color m_finalColor = FINAL_COLOR; ///< the final color of stars can change when a bonus is activated.
 
     public:
         StarField(GPU_Target* screen, int numOfStars = 200);
@@ -31,6 +33,8 @@ class StarField : public AbstractRenderable
         virtual void render() override;
 
         void update(float elapsedMs);
+
+        void enableBonusFinalColor();
 
         virtual ~StarField();
 };

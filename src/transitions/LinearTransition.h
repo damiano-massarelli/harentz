@@ -33,7 +33,8 @@ class LinearTransition : public AbstractTransition
         }
 
         void onUpdate(float f) const override {
-            m_updater((m_finalValue - m_initialValue)*f + m_initialValue);
+            if (m_updater)
+                m_updater((m_finalValue - m_initialValue)*f + m_initialValue);
         }
 
         virtual ~LinearTransition() {}

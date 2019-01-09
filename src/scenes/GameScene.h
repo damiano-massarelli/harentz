@@ -48,6 +48,10 @@ class GameScene : public Scene
 
         virtual void onRemove() override;
 
+        PieceManager* getPieceManager();
+
+        StarField* getStarFieldEffect();
+
         Renderer* getEffectRenderer();
 
         Player* getPlayer();

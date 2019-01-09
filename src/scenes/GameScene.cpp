@@ -25,6 +25,7 @@ void GameScene::onShow(GPU_Target* screen)
 
     // Creates the renderer for the ground
     m_effectRenderer = std::make_unique<PaintersRenderer>(screen, screenWidth, screenHeight, SCREEN_Z, PROJECTION_POINT_Z);
+    m_3dRenderer->setBackfaceCulling(std::make_unique<BackfaceCulling>(Point3{0.0f, 0.0f, PROJECTION_POINT_Z}, Point3{0.0f, 0.0f, 1.0f}));
 
     // creates and adds the ground to the scene
     m_ground = std::make_unique<Ground>(m_3dRenderer.get(), screenWidth, screenHeight, NUMBER_OF_LANES);
@@ -67,8 +68,8 @@ void GameScene::onEvent(SDL_Event e)
 
 void GameScene::onRenderingComplete()
 {
-    m_effectRenderer->renderToScreen();
     m_3dRenderer->renderToScreen();
+    m_effectRenderer->renderToScreen();
 }
 
 void GameScene::onRemove()
@@ -91,6 +92,16 @@ Player* GameScene::getPlayer()
 void GameScene::incrementScore(int inc)
 {
     m_score += inc;
+}
+
+PieceManager* GameScene::getPieceManager()
+{
+    return m_pieceManager.get();
+}
+
+StarField* GameScene::getStarFieldEffect()
+{
+    return m_starFieldEffect.get();
 }
 
 GameScene::~GameScene()

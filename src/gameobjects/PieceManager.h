@@ -46,6 +46,9 @@ class PieceManager
         /** \brief moves the pieces using the current speed and creates new ones if necessary */
         void update(float deltaMS, GameScene* gameScene);
 
+        /** \brief returns a vector of the currently used pieces */
+        std::vector<std::unique_ptr<Piece>>& getPieces();
+
         virtual ~PieceManager();
 };
 

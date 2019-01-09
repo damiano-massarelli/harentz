@@ -3,18 +3,18 @@
 #include "Renderer.h"
 #include "BonusMalusPiece.h"
 
-enum class Behavior {
-    ADD_LIFE,
-    SLOW_DOWN,
-    DESTROY_ALL
-};
-
 /** \brief a bonus piece */
 class BonusPiece : public BonusMalusPiece
 {
     private:
-        Behavior m_behavior;
+        enum class Behavior {
+            ADD_LIFE,
+            SLOW_DOWN,
+            DESTROY_ALL
+        };
 
+        Behavior m_behavior;
+        bool m_alreadyCollided = false; ///< BonusMalus pieces are not removed when they collide. An additional flag is hence needed.
 
     public:
         BonusPiece(Renderer* renderer);

@@ -2,11 +2,13 @@
 #include "DisplayManager.h"
 #include "randomUtils.h"
 #include "colorUtils.h"
+#include "LinearTransition.h"
 #include <cmath>
 
 const float StarField::SPEED = 300.0f;
-const SDL_Color StarField::INITIAL_COLOR{255, 0, 0, 255};
-const SDL_Color StarField::FINAL_COLOR{255, 255, 0, 255};
+const SDL_Color StarField::INITIAL_COLOR{0, 255, 249, 255};
+const SDL_Color StarField::FINAL_COLOR{150, 0, 255, 255};
+const SDL_Color StarField::FINAL_COLOR_BONUS{255, 0, 193, 255};
 
 StarField::StarField(GPU_Target* screen, int numOfStars) : m_screen{screen}
 {
@@ -33,14 +35,13 @@ void StarField::render()
         /* Determines the distance from the center of the screen on the y axis.
          * a value of 1 means the star is at the top of bottom of the screen */
         float factor = std::abs(star->position.y - h/2.0f) / (h/2.0f);
-        Uint8 alpha = factor * 200; // max opacity is 200
-        int starSize = static_cast<int>(5 * factor); // max size is 5
+
+        int starSize = static_cast<int>(3 * factor) + 1; // max size is 4, min size is 1
         starRect.w = starSize;
         starRect.h = starSize;
 
         // Linearly interpolates two colors (the equation is written that way to avoid Uint8 overflows)
-        SDL_Color starColor = FINAL_COLOR * factor + (INITIAL_COLOR - INITIAL_COLOR * factor);
-        starColor.a = alpha;
+        SDL_Color starColor = m_finalColor * factor + INITIAL_COLOR * (1.0f - factor);
 
         // Renders the star on the screen
         GPU_RectangleFilled2(m_screen, starRect, starColor);
@@ -57,6 +58,14 @@ void StarField::update(float elapsedMs)
 {
     // Sets the speed that will be used to update the starts
     m_updatePositionSpeed = SPEED * (elapsedMs / 1000.0f);
+}
+
+void StarField::enableBonusFinalColor()
+{
+    m_finalColor = FINAL_COLOR_BONUS;
+
+    /* Uses a transition to perform an action after 1.5 sec */
+    LinearTransition<int>::create(0, 0, nullptr, 1500.0f, [this]{this->m_finalColor = FINAL_COLOR;}, "game");
 }
 
 StarField::~StarField()
