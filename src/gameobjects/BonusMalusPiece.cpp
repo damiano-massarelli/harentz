@@ -59,5 +59,5 @@ void BonusMalusPiece::onEvent(SDL_Event e)
 
 BonusMalusPiece::~BonusMalusPiece()
 {
-    //dtor
+
 }

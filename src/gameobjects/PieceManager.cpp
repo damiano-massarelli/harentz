@@ -30,11 +30,7 @@ void PieceManager::generatePiece(float deltaMS, GameScene* gameScene)
     std::unique_ptr<Piece> piece;
     if (m_elapsedFromLast > m_generateEveryMS) {
         int pieceIndex = randRangeInt(0, m_pieceNames.size());
-        if (randRange(1, 10) < 2)
-            piece = std::make_unique<BonusPiece>(m_renderer);
-        else
-            piece = std::make_unique<Piece>(m_renderer, m_pieceNames[pieceIndex]);
-
+        piece = std::make_unique<Piece>(m_renderer, m_pieceNames[pieceIndex]);
 
         // Selects a lane for the piece
         int lane = randRangeInt(0, NUMBER_OF_LANES - piece->getNumOfHorizontalCubes() + 1);
@@ -42,6 +38,9 @@ void PieceManager::generatePiece(float deltaMS, GameScene* gameScene)
         // Place and rotate the piece
         piece->setPosition(Point3{piece->xForLane(lane), m_spawnPoint.y, m_spawnPoint.z});
         piece->setTransformationMatrix(m_rotationMatrix);
+
+        /* could generates a bonus or malus under the current piece */
+        generateBonusMalus(piece.get(), lane, gameScene);
 
         m_elapsedFromLast = 0.0f; // reset elapsed time
         m_generateEveryMS *= GENERATE_DECREASE_FACTOR;
@@ -52,6 +51,23 @@ void PieceManager::generatePiece(float deltaMS, GameScene* gameScene)
 
         // Adds the piece to the list
         m_pieces.push_back(std::move(piece));
+    }
+}
+
+void PieceManager::generateBonusMalus(const Piece* piece, int pieceLane, GameScene* gameScene)
+{
+    for (int i = 0; i < piece->getNumOfHorizontalCubes(); ++i) {
+        if (piece->cubeAt(i, 0, 0) == false) { // checks if the piece is hollow at ground level
+            std::unique_ptr<Piece> bonusMalus;
+            bonusMalus = std::make_unique<BonusPiece>(m_renderer);
+            bonusMalus->setPosition(Point3{bonusMalus->xForLane(pieceLane + i),
+                                     m_spawnPoint.y,
+                                     m_spawnPoint.z});
+            bonusMalus->setTransformationMatrix(m_rotationMatrix);
+
+            gameScene->add(bonusMalus.get());
+            m_pieces.push_back(std::move(bonusMalus));
+        }
     }
 }
 

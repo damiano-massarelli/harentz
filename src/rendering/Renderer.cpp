@@ -1,9 +1,8 @@
 #include "Renderer.h"
-#include <iostream>
-#include <algorithm>
 #include "Face.h"
-#include <drawers.h>
+#include <algorithm>
 #include <utility>
+#include <algorithm>
 
 Renderer::Renderer(GPU_Target* screen, int screenWidth, int screenHeight, float screenZ, float projectionPointZ) : m_screen{screen},
                                                 m_screenWidth{screenWidth}, m_screenHeight{screenHeight},
@@ -108,11 +107,12 @@ void Renderer::addToBatch(const Face* face)
                         firstVertIndex, static_cast<unsigned short>(firstVertIndex+1), static_cast<unsigned short>(firstVertIndex+2), // First tri
                         firstVertIndex, static_cast<unsigned short>(firstVertIndex+2), static_cast<unsigned short>(firstVertIndex+3)}); // Second tri
 
-    addOutlineToBatch(projectedPoints, face->getOutlineColor());
+    addOutlineToBatch(projectedPoints, face);
 }
 
-void Renderer::addOutlineToBatch(const std::vector<std::pair<float, float>>& verts, const SDL_Color& color)
+void Renderer::addOutlineToBatch(const std::vector<std::pair<float, float>>& verts, const Face* face)
 {
+    const SDL_Color& color = face->getOutlineColor();
     if (color.a == 0) return; // do not draw
 
     const float lineWidth = 1.0f;
@@ -122,12 +122,18 @@ void Renderer::addOutlineToBatch(const std::vector<std::pair<float, float>>& ver
     float b = color.b/255.0f;
     float a = color.a/255.0f;
 
+    const std::vector<bool>& splitVert = face->getSplitVert();
+
     for (std::size_t i = 0; i < verts.size(); ++i) {
         // The current number of vertices. /6: each vertex is represented by 6 values x, y, r, g, b, a
         unsigned short firstVertIndex = static_cast<unsigned short>(m_vertexBatch.size()/6);
 
         const auto& start = verts[i];
         const auto& end = verts[(i+1) % verts.size()];
+
+        /* Do not render an edge if it splits a face */
+        if (splitVert[i] && splitVert[(i+1) % verts.size()])
+            continue;
 
         // What follows are the components of a *2D* vector representing the line (its direction is the direction of the line)
         Point3 lineVec{start.first - end.first, start.second - end.second, 0, 0};

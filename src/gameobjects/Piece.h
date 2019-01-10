@@ -6,6 +6,8 @@
 #include <vector>
 #include <memory>
 #include <SDL.h>
+#include <utility>
+#include <set>
 
 class Piece : public Transform
 {
@@ -15,6 +17,8 @@ class Piece : public Transform
         static std::shared_ptr<Shape> getCubeShape();
 
         std::vector<std::unique_ptr<Transform>> m_cubes;
+
+        std::set<std::tuple<int, int, int>> m_cubeAtPosition; ///< an element is present if a cube is present at the given offset
 
         int m_horizontalCubes{0};
 
@@ -40,6 +44,11 @@ class Piece : public Transform
 
         /** \brief handles the collision with the player */
         virtual void handleCollision(int collidedCubeIndex);
+
+        /** \brief checks whether a cube is present in (x, y, z)
+          * x, y, z are offset and not 3d coordinates. They represent
+          * the position of a cube as it is stored in the file */
+        bool cubeAt(int x, int y, int z) const;
 
         virtual ~Piece();
 

@@ -1,6 +1,5 @@
 #include "EventManager.h"
 #include <algorithm>
-#include <iostream>
 
 // Static variable definition
 const SDL_EventType EventManager::ENTER_FRAME_EVENT = static_cast<SDL_EventType>(SDL_RegisterEvents(1));
@@ -64,8 +63,9 @@ void EventManager::dispatchEvents()
         if (m_event2listeners.count(it->first)) {
             auto& listeners = m_event2listeners.at(it->first);
             listeners.erase(std::remove_if(listeners.begin(), listeners.end(), [&it](auto& elem){
-                                           return std::find(it->second.begin(), it->second.end(), elem) != it->second.end();} ));
+                                           return std::find(it->second.begin(), it->second.end(), elem) != it->second.end();} ), listeners.end());
         }
+
     }
 
     m_toRemove.clear();

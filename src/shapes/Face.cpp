@@ -27,9 +27,10 @@ const SDL_Color& Face::getOutlineColor() const
 }
 
 
-void Face::addVertex(Point3 vertex)
+void Face::addVertex(Point3 vertex, bool splitVertex)
 {
     m_vertices.push_back(vertex);
+    m_splitVert.push_back(splitVertex);
 }
 
 const std::vector<Point3>& Face::getVertices() const
@@ -59,6 +60,10 @@ Point3 Face::getNormal() const
     return cross(m_vertices[0] - m_vertices[1], m_vertices[2] - m_vertices[1]);
 }
 
+const std::vector<bool>& Face::getSplitVert() const
+{
+    return m_splitVert;
+}
 
 Face::~Face()
 {

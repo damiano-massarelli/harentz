@@ -21,10 +21,12 @@ void BonusPiece::handleCollision(int collidedCubeIndex)
 
     GameScene* gameScene = static_cast<GameScene*>(DisplayManager::getInstance()->getCurrentScene());
 
+    /* Behavior ADD_LIFE */
     if (m_behavior == Behavior::ADD_LIFE) { // Adds a life to the player
         Player* player = gameScene->getPlayer();
         player->setLives(player->getLives() + 1);
 
+    /* Behavior DESTROY_ALL */
     } else if (m_behavior == Behavior::DESTROY_ALL) { // Destroys all the pieces currently on the screen
         auto& pieces = gameScene->getPieceManager()->getPieces();
         for (auto& piece : pieces) {

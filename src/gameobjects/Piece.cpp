@@ -70,13 +70,13 @@ Piece::Piece(Renderer* renderer, const std::string& shape) : Transform{nullptr}
 {
     setRenderer(renderer);
 
-    float z = 0.0f;
+    int z = 0;
     float sideSize = Piece::getCubeSide();
 
     std::stringstream infile = readFile("resources/pieces/" + shape + ".piece");
     std::string line;
     while(std::getline(infile, line)) {
-        float x = 0.0f;
+        int x = 0;
         std::vector<int> cubesHeights = split<int>(line, ' ', [](std::string& str) { return std::stoi(str); });
         m_horizontalCubes = std::max(m_horizontalCubes, static_cast<int>(cubesHeights.size())); // updates the number of horizontal cubes
 
@@ -91,14 +91,16 @@ Piece::Piece(Renderer* renderer, const std::string& shape) : Transform{nullptr}
             }
             for (; y < height; y++) {
                 Transform* cube = new Transform{Piece::getCubeShape()};
-                cube->setPosition(Point3{x, (-y * sideSize) - sideSize/2, z}); // -y: positive value in the file means the cube is higher
+                cube->setPosition(Point3{x * sideSize, (-y * sideSize) - sideSize/2, z * sideSize}); // -y: positive value in the file means the cube is higher
                 addChild(cube);
 
                 m_cubes.push_back(std::unique_ptr<Transform>(cube));
+
+                m_cubeAtPosition.insert(std::make_tuple(x, y, z));
             }
-            x += sideSize;
+            x += 1;
         }
-        z -= sideSize; // comes towards the player
+        z -= 1; // comes towards the player
     }
     SDL_Color finalColor = readPieceColor(shape);
     setFillColor(finalColor);
@@ -144,6 +146,11 @@ void Piece::handleCollision(int collidedCubeIndex)
     /* Decreases the number of lives of the player */
     Player* player = gameScene->getPlayer();
     player->setLives(player->getLives() - 1);
+}
+
+bool Piece::cubeAt(int x, int y, int z) const
+{
+    return m_cubeAtPosition.find(std::make_tuple(x, y, z)) != m_cubeAtPosition.end();
 }
 
 Piece::~Piece()

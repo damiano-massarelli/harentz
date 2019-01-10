@@ -112,28 +112,31 @@ bool BSPTree::splitFace(const Face* face, const Face* plane, std::unique_ptr<Fac
     outBack->setOutlineColor(face->getOutlineColor());
 
     const std::vector<Point3>& vertices = face->getVertices();
+    const std::vector<bool>& splitVert = face->getSplitVert();
     int numOfVertices = vertices.size();
     for (int i = 0; i < numOfVertices; i++) {
         /* Creates the starting and ending point of the edge.
          * (i+1)%numOfVertices is used to take into consideration the last edge: last vert. -> first vert. */
         const Point3& v1 = vertices[i];
         const Point3& v2 = vertices[(i+1) % numOfVertices];
+        bool v1Split = splitVert[i];
+        bool v2Split = splitVert[(i+1) % numOfVertices];
         Point3 intersection;
         RelPos v1Pos = classifyPoint(v1, plane);
         RelPos v2Pos = classifyPoint(v2, plane);
 
         if (v1Pos == v2Pos) {
             if (v1Pos == RelPos::FRONT) { // both in the front face
-                outFront->addVertex(v1);
-                outFront->addVertex(v2);
+                outFront->addVertex(v1, v1Split);
+                outFront->addVertex(v2, v2Split);
             } else { // both back
-                outBack->addVertex(v1);
-                outBack->addVertex(v2);
+                outBack->addVertex(v1, v1Split);
+                outBack->addVertex(v2, v2Split);
             }
         } else { // try to split
             if (getIntersection(v1, v2, plane, intersection)) {
-                outFront->addVertex(intersection);
-                outBack->addVertex(intersection);
+                outFront->addVertex(intersection, true);
+                outBack->addVertex(intersection, true);
             }
         }
     }

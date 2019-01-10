@@ -14,6 +14,9 @@ class Face
         SDL_Color m_fillColor;
         SDL_Color m_outlineColor;
 
+        /* Uses the same indices as m_vertices */
+        std::vector<bool> m_splitVert; ///< for every vertex contains true if that vertex splits a face
+
     public:
         Face();
 
@@ -23,13 +26,15 @@ class Face
         const SDL_Color& getFillColor() const;
         const SDL_Color& getOutlineColor() const;
 
-        void addVertex(Point3 vertex);
+        void addVertex(Point3 vertex, bool splitVertex = false);
 
         Point3 getCenter() const;
 
         Point3 getNormal() const;
 
         const std::vector<Point3>& getVertices() const;
+
+        const std::vector<bool>& getSplitVert() const;
 
         virtual ~Face();
 

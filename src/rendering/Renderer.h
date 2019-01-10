@@ -48,7 +48,7 @@ class Renderer
           * \param verts the 2d vertices of the face
           * \param color the color of the lines
           * Lines are also represented as triangles so that they can be batched together with the faces */
-        void addOutlineToBatch(const std::vector<std::pair<float, float>>& verts, const SDL_Color& color);
+        void addOutlineToBatch(const std::vector<std::pair<float, float>>& verts, const Face* face);
 
         /** \brief adds the face to the batch of faces to draw
           * \sa drawBatch */

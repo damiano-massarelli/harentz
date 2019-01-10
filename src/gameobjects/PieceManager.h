@@ -32,7 +32,10 @@ class PieceManager
 
         /** \brief generates a new piece if enough time is elapsed
           * \param deltaMS ms elapsed since last frame */
-        void generatePiece(float deltaMS, GameScene* GameScene);
+        void generatePiece(float deltaMS, GameScene* gameScene);
+
+        /** \brief generates a bonus/malus under a piece if it is has holes */
+        void generateBonusMalus(const Piece* piece, int pieceLane, GameScene* gameScene);
 
         /** \brief checks collision between a piece and the player */
         void checkCollision(Piece* piece, Player* player);
