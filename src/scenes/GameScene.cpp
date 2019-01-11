@@ -45,7 +45,7 @@ void GameScene::onShow(GPU_Target* screen)
     m_starFieldEffect = std::make_unique<StarField>(screen);
     add(m_starFieldEffect.get());
 
-    m_scoreText = std::make_unique<Text>(screen, "resources/font/pixelUnicode");
+    m_scoreText = std::make_unique<Text>(screen, "resources/font/invasion2000");
     m_scoreText->setText("Score: 0");
     add(m_scoreText.get());
 }

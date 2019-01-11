@@ -1,6 +1,7 @@
 #include "DisplayManager.h"
 #include "TransitionManager.h"
 #include "Scene.h"
+#include "Timer.h"
 #include <iostream>
 
 // Static variable definition.
@@ -40,24 +41,27 @@ DisplayManager::DisplayManager(const std::string& title, int displayWidth, int d
 void DisplayManager::startMainLoop()
 {
     m_eventManager->addListenerFor(SDL_QUIT, this);
+    Timer elapsedTimer;
+    elapsedTimer.start();
+
     Uint32 renderDelta = 0; ///< time elapsed to render
     Uint32 actualDelta = 0; ///< time elapsed taking into account fps capping
-    float lastTime = SDL_GetTicks();
+    float lastTime = elapsedTimer.get();
 
     m_transitionManager->startUpdatingTransitions(); // Transitions are now updated as frames go by
 
     while (!m_quit) {
         // Delta time calculations: elapsed time
-        lastTime = SDL_GetTicks();
+        lastTime = elapsedTimer.get();
 
         m_eventManager->pushEnterFrameEvent(&actualDelta);
         m_eventManager->dispatchEvents();
 
-        renderDelta = SDL_GetTicks() - lastTime;
+        renderDelta = elapsedTimer.get() - lastTime;
         float sleepTime = (1000.0f/FPS_CAP) - renderDelta;
         if (sleepTime > 0) SDL_Delay(sleepTime);
 
-        actualDelta = SDL_GetTicks() - lastTime;
+        actualDelta = elapsedTimer.get() - lastTime;
      }
 }
 

@@ -4,9 +4,23 @@
 // Static variable definition
 const SDL_EventType EventManager::ENTER_FRAME_EVENT = static_cast<SDL_EventType>(SDL_RegisterEvents(1));
 
+/** \brief handles events as they happen instead of putting them in the event queue
+  *
+  * Some events must be handled immediately. For instance app events cannot wait an entire frame
+  * to be handled as the OS might pause/terminate the app before the frame is completely rendered */
+static int eventFilterFunction(void* eventManager, SDL_Event* event) {
+    if (event->type == SDL_APP_WILLENTERBACKGROUND || event->type == SDL_APP_DIDENTERBACKGROUND) {
+        EventManager* evtManager = static_cast<EventManager*>(eventManager);
+        evtManager->dispatchToListeners(*event);
+    }
+
+    return 1;
+}
+
+
 EventManager::EventManager()
 {
-    //ctor
+    SDL_AddEventWatch(eventFilterFunction, this);
 }
 
 std::unique_ptr<EventListenerCrumb> EventManager::addListenerFor(SDL_EventType event, EventListener* listener, bool wantCrumb)
@@ -36,19 +50,7 @@ void EventManager::dispatchEvents()
     /* Dispatches all events */
     SDL_Event event;
     while (SDL_PollEvent(&event) != 0) {
-        SDL_EventType eventType = static_cast<SDL_EventType>(event.type);
-        if (m_event2listeners.count(eventType)) {
-            for (auto& listener : m_event2listeners.at(eventType)) {
-                /* Skip a listener if it is removed */
-                if (m_toRemove.count(eventType)) {
-                    auto& removed = m_toRemove.at(eventType);
-                    if (std::find(removed.begin(), removed.end(), listener) != removed.end())
-                        continue;
-                }
-
-                listener->onEvent(event);
-            }
-        }
+        dispatchToListeners(event);
     }
 
     /* Adds the listeners */
@@ -58,20 +60,34 @@ void EventManager::dispatchEvents()
         else // No listener for this event, just copy
             m_event2listeners.insert(std::make_pair(it->first, it->second));
 
-    /* Removes the listeners */
-    for (auto it = m_toRemove.begin(); it != m_toRemove.end(); ++it) {
-        if (m_event2listeners.count(it->first)) {
-            auto& listeners = m_event2listeners.at(it->first);
-            listeners.erase(std::remove_if(listeners.begin(), listeners.end(), [&it](auto& elem){
-                                           return std::find(it->second.begin(), it->second.end(), elem) != it->second.end();} ), listeners.end());
-        }
-
-    }
-
     m_toRemove.clear();
     m_toAdd.clear();
 
 }
+
+void EventManager::dispatchToListeners(SDL_Event& event)
+{
+    // Event type
+    SDL_EventType eventType = static_cast<SDL_EventType>(event.type);
+    if (m_event2listeners.count(eventType)) {
+        // List of listeners for this type of event
+        auto& listeners = m_event2listeners[eventType];
+        for (auto it = listeners.begin(); it != listeners.end(); ) {
+            /* Skip a listener if it is removed and removes it */
+            if (m_toRemove.count(eventType)) {
+                auto& removed = m_toRemove[eventType];
+                if (std::find(removed.begin(), removed.end(), *it) != removed.end()) {
+                    it = listeners.erase(it);
+                    continue;
+                }
+            }
+
+            (*it)->onEvent(event);
+            ++it;
+        }
+    }
+}
+
 
 void EventManager::pushEnterFrameEvent(Uint32* deltaMillis) const
 {
@@ -87,5 +103,5 @@ void EventManager::pushEnterFrameEvent(Uint32* deltaMillis) const
 
 EventManager::~EventManager()
 {
-    //dtor
+
 }

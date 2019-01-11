@@ -25,7 +25,11 @@ class EventManager
 
         void removeListenerFor(SDL_EventType event, EventListener* listener);
 
+        /** \brief dispatches all the events from the event queue */
         void dispatchEvents();
+
+        /** \brief dispatches a certain event to all the listeners registered for that event */
+        void dispatchToListeners(SDL_Event& event);
 
         void pushEnterFrameEvent(Uint32* deltaMillis) const;
 

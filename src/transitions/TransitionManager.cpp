@@ -1,6 +1,7 @@
 #include "TransitionManager.h"
 #include "DisplayManager.h"
 #include <utility>
+#include <string>
 
 TransitionManager::TransitionManager()
 {
