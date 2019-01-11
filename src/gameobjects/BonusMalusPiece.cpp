@@ -19,12 +19,13 @@ BonusMalusPiece::BonusMalusPiece(Renderer* renderer) : Piece{renderer, "C"}
 void BonusMalusPiece::handleCollision(int collidedCubeIndex)
 {
     /* translate the cube upwards */
+    Point3 collisionPosition = getWorldPosition();
     LinearTransition<float>::create(getPosition().y,
                                     getPosition().y - 5.0f * (Piece::getCubeSide()),
-                                    [this](float y) {
-                                            Point3 pos = this->getWorldPosition();
-                                            pos.y = y;
-                                            this->setPosition(pos);
+                                    [this, &collisionPosition](float y) {
+                                            Point3 newPosition = collisionPosition;
+                                            newPosition.y = y;
+                                            this->setPosition(newPosition);
                                     },
                                     250.0f,
                                     nullptr,

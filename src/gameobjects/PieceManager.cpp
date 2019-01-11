@@ -9,11 +9,13 @@
 #include "BonusPiece.h"
 #include "constants.h"
 #include "randomUtils.h"
+#include "lerpUtils.h"
 
-const float PieceManager::GENERATE_DECREASE_FACTOR = 0.98f;
-const float PieceManager::GENERATE_INITIAL_INTERVAL = 1500.0f;
-const float PieceManager::GENERATE_MIN_INTERVAL = 500.0f;
-const float PieceManager::SPEED = 1200.0f;
+const float PieceManager::GENERATE_INITIAL_INTERVAL = 1000.0f;
+const float PieceManager::GENERATE_MIN_INTERVAL = 430.0f;
+const float PieceManager::INITIAL_SPEED = 1600.0f;
+const float PieceManager::FINAL_SPEED = 2500.0f;
+const int PieceManager::DEFAULT_FINAL_SCORE = 15000;
 
 const std::vector<std::string> PieceManager::m_pieceNames{"I-side", "I-up", "J", "J-up", "L", "L-up", "O-side", "O-up",
                                                     "S", "T-down", "T-up", "Z"};
@@ -27,8 +29,11 @@ PieceManager::PieceManager(Renderer* renderer, const Point3& spawnPoint, const M
 void PieceManager::generatePiece(float deltaMS, GameScene* gameScene)
 {
     m_elapsedFromLast += deltaMS;
+
+    int currentScore = std::min(gameScene->getScore(), m_finalScore); // capped
+    float generationInterval = lerp(GENERATE_INITIAL_INTERVAL, GENERATE_MIN_INTERVAL, currentScore/(static_cast<float>(m_finalScore)));
     std::unique_ptr<Piece> piece;
-    if (m_elapsedFromLast > m_generateEveryMS) {
+    if (m_elapsedFromLast > generationInterval) {
         int pieceIndex = randRangeInt(0, m_pieceNames.size());
         piece = std::make_unique<Piece>(m_renderer, m_pieceNames[pieceIndex]);
 
@@ -43,8 +48,6 @@ void PieceManager::generatePiece(float deltaMS, GameScene* gameScene)
         generateBonusMalus(piece.get(), lane, gameScene);
 
         m_elapsedFromLast = 0.0f; // reset elapsed time
-        m_generateEveryMS *= GENERATE_DECREASE_FACTOR;
-        m_generateEveryMS = std::max(m_generateEveryMS, GENERATE_MIN_INTERVAL);
 
         // Adds the piece to the scene
         gameScene->add(piece.get());
@@ -76,7 +79,9 @@ void PieceManager::update(float deltaMS, GameScene* gameScene)
     /* Generate a new piece if necessary */
     generatePiece(deltaMS, gameScene);
 
-    float speed = SPEED * (deltaMS/1000);
+    int currentScore = std::min(gameScene->getScore(), m_finalScore); // capped
+    float speed = lerp(INITIAL_SPEED, FINAL_SPEED, currentScore/(static_cast<float>(m_finalScore)));
+    speed *= (deltaMS/1000); // speed is fps independent
 
     if (speed > 100000.0f || std::isnan(speed)) return; // sometimes (e.g first frame) this value can be too high, ignore it
     /* Iterates through the pieces moving them and removing the elements whose z is less than -200.0f */

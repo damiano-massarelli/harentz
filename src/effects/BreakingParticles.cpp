@@ -5,6 +5,7 @@
 #include "Shape.h"
 #include "Mat4.h"
 #include "randomUtils.h"
+#include "lerpUtils.h"
 
 const float BreakingParticles::CUBE_SIDE_SIZE = 10.0f;
 std::shared_ptr<Shape> BreakingParticles::CUBE_SHAPE = std::shared_ptr<Shape>(
@@ -69,7 +70,7 @@ void BreakingParticles::update(float f)
     for (std::size_t i = 0; i < m_particles.size(); ++i) {
         const Point3& src = m_directions[i].first;
         const Point3& dst = m_directions[i].second;
-        m_particles[i]->setPosition((dst - src)*f + src);
+        m_particles[i]->setPosition(lerp(src, dst, f));
 
         // updates color, when the animation is over alpha = 0
         SDL_Color currentFill = m_particles[i]->getFillColor();

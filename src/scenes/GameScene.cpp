@@ -94,6 +94,11 @@ void GameScene::incrementScore(int inc)
     m_score += inc;
 }
 
+int GameScene::getScore() const
+{
+    return m_score;
+}
+
 PieceManager* GameScene::getPieceManager()
 {
     return m_pieceManager.get();

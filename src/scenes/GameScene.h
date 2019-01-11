@@ -58,6 +58,8 @@ class GameScene : public Scene
 
         void incrementScore(int inc = SCORE_PER_PIECE);
 
+        int getScore() const;
+
         virtual ~GameScene();
 
 };
