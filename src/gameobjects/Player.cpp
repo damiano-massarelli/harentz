@@ -67,7 +67,7 @@ void Player::onEvent(SDL_Event e)
                                                                     current.x = x;
                                                                     this->setPosition(current);
                                                                  },
-                                                                 75.0f,
+                                                                 45.0f,
                                                                  nullptr,
                                                                  "game");
     }

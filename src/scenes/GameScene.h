@@ -37,14 +37,25 @@ class GameScene : public Scene
 
         int m_score = 0; ///< the score of the player
 
+        bool m_paused = false; ///< true when the application is paused (e.g. put in bg in android)
+
     public:
         GameScene();
 
         virtual void onShow(GPU_Target* screen) override;
 
-        virtual void onEvent(SDL_Event e) override;
+        virtual void onEnterFrame(SDL_Event& e) override;
 
         virtual void onRenderingComplete() override;
+
+        virtual void onPause(const EventStatus& status) override;
+
+        virtual void onResume(const EventStatus& status) override;
+
+        /** \brief A recursive function that displays a countdown text
+          * when the countdown is over the game is resumed ( \sa m_paused)
+          * The recursive call is delayed using a LinearTransition */
+        void startResumeCountdown(int countdown) const;
 
         virtual void onRemove() override;
 

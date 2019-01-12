@@ -4,6 +4,7 @@
 #include "DisplayManager.h"
 #include "BspRenderer.h"
 #include "PaintersRenderer.h"
+#include "LinearTransition.h"
 #include <sstream>
 
 GameScene::GameScene()
@@ -48,11 +49,14 @@ void GameScene::onShow(GPU_Target* screen)
     m_scoreText = std::make_unique<Text>(screen, "resources/font/invasion2000");
     m_scoreText->setText("Score: 0");
     add(m_scoreText.get());
+
+    onResume(EventStatus::DID);
 }
 
-void GameScene::onEvent(SDL_Event e)
+void GameScene::onEnterFrame(SDL_Event& e)
 {
-    Scene::onEvent(e);
+    Scene::onEnterFrame(e);
+    if (m_paused) return; // do not do anything while game is paused
 
     float delta = (*(static_cast<Uint32*>(e.user.data1)));
     //std::cout << "fps " << 1000/delta << std::endl;
@@ -70,6 +74,29 @@ void GameScene::onRenderingComplete()
 {
     m_3dRenderer->renderToScreen();
     m_effectRenderer->renderToScreen();
+}
+
+void GameScene::onPause(const EventStatus& status)
+{
+    if (status == EventStatus::WILL)
+        m_paused = true;
+}
+
+void GameScene::onResume(const EventStatus& status)
+{
+    if (status != EventStatus::DID) return;
+
+    std::shared_ptr<Text> cntdwnText = std::make_shared<Text>(getScreen(), "resources/font/invasion2000");
+    cntdwnText->setX(50);
+    cntdwnText->setY(50);
+
+    showOnResumeText(3);
+}
+
+void GameScene::startResumeCountdown(int countdown) const
+{
+    if (countdown < 0) return;
+    LinearTransition<float>::create(0.0f, 1.0f, nullptr, 1000.0f, [this, countdown](){this->showOnResumeText(countdown-1);}, "game");
 }
 
 void GameScene::onRemove()

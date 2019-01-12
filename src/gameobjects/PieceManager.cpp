@@ -15,7 +15,7 @@ const float PieceManager::GENERATE_INITIAL_INTERVAL = 1000.0f;
 const float PieceManager::GENERATE_MIN_INTERVAL = 430.0f;
 const float PieceManager::INITIAL_SPEED = 1600.0f;
 const float PieceManager::FINAL_SPEED = 2500.0f;
-const int PieceManager::DEFAULT_FINAL_SCORE = 15000;
+const float PieceManager::DEFAULT_FINAL_TIME = 60 * 1000.0f; // a minute
 
 const std::vector<std::string> PieceManager::m_pieceNames{"I-side", "I-up", "J", "J-up", "L", "L-up", "O-side", "O-up",
                                                     "S", "T-down", "T-up", "Z"};
@@ -30,8 +30,8 @@ void PieceManager::generatePiece(float deltaMS, GameScene* gameScene)
 {
     m_elapsedFromLast += deltaMS;
 
-    int currentScore = std::min(gameScene->getScore(), m_finalScore); // capped
-    float generationInterval = lerp(GENERATE_INITIAL_INTERVAL, GENERATE_MIN_INTERVAL, currentScore/(static_cast<float>(m_finalScore)));
+    float generationInterval = lerp(GENERATE_INITIAL_INTERVAL, GENERATE_MIN_INTERVAL, m_totalElapsed/m_finalTime);
+
     std::unique_ptr<Piece> piece;
     if (m_elapsedFromLast > generationInterval) {
         int pieceIndex = randRangeInt(0, m_pieceNames.size());
@@ -76,11 +76,13 @@ void PieceManager::generateBonusMalus(const Piece* piece, int pieceLane, GameSce
 
 void PieceManager::update(float deltaMS, GameScene* gameScene)
 {
+    m_totalElapsed += deltaMS; // updates total elapsed time
+    m_totalElapsed = std::min(m_totalElapsed, m_finalTime); // capped
+
     /* Generate a new piece if necessary */
     generatePiece(deltaMS, gameScene);
 
-    int currentScore = std::min(gameScene->getScore(), m_finalScore); // capped
-    float speed = lerp(INITIAL_SPEED, FINAL_SPEED, currentScore/(static_cast<float>(m_finalScore)));
+    float speed = lerp(INITIAL_SPEED, FINAL_SPEED, m_totalElapsed/m_finalTime);
     speed *= (deltaMS/1000); // speed is fps independent
 
     if (speed > 100000.0f || std::isnan(speed)) return; // sometimes (e.g first frame) this value can be too high, ignore it

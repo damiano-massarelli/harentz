@@ -18,34 +18,7 @@ BonusMalusPiece::BonusMalusPiece(Renderer* renderer) : Piece{renderer, "C"}
 
 void BonusMalusPiece::handleCollision(int collidedCubeIndex)
 {
-    /* translate the cube upwards */
-    Point3 collisionPosition = getWorldPosition();
-    LinearTransition<float>::create(getPosition().y,
-                                    getPosition().y - 5.0f * (Piece::getCubeSide()),
-                                    [this, &collisionPosition](float y) {
-                                            Point3 newPosition = collisionPosition;
-                                            newPosition.y = y;
-                                            this->setPosition(newPosition);
-                                    },
-                                    250.0f,
-                                    nullptr,
-                                    "game");
-
-    /* Change the alpha of the cube */
-    LinearTransition<int>::create(255,
-                                   0,
-                                   [this](int a) {
-                                         SDL_Color fillColor = this->getFillColor();
-                                         fillColor.a = a;
-                                         this->setFillColor(fillColor);
-
-                                         SDL_Color outlineColor = this->getOutlineColor();
-                                         outlineColor.a = a;
-                                         this->setOutlineColor(outlineColor);
-                                    },
-                                    250.0f,
-                                    nullptr,
-                                    "game");
+    removeCube(0);
 }
 
 void BonusMalusPiece::onEvent(SDL_Event e)

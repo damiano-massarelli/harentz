@@ -13,12 +13,22 @@ class Scene : public EventListener
 {
     private:
         std::vector<AbstractRenderable* > m_renderList;
-        std::unique_ptr<EventListenerCrumb> m_eventCrumb;
+        std::unique_ptr<EventListenerCrumb> m_enterFrameCrumb;
+        std::unique_ptr<EventListenerCrumb> m_willEnterBgCrumb;
+        std::unique_ptr<EventListenerCrumb> m_didEnterBgCrumb;
+        std::unique_ptr<EventListenerCrumb> m_willEnterFgCrumb;
+        std::unique_ptr<EventListenerCrumb> m_didEnterFgCrumb;
 
         SDL_Color m_bgColor{0, 0, 0};
 
         GPU_Target* m_screen = nullptr;
 
+    protected:
+        /** \brief Describes status of a resume/pause event */
+        enum class EventStatus {
+            WILL,
+            DID
+        };
 
     public:
         Scene();
@@ -28,12 +38,20 @@ class Scene : public EventListener
           * called so that Renderable objects can be actually
           * on screen.
           */
-        virtual void onEvent(SDL_Event e) override;
+        virtual void onEvent(SDL_Event event) override;
+
+        virtual void onEnterFrame(SDL_Event& e);
 
         /** \brief this function is called when all the element of the scene have been rendered
           * This function is sometimes required by those renderer that draws on the screen once
           * all their elements have been rendered (that is render is called on them) */
         virtual void onRenderingComplete() {};
+
+        /** \brief this function is called whenever the application is paused */
+        virtual void onPause(const EventStatus& status) {}
+
+        /** \brief this method is called whenever the application is resumed */
+        virtual void onResume(const EventStatus& status) {}
 
         /** \brief this function is called before the scene is removed */
         virtual void onRemove() {};

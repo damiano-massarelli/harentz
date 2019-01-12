@@ -20,11 +20,12 @@ class PieceManager
         static const float GENERATE_MIN_INTERVAL; ///< min piece generation interval
         static const float INITIAL_SPEED; ///< initial speed of pieces, pixels per second
         static const float FINAL_SPEED; ///< final speed for pieces, pixels per second
-        static const int DEFAULT_FINAL_SCORE; ///< the score at which speed = FINAL_SPPED and a piece is generated every GENERATE_MIN_INTERVAL (can be changed, \sa m_scoreFinalSpeed)
+        static const float DEFAULT_FINAL_TIME; ///< the time at which speed = FINAL_SPPED and a piece is generated every GENERATE_MIN_INTERVAL (can be changed, \sa m_finalTime)
 
-        int m_finalScore = DEFAULT_FINAL_SCORE; ///< the score at which speed = FINAL_SPPED
+        float m_finalTime = DEFAULT_FINAL_TIME; ///< the score at which speed = FINAL_SPPED
 
         float m_elapsedFromLast = 0.0f; ///< time elapsed from the last generated piece
+        float m_totalElapsed = 0.0; ///< the total elapsed time used to determine the current speed and generation time.
 
         Renderer* m_renderer = nullptr; ///< the renderer used by the pieces
         const Point3 m_spawnPoint;
