@@ -79,24 +79,27 @@ void GameScene::onRenderingComplete()
 void GameScene::onPause(const EventStatus& status)
 {
     if (status == EventStatus::WILL)
-        m_paused = true;
+        m_paused = true; // stops the gameplay until the app is resumed
 }
 
 void GameScene::onResume(const EventStatus& status)
 {
     if (status != EventStatus::DID) return;
 
-    std::shared_ptr<Text> cntdwnText = std::make_shared<Text>(getScreen(), "resources/font/invasion2000");
-    cntdwnText->setX(50);
-    cntdwnText->setY(50);
+    /* creates the text to use for the countdown (shared ptr so that it can be passed to a lambda without issues)*/
+    std::shared_ptr<Text> countdownText = std::make_shared<Text>(getScreen(), "resources/font/invasion_2000_50");
+    countdownText->setX(50);
+    countdownText->setY(50);
+    add(countdownText.get());
 
-    showOnResumeText(3);
+    startResumeCountdown(3, countdownText);
 }
 
-void GameScene::startResumeCountdown(int countdown) const
+void GameScene::startResumeCountdown(int countdown, std::shared_ptr<Text> countdownText) const
 {
     if (countdown < 0) return;
-    LinearTransition<float>::create(0.0f, 1.0f, nullptr, 1000.0f, [this, countdown](){this->showOnResumeText(countdown-1);}, "game");
+    countdownText->setText(std::to_string(countdown));
+    LinearTransition<float>::create(0.0f, 1.0f, nullptr, 1000.0f, [this, countdown, countdownText](){this->startResumeCountdown(countdown-1, countdownText);}, "game");
 }
 
 void GameScene::onRemove()

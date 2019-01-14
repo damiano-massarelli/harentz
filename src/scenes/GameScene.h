@@ -55,7 +55,7 @@ class GameScene : public Scene
         /** \brief A recursive function that displays a countdown text
           * when the countdown is over the game is resumed ( \sa m_paused)
           * The recursive call is delayed using a LinearTransition */
-        void startResumeCountdown(int countdown) const;
+        void startResumeCountdown(int countdown, std::shared_ptr<Text> countdownText) const;
 
         virtual void onRemove() override;
 

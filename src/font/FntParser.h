@@ -4,6 +4,7 @@
 #include <sstream>
 #include <string>
 #include <map>
+#include <vector>
 
 struct CharData {
     int x; ///< x in the texture
@@ -13,6 +14,7 @@ struct CharData {
     int xoff; ///< xoffset for cursor
     int yoff; ///< y offset for the cursor
     int xadvance; ///< how much the cursor should advance
+    int pageIndex; ///< the glyph page on which this char is stored
 };
 
 /** \brief a parser for .fnt files
@@ -29,7 +31,7 @@ class FntParser
 
         std::map<int, CharData> m_char2data; ///< data for each char
         std::map<std::pair<int, int>, int> m_kernings; ///< maps a pair of char codes to the amount the second should be moved on the x axis
-        std::string m_textureFileName;
+        std::vector<std::string> m_textureFileNames;
         int m_lineHeight = 0; ///< the height of each line
         float m_spaceWidth = 0.0f; ///< the width of a space (to increase the cursor)
         int m_numOfChars = 0; ///< the number of chars used by this font
@@ -55,8 +57,8 @@ class FntParser
     public:
         FntParser(const std::string& fontName);
 
-        /** \brief returns the name of the file containing the glyph texture */
-        const std::string& getTextureFileName() const;
+        /** \brief returns the names of the files containing the glyph texture */
+        const std::vector<std::string>& getTextureFileNames() const;
 
         /** \brief returns the data used to render a character.
           * \param charId the id (ascii code) of the character

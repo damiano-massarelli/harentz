@@ -3,8 +3,12 @@
 
 Text::Text(GPU_Target* screen, const std::string& fontName) : m_screen{screen}, m_fntParser{fontName}
 {
+    const std::vector<std::string>& textureFilenames = m_fntParser.getTextureFileNames();
+    m_glyphTextures.resize(textureFilenames.size());
+
     // Loads the texture
-    m_glyphTexture = GPU_LoadImage(("resources/font/" + m_fntParser.getTextureFileName()).c_str());
+    for (std::size_t i = 0; i < textureFilenames.size(); ++i)
+        m_glyphTextures[i] = GPU_LoadImage(("resources/font/" + textureFilenames[i]).c_str());
 }
 
 void Text::setText(const std::string& text)
@@ -40,7 +44,7 @@ void Text::render()
                            static_cast<float>(d->w), static_cast<float>(d->h)};
 
         /* !! GPU_Blit (as opposed to GPU_BlitRect) uses the x and y coords for the center of the image add w/2 and h/2) */
-        GPU_Blit(m_glyphTexture, &glyphRect, m_screen, xcur + d->xoff + d->w/2 + xoffKerning, ycur + d->h/2 + d->yoff);
+        GPU_Blit(m_glyphTextures[d->pageIndex], &glyphRect, m_screen, xcur + d->xoff + d->w/2 + xoffKerning, ycur + d->h/2 + d->yoff);
 
         xcur += d->xadvance + xoffKerning;
     }
@@ -58,5 +62,6 @@ void Text::setY(float y)
 
 Text::~Text()
 {
-    GPU_FreeImage(m_glyphTexture);
+    for (const auto texture : m_glyphTextures)
+        GPU_FreeImage(texture);
 }

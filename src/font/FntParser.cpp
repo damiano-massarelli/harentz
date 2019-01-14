@@ -60,13 +60,16 @@ void FntParser::parseFnt(std::stringstream& fontConfig)
 void FntParser::parseCommon(const std::smatch& matches)
 {
     m_lineHeight = std::stoi(matches.str(1));
+
+    // sets the size of the vector based on the number of pages
+    int numPages = std::stoi(matches.str(5));
+    m_textureFileNames.resize(numPages);
 }
 
 void FntParser::parsePage(const std::smatch& matches)
 {
-    // Only parse the first page for now
-    if (matches.str(1) == "0")
-        m_textureFileName = matches.str(2);
+    int pageId = std::stoi(matches.str(1));
+    m_textureFileNames[pageId] = matches.str(2);
 }
 
 void FntParser::parseNumOfChars(const std::smatch& matches)
@@ -86,7 +89,8 @@ void FntParser::parseChar(const std::smatch& matches)
     data.xoff = std::stoi(matches.str(6));
     data.yoff = std::stoi(matches.str(7));
     data.xadvance = std::stoi(matches.str(8));
-    // pages and channels are ignored for now
+    data.pageIndex = std::stoi(matches.str(9));
+    // channels are ignored for now
 
     m_spaceWidth += data.xadvance; // Will be then divided to get the average
 
@@ -102,9 +106,9 @@ void FntParser::parseKerning(const std::smatch& matches)
     m_kernings.insert(std::make_pair(std::make_pair(prev, current), offset));
 }
 
-const std::string& FntParser::getTextureFileName() const
+const std::vector<std::string>& FntParser::getTextureFileNames() const
 {
-    return m_textureFileName;
+    return m_textureFileNames;
 }
 
 const CharData* FntParser::getDataForChar(int charId) const

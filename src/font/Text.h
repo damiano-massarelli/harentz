@@ -1,18 +1,18 @@
 #ifndef TEXT_H
 #define TEXT_H
 #include "AbstractRenderable.h"
+#include "FntParser.h"
 #include <SDL_gpu.h>
 #include <map>
 #include <string>
 #include <regex>
 #include <sstream>
-#include "FntParser.h"
 
 class Text : public AbstractRenderable
 {
     private:
         GPU_Target* m_screen = nullptr; ///< where text is going to be rendered
-        GPU_Image* m_glyphTexture = nullptr; ///< a texture containing all the glyphs
+        std::vector<GPU_Image*> m_glyphTextures; ///< the textures containing all the glyphs
 
         FntParser m_fntParser; ///< contains data related to the glyphs
 
