@@ -7,6 +7,7 @@
 #include "GameScene.h"
 #include "collisionDetection.h"
 #include "BonusPiece.h"
+#include "MalusPiece.h"
 #include "constants.h"
 #include "randomUtils.h"
 #include "lerpUtils.h"
@@ -62,7 +63,7 @@ void PieceManager::generateBonusMalus(const Piece* piece, int pieceLane, GameSce
     for (int i = 0; i < piece->getNumOfHorizontalCubes(); ++i) {
         if (piece->cubeAt(i, 0, 0) == false) { // checks if the piece is hollow at ground level
             std::unique_ptr<Piece> bonusMalus;
-            bonusMalus = std::make_unique<BonusPiece>(m_renderer);
+            bonusMalus = std::make_unique<MalusPiece>(m_renderer);
             bonusMalus->setPosition(Point3{bonusMalus->xForLane(pieceLane + i),
                                      m_spawnPoint.y,
                                      m_spawnPoint.z});

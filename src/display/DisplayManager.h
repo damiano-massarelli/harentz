@@ -20,6 +20,11 @@ class DisplayManager : public EventListener
         EventManager* m_eventManager = nullptr;
         Scene* m_currentScene = nullptr;
 
+        /* Scenes cannot be swapped when setCurrentScene is called
+        we must wait until the current frame is over. If this variable
+        contain a scene it will become the next scene once the current frame is over */
+        Scene* m_nextScene = nullptr;
+
         bool m_quit{false}; ///< true if should quit main loop
 
         DisplayManager(const std::string& title, int displayWidth, int displayHeight);

@@ -73,25 +73,6 @@ void Player::onEvent(SDL_Event e)
     }
 }
 
-void Player::setLives(int lives)
-{
-    m_lives = lives;
-    SDL_Color color = getFillColor();
-    if (m_lives >= 3)
-        color.a = 255;
-    if (m_lives == 2)
-        color.a = 200;
-    if (m_lives <= 1)
-        color.a = 128;
-
-    setFillColor(color);
-}
-
-int Player::getLives()
-{
-    return m_lives;
-}
-
 Player::~Player()
 {
 

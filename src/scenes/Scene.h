@@ -19,7 +19,7 @@ class Scene : public EventListener
         std::unique_ptr<EventListenerCrumb> m_willEnterFgCrumb;
         std::unique_ptr<EventListenerCrumb> m_didEnterFgCrumb;
 
-        SDL_Color m_bgColor{0, 0, 0};
+        SDL_Color m_bgColor{0, 0, 0, 255};
 
         GPU_Target* m_screen = nullptr;
 

@@ -58,6 +58,7 @@ BreakingParticles::BreakingParticles(Renderer* renderer, const Point3& position,
         m_directions.push_back(std::make_pair(position, Point3{finalX, finalY, finalZ})); // Direction of each particle represented by start and end point
 
         cubeParticle->setFillColor(color); // color of the broken piece
+        cubeParticle->setOutlineColor(SDL_Color{255, 255, 255, 255});
         float randomRotation = randRange(-M_PI/2.0f, M_PI/2.0f);
         cubeParticle->setTransformationMatrix(rotation(randomRotation, randomRotation, randomRotation));
         m_particles.push_back(std::move(cubeParticle));
@@ -77,7 +78,7 @@ void BreakingParticles::update(float f)
         SDL_Color currentOutline = m_particles[i]->getOutlineColor();
         float alpha = m_initialColor.a * (1.0f - f); // From initial alpha to 0
         currentFill.a = alpha;
-        currentOutline.a = alpha;
+        currentOutline.a = 255 * (1.0f - f);
         m_particles[i]->setFillColor(currentFill);
         m_particles[i]->setOutlineColor(currentOutline);
     }

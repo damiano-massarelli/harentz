@@ -85,7 +85,6 @@ class Renderer
           */
         void setLight(std::unique_ptr<PointLight> light);
 
-
         /** \brief Adds backface culling capabilities to this renderer
           * \param backfaceCulling the object to use for backface culling
           */

@@ -126,6 +126,20 @@ void Piece::removeCube(int index)
     }
 }
 
+void Piece::explodeCube(int index)
+{
+    GameScene* gameScene = static_cast<GameScene*>(DisplayManager::getInstance()->getCurrentScene()); // it must be the game scene
+
+    /* Creates the particle effect */
+    Point3 collisionPoint = getChildren()[index]->getWorldPosition();
+    SDL_Color particleColor = getChildren()[index]->getFillColor();
+    gameScene->add(BreakingParticles::create(gameScene->getEffectRenderer(), collisionPoint, particleColor, 10));
+
+    /* finally removes the cube */
+    removeCube(index);
+
+}
+
 int Piece::getNumOfHorizontalCubes() const
 {
     return m_horizontalCubes;
@@ -133,19 +147,12 @@ int Piece::getNumOfHorizontalCubes() const
 
 void Piece::handleCollision(int collidedCubeIndex)
 {
-    GameScene* gameScene = static_cast<GameScene*>(DisplayManager::getInstance()->getCurrentScene()); // it must be the game scene
-
-    /* Creates the particle effect */
-    Point3 collisionPoint = getChildren()[collidedCubeIndex]->getWorldPosition();
-    SDL_Color particleColor = getChildren()[collidedCubeIndex]->getFillColor();
-    gameScene->add(BreakingParticles::create(gameScene->getEffectRenderer(), collisionPoint, particleColor, 10));
-
     /* removes the cube that collided */
-    removeCube(collidedCubeIndex);
+    explodeCube(collidedCubeIndex);
 
     /* Decreases the number of lives of the player */
-    Player* player = gameScene->getPlayer();
-    player->setLives(player->getLives() - 1);
+    GameScene* gameScene = static_cast<GameScene*>(DisplayManager::getInstance()->getCurrentScene()); // it must be the game scene
+    gameScene->incrementLives(-1);
 }
 
 bool Piece::cubeAt(int x, int y, int z) const

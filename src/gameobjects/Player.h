@@ -26,10 +26,6 @@ class Player : public Piece, public EventListener
 
         void onEvent(SDL_Event e) override;
 
-        void setLives(int lives);
-
-        int getLives();
-
         virtual ~Player();
 };
 

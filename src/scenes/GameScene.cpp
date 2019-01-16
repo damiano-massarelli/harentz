@@ -5,6 +5,7 @@
 #include "BspRenderer.h"
 #include "PaintersRenderer.h"
 #include "LinearTransition.h"
+#include "LocalLeaderboardScene.h"
 #include <sstream>
 
 GameScene::GameScene()
@@ -47,8 +48,13 @@ void GameScene::onShow(GPU_Target* screen)
     add(m_starFieldEffect.get());
 
     m_scoreText = std::make_unique<Text>(screen, "resources/font/invasion2000");
-    m_scoreText->setText("Score: 0");
+    m_scoreText->setText("score: 0");
     add(m_scoreText.get());
+
+    m_livesText = std::make_unique<Text>(screen, "resources/font/invasion2000");
+    m_livesText->setText("lives: " + std::to_string(m_lives));
+    m_livesText->setY(m_scoreText->getY() + m_scoreText->getHeight() + 5);
+    add(m_livesText.get());
 
     onResume(EventStatus::DID);
 }
@@ -63,11 +69,11 @@ void GameScene::onEnterFrame(SDL_Event& e)
 
     m_starFieldEffect->update(delta);
 
+    // Updates the score
+    m_scoreText->setText("score: " + std::to_string(m_score));
+
     // Moves all the pieces towards the player
     m_pieceManager->update(delta, this);
-
-    // Updates the
-    m_scoreText->setText("Score: " + std::to_string(m_score));
 }
 
 void GameScene::onRenderingComplete()
@@ -88,18 +94,27 @@ void GameScene::onResume(const EventStatus& status)
 
     /* creates the text to use for the countdown (shared ptr so that it can be passed to a lambda without issues)*/
     std::shared_ptr<Text> countdownText = std::make_shared<Text>(getScreen(), "resources/font/invasion_2000_50");
-    countdownText->setX(50);
-    countdownText->setY(50);
+    countdownText->setY(100);
     add(countdownText.get());
 
     startResumeCountdown(3, countdownText);
 }
 
-void GameScene::startResumeCountdown(int countdown, std::shared_ptr<Text> countdownText) const
+void GameScene::startResumeCountdown(int countdown, std::shared_ptr<Text> countdownText)
 {
-    if (countdown < 0) return;
-    countdownText->setText(std::to_string(countdown));
-    LinearTransition<float>::create(0.0f, 1.0f, nullptr, 1000.0f, [this, countdown, countdownText](){this->startResumeCountdown(countdown-1, countdownText);}, "game");
+    if (countdown < 0) {
+        m_paused = false;
+        return;
+    };
+    countdownText->setText((countdown == 0 ? "Go!" : std::to_string(countdown)));
+    countdownText->setX(DisplayManager::screenWidth()/2 - countdownText->getWidth()/2);
+
+    // the duration of this transition is 1s if the countdown is different from 0, 0.45 if is 0
+    LinearTransition<float>::create(0.0f, 1.0f, nullptr, (countdown == 0 ? 450.0f : 1000.0f),
+                                    [this, countdown, countdownText](){
+                                        this->startResumeCountdown(countdown-1, countdownText);
+                                    },
+                                    "game");
 }
 
 void GameScene::onRemove()
@@ -129,6 +144,30 @@ int GameScene::getScore() const
     return m_score;
 }
 
+void GameScene::incrementLives(int lives)
+{
+    m_lives += lives;
+    if (m_lives < 0) {
+        DisplayManager::getInstance()->setCurrentScene(new LocalLeaderboardScene{});
+        return;
+    }
+    SDL_Color color = m_player->getFillColor();
+    if (m_lives >= 3)
+        color.a = 255;
+    if (m_lives == 2)
+        color.a = 200;
+    if (m_lives <= 1)
+        color.a = 128;
+
+    m_player->setFillColor(color);
+    m_livesText->setText("lives: " + std::to_string(m_lives));
+}
+
+int GameScene::getLives() const
+{
+    return m_lives;
+}
+
 PieceManager* GameScene::getPieceManager()
 {
     return m_pieceManager.get();
@@ -141,5 +180,5 @@ StarField* GameScene::getStarFieldEffect()
 
 GameScene::~GameScene()
 {
-    //dtor
+
 }

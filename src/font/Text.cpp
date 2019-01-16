@@ -14,9 +14,10 @@ Text::Text(GPU_Target* screen, const std::string& fontName) : m_screen{screen}, 
 void Text::setText(const std::string& text)
 {
     m_text = text;
+    goThroughText(); // computes the width and height
 }
 
-void Text::render()
+void Text::goThroughText(std::function<void(const CharData*, GPU_Rect*, float, float)> func)
 {
     float xcur = m_x; /* The horizontal cursor */
     float ycur = m_y; /* The vertical cursor */
@@ -43,11 +44,22 @@ void Text::render()
         GPU_Rect glyphRect{static_cast<float>(d->x), static_cast<float>(d->y),
                            static_cast<float>(d->w), static_cast<float>(d->h)};
 
-        /* !! GPU_Blit (as opposed to GPU_BlitRect) uses the x and y coords for the center of the image add w/2 and h/2) */
-        GPU_Blit(m_glyphTextures[d->pageIndex], &glyphRect, m_screen, xcur + d->xoff + d->w/2 + xoffKerning, ycur + d->h/2 + d->yoff);
+        if (func)
+            func(d, &glyphRect, xcur + d->xoff + d->w/2 + xoffKerning, ycur + d->h/2 + d->yoff);
 
         xcur += d->xadvance + xoffKerning;
     }
+
+    m_width = xcur - m_x;
+    m_height = ycur - m_y + m_fntParser.getLineHeight(); // takes into account at least a line
+}
+
+void Text::render()
+{
+    goThroughText([this](const CharData* d, GPU_Rect* glyphRect, float x, float y) {
+                    /* !! GPU_Blit (as opposed to GPU_BlitRect) uses the x and y coords for the center of the image add w/2 and h/2) */
+                    GPU_Blit(this->m_glyphTextures[d->pageIndex], glyphRect, this->m_screen, x, y);
+                  });
 }
 
 void Text::setX(float x)
@@ -58,6 +70,31 @@ void Text::setX(float x)
 void Text::setY(float y)
 {
     m_y = y;
+}
+
+float Text::getX() const
+{
+    return m_x;
+}
+
+float Text::getY() const
+{
+    return m_y;
+}
+
+float Text::getWidth() const
+{
+    return m_width;
+}
+
+float Text::getHeight() const
+{
+    return m_height;
+}
+
+const FntParser& Text::getFntParser()
+{
+    return m_fntParser;
 }
 
 Text::~Text()

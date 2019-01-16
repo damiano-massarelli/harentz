@@ -39,6 +39,9 @@ class Piece : public Transform
         /** \brief gets the number of cubes this piece is composed of */
         int getNumOfHorizontalCubes() const;
 
+        /** \brief removes one of the cubes of this piece adding an explosion effect */
+        void explodeCube(int index);
+
         /** \brief removes one of the cubes of this piece */
         void removeCube(int index);
 

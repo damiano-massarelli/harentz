@@ -61,6 +61,18 @@ void DisplayManager::startMainLoop()
         float sleepTime = (1000.0f/FPS_CAP) - renderDelta;
         if (sleepTime > 0) SDL_Delay(sleepTime);
 
+        /* changes current scene if needed (m_nextScene != nullptr) */
+        if (m_nextScene != nullptr) {
+            if (m_currentScene != nullptr) {
+                m_currentScene->onRemove();
+                delete m_currentScene;
+            }
+            m_currentScene = m_nextScene;
+            if (m_currentScene != nullptr)
+                m_currentScene->onShow(m_screen);
+
+            m_nextScene = nullptr;
+        }
         actualDelta = elapsedTimer.get() - lastTime;
      }
 }
@@ -78,13 +90,7 @@ GPU_Target* DisplayManager::getScreen() const
 
 void DisplayManager::setCurrentScene(Scene* scene)
 {
-    if (m_currentScene != nullptr) {
-        m_currentScene->onRemove();
-        delete m_currentScene;
-    }
-    m_currentScene = scene;
-    if (scene != nullptr)
-        m_currentScene->onShow(m_screen);
+    m_nextScene = scene;
 }
 
 Scene* DisplayManager::getCurrentScene()

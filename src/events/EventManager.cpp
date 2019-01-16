@@ -60,9 +60,7 @@ void EventManager::dispatchEvents()
         else // No listener for this event, just copy
             m_event2listeners.insert(std::make_pair(it->first, it->second));
 
-    m_toRemove.clear();
     m_toAdd.clear();
-
 }
 
 void EventManager::dispatchToListeners(SDL_Event& event)
@@ -76,7 +74,9 @@ void EventManager::dispatchToListeners(SDL_Event& event)
             /* Skip a listener if it is removed and removes it */
             if (m_toRemove.count(eventType)) {
                 auto& removed = m_toRemove[eventType];
-                if (std::find(removed.begin(), removed.end(), *it) != removed.end()) {
+                const auto& listenerToRemove = std::find(removed.begin(), removed.end(), *it);
+                if (listenerToRemove != removed.end()) {
+                    removed.erase(listenerToRemove);
                     it = listeners.erase(it);
                     continue;
                 }

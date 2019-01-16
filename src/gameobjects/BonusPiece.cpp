@@ -3,6 +3,7 @@
 #include "DisplayManager.h"
 #include "Mat4.h"
 #include "LinearTransition.h"
+#include "constants.h"
 
 BonusPiece::BonusPiece(Renderer* renderer) : BonusMalusPiece{renderer}
 {
@@ -23,8 +24,7 @@ void BonusPiece::handleCollision(int collidedCubeIndex)
 
     /* Behavior ADD_LIFE */
     if (m_behavior == Behavior::ADD_LIFE) { // Adds a life to the player
-        Player* player = gameScene->getPlayer();
-        player->setLives(player->getLives() + 1);
+        gameScene->incrementLives(1);
 
     /* Behavior DESTROY_ALL */
     } else if (m_behavior == Behavior::DESTROY_ALL) { // Destroys all the pieces currently on the screen
@@ -34,8 +34,10 @@ void BonusPiece::handleCollision(int collidedCubeIndex)
 
             /* Do not delete this piece and the other bonuses maluses which are composed of a single cube */
             if (piece.get() == this || numOfCubes == 1) continue;
-            for (int cubeIndex = numOfCubes - 1; cubeIndex >= 0; --cubeIndex)
-                piece->handleCollision(cubeIndex);
+            for (int cubeIndex = numOfCubes - 1; cubeIndex >= 0; --cubeIndex) {
+                piece->explodeCube(cubeIndex);
+                gameScene->incrementScore(SCORE_PER_PIECE);
+            }
         }
     }
 

@@ -31,13 +31,15 @@ class GameScene : public Scene
         std::unique_ptr<StarField> m_starFieldEffect;
 
         std::unique_ptr<Text> m_scoreText; ///< the text containing the current score
+        std::unique_ptr<Text> m_livesText; ///< the text containing the current number of lives
 
         Point3 m_spawnPoint; ///< the point where new pieces are spawned, only y and z are relevant.
         Mat4 m_rotationMatrix; ///< the matrix used by all the rotated objects
 
         int m_score = 0; ///< the score of the player
+        int m_lives = 3; ///< lives of the player
 
-        bool m_paused = false; ///< true when the application is paused (e.g. put in bg in android)
+        bool m_paused = true; ///< true when the application is paused (e.g. put in bg in android)
 
     public:
         GameScene();
@@ -55,7 +57,7 @@ class GameScene : public Scene
         /** \brief A recursive function that displays a countdown text
           * when the countdown is over the game is resumed ( \sa m_paused)
           * The recursive call is delayed using a LinearTransition */
-        void startResumeCountdown(int countdown, std::shared_ptr<Text> countdownText) const;
+        void startResumeCountdown(int countdown, std::shared_ptr<Text> countdownText);
 
         virtual void onRemove() override;
 
@@ -70,6 +72,10 @@ class GameScene : public Scene
         void incrementScore(int inc = SCORE_PER_PIECE);
 
         int getScore() const;
+
+        void incrementLives(int lives);
+
+        int getLives() const;
 
         virtual ~GameScene();
 
