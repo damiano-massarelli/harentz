@@ -19,11 +19,10 @@ void Scene::onEvent(SDL_Event event)
         onPause(EventStatus::WILL);
     if (event.type == SDL_APP_DIDENTERBACKGROUND)
         onPause(EventStatus::DID);
-    if (event.type == SDL_APP_WILLENTERBACKGROUND)
-        onPause(EventStatus::WILL);
-    if (event.type == SDL_APP_DIDENTERBACKGROUND)
-        onPause(EventStatus::DID);
-
+    if (event.type == SDL_APP_WILLENTERFOREGROUND)
+        onResume(EventStatus::WILL);
+    if (event.type == SDL_APP_DIDENTERFOREGROUND)
+        onResume(EventStatus::DID);
 }
 
 void Scene::onEnterFrame(SDL_Event& e)

@@ -9,7 +9,8 @@ class MalusPiece : public BonusMalusPiece
         enum class Behavior {
             WIREFRAME_ONLY,
             SPEED_UP,
-            INVERT_COMMANDS
+            INVERT_COMMANDS,
+            COUNT
         };
 
         Behavior m_behavior;

@@ -23,6 +23,7 @@ class PieceManager
         static const float DEFAULT_FINAL_TIME; ///< the time at which speed = FINAL_SPPED and a piece is generated every GENERATE_MIN_INTERVAL (can be changed, \sa m_finalTime)
 
         float m_finalTime = DEFAULT_FINAL_TIME; ///< the score at which speed = FINAL_SPPED
+        float m_speedMultiplier = 1.0f;
 
         float m_elapsedFromLast = 0.0f; ///< time elapsed from the last generated piece
         float m_totalElapsed = 0.0; ///< the total elapsed time used to determine the current speed and generation time.
@@ -51,6 +52,10 @@ class PieceManager
 
         /** \brief moves the pieces using the current speed and creates new ones if necessary */
         void update(float deltaMS, GameScene* gameScene);
+
+        /** \brief multiplies the current speed by a factor
+          * \param factor the factor to use */
+        void changeSpeed(float factor);
 
         /** \brief returns a vector of the currently used pieces */
         std::vector<std::unique_ptr<Piece>>& getPieces();

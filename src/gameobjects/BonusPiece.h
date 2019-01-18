@@ -10,11 +10,11 @@ class BonusPiece : public BonusMalusPiece
         enum class Behavior {
             ADD_LIFE,
             SLOW_DOWN,
-            DESTROY_ALL
+            DESTROY_ALL,
+            COUNT
         };
 
         Behavior m_behavior;
-        bool m_alreadyCollided = false; ///< BonusMalus pieces are not removed when they collide. An additional flag is hence needed.
 
     public:
         BonusPiece(Renderer* renderer);

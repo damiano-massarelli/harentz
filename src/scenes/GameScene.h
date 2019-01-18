@@ -32,6 +32,7 @@ class GameScene : public Scene
 
         std::unique_ptr<Text> m_scoreText; ///< the text containing the current score
         std::unique_ptr<Text> m_livesText; ///< the text containing the current number of lives
+        std::unique_ptr<Text> m_messageText; ///< the text containing messages to show to the player (e.g countdown)
 
         Point3 m_spawnPoint; ///< the point where new pieces are spawned, only y and z are relevant.
         Mat4 m_rotationMatrix; ///< the matrix used by all the rotated objects
@@ -57,7 +58,7 @@ class GameScene : public Scene
         /** \brief A recursive function that displays a countdown text
           * when the countdown is over the game is resumed ( \sa m_paused)
           * The recursive call is delayed using a LinearTransition */
-        void startResumeCountdown(int countdown, std::shared_ptr<Text> countdownText);
+        void startResumeCountdown(int countdown);
 
         virtual void onRemove() override;
 
@@ -76,6 +77,12 @@ class GameScene : public Scene
         void incrementLives(int lives);
 
         int getLives() const;
+
+        /** \brief shows a message to the user
+         * \param message the message to show
+         * \param the time before the message is removed (negative value: do not remove)
+         */
+        void setMessage(const std::string& message, float duration = -1.0f);
 
         virtual ~GameScene();
 

@@ -15,8 +15,8 @@
 const float PieceManager::GENERATE_INITIAL_INTERVAL = 1000.0f;
 const float PieceManager::GENERATE_MIN_INTERVAL = 430.0f;
 const float PieceManager::INITIAL_SPEED = 1600.0f;
-const float PieceManager::FINAL_SPEED = 2500.0f;
-const float PieceManager::DEFAULT_FINAL_TIME = 60 * 1000.0f; // a minute
+const float PieceManager::FINAL_SPEED = 2900.0f;
+const float PieceManager::DEFAULT_FINAL_TIME = 90 * 1000.0f; // a minute and a half
 
 const std::vector<std::string> PieceManager::m_pieceNames{"I-side", "I-up", "J", "J-up", "L", "L-up", "O-side", "O-up",
                                                     "S", "T-down", "T-up", "Z"};
@@ -30,8 +30,8 @@ PieceManager::PieceManager(Renderer* renderer, const Point3& spawnPoint, const M
 void PieceManager::generatePiece(float deltaMS, GameScene* gameScene)
 {
     m_elapsedFromLast += deltaMS;
-
-    float generationInterval = lerp(GENERATE_INITIAL_INTERVAL, GENERATE_MIN_INTERVAL, m_totalElapsed/m_finalTime);
+    float cappedElapsed = std::min(m_totalElapsed, m_finalTime); // capped
+    float generationInterval = lerp(GENERATE_INITIAL_INTERVAL, GENERATE_MIN_INTERVAL, cappedElapsed/m_finalTime) / m_speedMultiplier;
 
     std::unique_ptr<Piece> piece;
     if (m_elapsedFromLast > generationInterval) {
@@ -61,9 +61,15 @@ void PieceManager::generatePiece(float deltaMS, GameScene* gameScene)
 void PieceManager::generateBonusMalus(const Piece* piece, int pieceLane, GameScene* gameScene)
 {
     for (int i = 0; i < piece->getNumOfHorizontalCubes(); ++i) {
-        if (piece->cubeAt(i, 0, 0) == false) { // checks if the piece is hollow at ground level
+        if (piece->cubeAt(i, 0, 0) == false && randRange(0.0f, 1.0f) <= 0.25f) { // checks if the piece is hollow at ground level
             std::unique_ptr<Piece> bonusMalus;
-            bonusMalus = std::make_unique<MalusPiece>(m_renderer);
+
+            // bonus pieces are more likely than malus pieces
+            if (randRange(0.0f, 1.0f) >= 0.6f)
+                bonusMalus = std::make_unique<BonusPiece>(m_renderer);
+            else
+                bonusMalus = std::make_unique<MalusPiece>(m_renderer);
+
             bonusMalus->setPosition(Point3{bonusMalus->xForLane(pieceLane + i),
                                      m_spawnPoint.y,
                                      m_spawnPoint.z});
@@ -78,12 +84,12 @@ void PieceManager::generateBonusMalus(const Piece* piece, int pieceLane, GameSce
 void PieceManager::update(float deltaMS, GameScene* gameScene)
 {
     m_totalElapsed += deltaMS; // updates total elapsed time
-    m_totalElapsed = std::min(m_totalElapsed, m_finalTime); // capped
+    float cappedElapsed = std::min(m_totalElapsed, m_finalTime); // capped
 
     /* Generate a new piece if necessary */
     generatePiece(deltaMS, gameScene);
 
-    float speed = lerp(INITIAL_SPEED, FINAL_SPEED, m_totalElapsed/m_finalTime);
+    float speed = lerp(INITIAL_SPEED, FINAL_SPEED, cappedElapsed/m_finalTime) * m_speedMultiplier;
     speed *= (deltaMS/1000); // speed is fps independent
 
     if (speed > 100000.0f || std::isnan(speed)) return; // sometimes (e.g first frame) this value can be too high, ignore it
@@ -133,6 +139,11 @@ void PieceManager::checkCollision(Piece* piece, Player* player)
 std::vector<std::unique_ptr<Piece>>& PieceManager::getPieces()
 {
     return m_pieces;
+}
+
+void PieceManager::changeSpeed(float factor)
+{
+    m_speedMultiplier = factor;
 }
 
 PieceManager::~PieceManager()
