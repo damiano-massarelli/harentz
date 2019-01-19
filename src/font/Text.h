@@ -38,6 +38,8 @@ class Text : public AbstractRenderable
 
         void setY(float y);
 
+        void setColor(const SDL_Color& color);
+
         float getX() const;
 
         float getY() const;

@@ -6,6 +6,7 @@
 #include "constants.h"
 #include "randomUtils.h"
 #include "constants.h"
+#include "AudioManager.h"
 
 BonusPiece::BonusPiece(Renderer* renderer) : BonusMalusPiece{renderer}
 {
@@ -17,6 +18,7 @@ BonusPiece::BonusPiece(Renderer* renderer) : BonusMalusPiece{renderer}
 void BonusPiece::handleCollision(int collidedCubeIndex)
 {
     BonusMalusPiece::handleCollision(collidedCubeIndex);
+    AudioManager::getInstance()->playSound("resources/sound/bonus.wav");
 
     GameScene* gameScene = static_cast<GameScene*>(DisplayManager::getInstance()->getCurrentScene());
 

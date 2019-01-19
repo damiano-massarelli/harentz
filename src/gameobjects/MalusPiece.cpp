@@ -5,6 +5,7 @@
 #include "LinearTransition.h"
 #include "Player.h"
 #include "randomUtils.h"
+#include "AudioManager.h"
 
 MalusPiece::MalusPiece(Renderer* renderer) : BonusMalusPiece{renderer}
 {
@@ -15,6 +16,7 @@ MalusPiece::MalusPiece(Renderer* renderer) : BonusMalusPiece{renderer}
 void MalusPiece::handleCollision(int collidedCubeIndex)
 {
     BonusMalusPiece::handleCollision(collidedCubeIndex);
+    AudioManager::getInstance()->playSound("resources/sound/malus.wav");
 
     GameScene* gameScene = static_cast<GameScene*>(DisplayManager::getInstance()->getCurrentScene());
 

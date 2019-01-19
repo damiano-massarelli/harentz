@@ -112,7 +112,14 @@ void GameScene::startResumeCountdown(int countdown)
         setMessage("");
         return;
     };
-    setMessage((countdown == 0 ? "Go!" : std::to_string(countdown)));
+    if (countdown == 0) {
+        setMessage("Go!");
+        AudioManager::getInstance()->playSound("resources/sound/beepHigh.wav");\
+        AudioManager::getInstance()->playMusic("resources/sound/base.mp3", -1);
+    }else {
+        setMessage(std::to_string(countdown));
+        AudioManager::getInstance()->playSound("resources/sound/beepLow.wav");
+    }
 
     // the duration of this transition is 1s if the countdown is different from 0, 0.45 if is 0
     LinearTransition<float>::create(0.0f, 1.0f, nullptr, (countdown == 0 ? 450.0f : 1000.0f),
@@ -157,7 +164,7 @@ void GameScene::incrementLives(int lives)
     m_player->setInvincible(); // now the player cannot be hit for some time
     m_lives += lives;
     if (m_lives < 0) {
-        DisplayManager::getInstance()->setCurrentScene(new LocalLeaderboardScene{});
+        DisplayManager::getInstance()->setCurrentScene(new LocalLeaderboardScene{m_score});
         return;
     }
     SDL_Color color = m_player->getFillColor();

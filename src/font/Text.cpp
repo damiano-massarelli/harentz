@@ -72,6 +72,12 @@ void Text::setY(float y)
     m_y = y;
 }
 
+void Text::setColor(const SDL_Color& color)
+{
+    for (auto glyphTexture : m_glyphTextures)
+        GPU_SetColor(glyphTexture, color);
+}
+
 float Text::getX() const
 {
     return m_x;
