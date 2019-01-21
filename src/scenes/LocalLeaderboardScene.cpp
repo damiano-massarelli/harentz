@@ -2,6 +2,8 @@
 #include "DisplayManager.h"
 #include "colorUtils.h"
 #include "LinearTransition.h"
+#include "ioUtils.h"
+#include "stringUtils.h"
 #include <string>
 #include <sstream>
 
@@ -12,17 +14,30 @@ LocalLeaderboardScene::LocalLeaderboardScene(int score) : m_lastScore{score}
 
 std::vector<int> LocalLeaderboardScene::loadScore() const
 {
-    return std::vector<int>{};
+    std::stringstream savedScore = readFile("data/scores");
+    if (savedScore.bad()) // not saved scores yet
+        return std::vector<int>{};
+    return split<int>(savedScore.str(), ',', [](std::string& str) { return std::stoi(str); });
 }
 
 void LocalLeaderboardScene::saveScore(const std::vector<int>& scores)
 {
-
+    std::stringstream toSave;
+    for (auto it = scores.begin(); it != scores.end(); ++it) {
+        if (it != scores.begin()) toSave << ",";
+        toSave << *it;
+    }
+    writeFile("data/scores", toSave.str());
 }
 
 void LocalLeaderboardScene::onShow(GPU_Target* screen)
 {
     Scene::onShow(screen);
+    m_gameOverText = std::make_unique<Text>(screen, "resources/font/invasion_2000_50");
+    m_gameOverText->setText("game over");
+    m_gameOverText->setY(10);
+    m_gameOverText->setX((DisplayManager::screenWidth() - m_gameOverText->getWidth())/2);
+    add(m_gameOverText.get());
 
     int numOfScores = 10; // TODO compute this value
 
@@ -30,10 +45,9 @@ void LocalLeaderboardScene::onShow(GPU_Target* screen)
     scores.push_back(m_lastScore);
     std::sort(scores.begin(), scores.end(), [](int a, int b) {return b < a;});
     scores.resize(numOfScores);    // shows only the first tot scores
+    saveScore(scores);
 
-
-
-    float textPosY = 20;
+    float textPosY = m_gameOverText->getY() + m_gameOverText->getHeight() + 10;
     float textPosX = 10.0f;
     for (std::size_t i = 0; i < scores.size(); ++i) {
         int score = scores[i];

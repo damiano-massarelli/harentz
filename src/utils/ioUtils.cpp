@@ -34,3 +34,11 @@ std::stringstream readFile(const std::string& path) {
     free(res);
     return ss;
 }
+
+bool writeFile(const std::string& path, const std::string& content)
+{
+    SDL_RWops* rw = SDL_RWFromFile(path.c_str(), "w");
+    SDL_RWwrite(rw, content.c_str(), sizeof(char), content.length());
+    SDL_RWclose(rw);
+}
+

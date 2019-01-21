@@ -10,6 +10,7 @@ class LocalLeaderboardScene : public Scene
 {
     private:
         std::vector<std::unique_ptr<Text>> m_scoreTexts;
+        std::unique_ptr<Text> m_gameOverText;
         int m_lastScore;
 
         std::vector<int> loadScore() const;

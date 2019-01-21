@@ -10,4 +10,10 @@
   * the returned stringstream shall return false */
 std::stringstream readFile(const std::string& path);
 
+/** \brief writes a string into a file
+  * \param path the path of the file
+  * \param content the content of the file
+  * \return true if successful, false otherwise */
+bool writeFile(const std::string& path, const std::string& content);
+
 #endif // IOUTILS_H

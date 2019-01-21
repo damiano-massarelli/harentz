@@ -1,31 +1,16 @@
 #include "Piece.h"
-#include <sstream>
-#include <string>
 #include "DisplayManager.h"
 #include "constants.h"
-#include <functional>
-#include <LinearTransition.h>
+#include "LinearTransition.h"
 #include "ioUtils.h"
 #include "GameScene.h"
 #include "BreakingParticles.h"
+#include "stringUtils.h"
+#include <sstream>
+#include <string>
+#include <functional>
 
 std::shared_ptr<Shape> Piece::CUBE_SHAPE;
-
-template<typename T>
-std::vector<T> split(const std::string &toSplit, char ch, std::function<T(std::string& str)> converter)
-{
-    std::stringstream ss(toSplit);
-    std::vector<T> result;
-
-    while( ss.good() )
-    {
-        std::string substr;
-        getline(ss, substr, ch);
-        result.push_back(converter(substr));
-    }
-
-    return result;
-}
 
 std::shared_ptr<Shape> Piece::getCubeShape()
 {
