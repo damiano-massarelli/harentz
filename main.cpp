@@ -6,7 +6,6 @@
 #include "constants.h"
 
 #include "LocalLeaderboardScene.h"
-#include "ioUtils.h"
 
 int main(int argc, char* argv[])
 {

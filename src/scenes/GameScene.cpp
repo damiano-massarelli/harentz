@@ -60,7 +60,7 @@ void GameScene::onShow(GPU_Target* screen)
     add(m_livesText.get());
 
     /* creates the text to use for the countdown (shared ptr so that it can be passed to a lambda without issues)*/
-    m_messageText = std::make_unique<Text>(screen, "resources/font/invasion_2000_50");
+    m_messageText = std::make_unique<Text>(screen, "resources/font/invasion2000_50");
     m_messageText->setY(100);
     add(m_messageText.get());
 
@@ -70,7 +70,7 @@ void GameScene::onShow(GPU_Target* screen)
 void GameScene::onEnterFrame(SDL_Event& e)
 {
     Scene::onEnterFrame(e);
-    if (m_paused) return; // do not do anything while game is paused
+    if (m_paused || m_gameOver) return; // do not do anything while game is paused
 
     float delta = (*(static_cast<Uint32*>(e.user.data1)));
     //std::cout << "fps " << 1000/delta << std::endl;
@@ -100,7 +100,8 @@ void GameScene::onPause(const EventStatus& status)
 
 void GameScene::onResume(const EventStatus& status)
 {
-    if (status != EventStatus::DID) return;
+    // do not resume if game is over
+    if (status != EventStatus::DID || m_gameOver) return;
 
     startResumeCountdown(3);
 }
@@ -164,7 +165,13 @@ void GameScene::incrementLives(int lives)
     m_player->setInvincible(); // now the player cannot be hit for some time
     m_lives += lives;
     if (m_lives < 0) {
-        DisplayManager::getInstance()->setCurrentScene(new LocalLeaderboardScene{m_score});
+        m_gameOver = true;
+        m_player->explodeCube(0);
+        // wait till the end of the explosion to change scene
+        LinearTransition<int>::create(0, 0, nullptr, 750.0f, [this](){
+                                        DisplayManager::getInstance()->setCurrentScene(new LocalLeaderboardScene{this->m_score});
+                                      }, "game");
+
         return;
     }
     SDL_Color color = m_player->getFillColor();
@@ -179,7 +186,7 @@ void GameScene::incrementLives(int lives)
     m_livesText->setText("lives: " + std::to_string(m_lives));
 
     if (lives < 0) { // play glass sound when losing lives
-        AudioManager::getInstance()->playSound("resources/sound/glass2.wav");
+        AudioManager::getInstance()->playSound("resources/sound/glass1.wav");
     }
 }
 

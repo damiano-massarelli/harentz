@@ -41,6 +41,7 @@ class GameScene : public Scene
         int m_lives = 3; ///< lives of the player
 
         bool m_paused = true; ///< true when the application is paused (e.g. put in bg in android)
+        bool m_gameOver = false;
 
     public:
         GameScene();

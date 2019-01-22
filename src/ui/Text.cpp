@@ -1,6 +1,8 @@
 #include "Text.h"
 #include "ioUtils.h"
 
+#include <iostream>
+#include "DisplayManager.h"
 Text::Text(GPU_Target* screen, const std::string& fontName) : m_screen{screen}, m_fntParser{fontName}
 {
     const std::vector<std::string>& textureFilenames = m_fntParser.getTextureFileNames();
@@ -44,7 +46,7 @@ void Text::goThroughText(std::function<void(const CharData*, GPU_Rect*, float, f
         GPU_Rect glyphRect{static_cast<float>(d->x), static_cast<float>(d->y),
                            static_cast<float>(d->w), static_cast<float>(d->h)};
 
-        if (func)
+        if (func) /* !! GPU_Blit (as opposed to GPU_BlitRect) uses the x and y coords for the center of the image add w/2 and h/2) */
             func(d, &glyphRect, xcur + d->xoff + d->w/2 + xoffKerning, ycur + d->h/2 + d->yoff);
 
         xcur += d->xadvance + xoffKerning;
@@ -57,9 +59,24 @@ void Text::goThroughText(std::function<void(const CharData*, GPU_Rect*, float, f
 void Text::render()
 {
     goThroughText([this](const CharData* d, GPU_Rect* glyphRect, float x, float y) {
-                    /* !! GPU_Blit (as opposed to GPU_BlitRect) uses the x and y coords for the center of the image add w/2 and h/2) */
                     GPU_Blit(this->m_glyphTextures[d->pageIndex], glyphRect, this->m_screen, x, y);
                   });
+}
+
+
+GPU_Image* Text::renderToImage()
+{
+    GPU_Image* textImage = GPU_CreateImage(getWidth(), getHeight(), GPU_FORMAT_RGBA);
+    GPU_GetTarget(textImage);
+    GPU_Camera cam = GPU_GetCamera(textImage->target);
+    cam.zoom_x *= DisplayManager::screenWidth()/getWidth();
+    cam.zoom_y *= -DisplayManager::screenHeight()/getHeight();
+    GPU_SetCamera(textImage->target, &cam);
+    goThroughText([this, textImage](const CharData* d, GPU_Rect* glyphRect, float x, float y) {
+                    GPU_Blit(this->m_glyphTextures[d->pageIndex], glyphRect, textImage->target, x, y);
+                    //GPU_BlitScale(this->m_glyphTextures[d->pageIndex], glyphRect, textImage->target, x, y, 15, -1);
+                  });
+    return textImage;
 }
 
 void Text::setX(float x)

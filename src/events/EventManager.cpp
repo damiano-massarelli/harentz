@@ -37,6 +37,12 @@ std::unique_ptr<EventListenerCrumb> EventManager::addListenerFor(SDL_EventType e
     return crumb;
 }
 
+void EventManager::addListenerFor(SDL_EventType event, EventListenerCrumb* existingCrumb)
+{
+    existingCrumb->addEvent(event);
+    addListenerFor(event, existingCrumb->getListener(), false);
+}
+
 void EventManager::removeListenerFor(SDL_EventType event, EventListener* listener)
 {
     if (m_toRemove.count(event))

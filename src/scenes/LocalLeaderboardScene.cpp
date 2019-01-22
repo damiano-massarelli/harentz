@@ -4,6 +4,8 @@
 #include "LinearTransition.h"
 #include "ioUtils.h"
 #include "stringUtils.h"
+#include "Button.h"
+#include "GameScene.h"
 #include <string>
 #include <sstream>
 
@@ -33,11 +35,26 @@ void LocalLeaderboardScene::saveScore(const std::vector<int>& scores)
 void LocalLeaderboardScene::onShow(GPU_Target* screen)
 {
     Scene::onShow(screen);
-    m_gameOverText = std::make_unique<Text>(screen, "resources/font/invasion_2000_50");
+    // credit button
+    m_creditsButton = std::make_unique<Button>(screen, "resources/font/invasion2000", "i", 20.0f, 20.0f);
+    m_creditsButton->setX(DisplayManager::screenWidth() - m_creditsButton->getWidth() - 10);
+    m_creditsButton->setY(DisplayManager::screenHeight() - m_creditsButton->getHeight() - 10);
+    add(m_creditsButton.get());
+
+    // game over text
+    m_gameOverText = std::make_unique<Text>(screen, "resources/font/invasion2000_50");
     m_gameOverText->setText("game over");
     m_gameOverText->setY(10);
     m_gameOverText->setX((DisplayManager::screenWidth() - m_gameOverText->getWidth())/2);
     add(m_gameOverText.get());
+
+    // play again button
+    m_playAgainButton = std::make_unique<Button>(screen, "resources/font/invasion2000_50", "play again", 15.0f);
+    m_playAgainButton->setX((DisplayManager::screenWidth() - m_playAgainButton->getWidth())/2);
+    m_playAgainButton->setY(DisplayManager::screenHeight() - m_playAgainButton->getHeight()*2);
+    m_playAgainButton->setOnClick([](Button* btn){
+                                  DisplayManager::getInstance()->setCurrentScene(new GameScene{});});
+    add(m_playAgainButton.get());
 
     int numOfScores = 10; // TODO compute this value
 

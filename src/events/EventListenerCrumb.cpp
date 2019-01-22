@@ -2,16 +2,27 @@
 #include "EventManager.h"
 #include "DisplayManager.h"
 
-EventListenerCrumb::EventListenerCrumb(SDL_EventType eventType, EventListener* listener) : m_eventType{eventType}, m_listener{listener}
+EventListenerCrumb::EventListenerCrumb(SDL_EventType eventType, EventListener* listener) : m_eventTypes{eventType}, m_listener{listener}
 {
 
 }
 
 void EventListenerCrumb::unregister()
 {
-    DisplayManager::getInstance()->getEventManager().removeListenerFor(m_eventType, m_listener);
+    EventManager& eventManager = DisplayManager::getInstance()->getEventManager();
+    for (auto eventType : m_eventTypes)
+        eventManager.removeListenerFor(eventType, m_listener);
 }
 
+void EventListenerCrumb::addEvent(SDL_EventType eventType)
+{
+    m_eventTypes.push_back(eventType);
+}
+
+EventListener* EventListenerCrumb::getListener()
+{
+    return m_listener;
+}
 
 EventListenerCrumb::~EventListenerCrumb()
 {

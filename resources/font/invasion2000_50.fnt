@@ -1,7 +1,7 @@
 info face="Invasion2000" size=50 bold=0 italic=0 charset="" unicode=1 stretchH=100 smooth=1 aa=2 padding=0,0,0,0 spacing=1,1 outline=0
-common lineHeight=50 base=41 scaleW=256 scaleH=256 pages=2 packed=0 alphaChnl=1 redChnl=0 greenChnl=0 blueChnl=0
-page id=0 file="invasion_2000_50_0.png"
-page id=1 file="invasion_2000_50_1.png"
+common lineHeight=50 base=41 scaleW=256 scaleH=256 pages=2 packed=0 alphaChnl=0 redChnl=3 greenChnl=3 blueChnl=3
+page id=0 file="invasion2000_50_0.png"
+page id=1 file="invasion2000_50_1.png"
 chars count=97
 char id=32   x=247   y=0     width=1     height=1     xoffset=0     yoffset=0     xadvance=22    page=0  chnl=15
 char id=33   x=240   y=134   width=14    height=28    xoffset=-2    yoffset=18    xadvance=12    page=0  chnl=15

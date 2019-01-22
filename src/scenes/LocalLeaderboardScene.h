@@ -2,6 +2,7 @@
 #define LOCALLEADERBOARDSCENE_H
 #include "Scene.h"
 #include "Text.h"
+#include "Button.h"
 #include <SDL_gpu.h>
 #include <memory>
 #include <vector>
@@ -11,6 +12,8 @@ class LocalLeaderboardScene : public Scene
     private:
         std::vector<std::unique_ptr<Text>> m_scoreTexts;
         std::unique_ptr<Text> m_gameOverText;
+        std::unique_ptr<Button> m_playAgainButton;
+        std::unique_ptr<Button> m_creditsButton;
         int m_lastScore;
 
         std::vector<int> loadScore() const;

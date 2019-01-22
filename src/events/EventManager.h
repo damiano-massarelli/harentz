@@ -23,6 +23,9 @@ class EventManager
 
         std::unique_ptr<EventListenerCrumb> addListenerFor(SDL_EventType event, EventListener* listener, bool wantCrumb = false);
 
+        /** \brief Same as addListenerFor but adds the listener to an existing crumb */
+        void addListenerFor(SDL_EventType event, EventListenerCrumb* existingCrumb);
+
         void removeListenerFor(SDL_EventType event, EventListener* listener);
 
         /** \brief dispatches all the events from the event queue */
