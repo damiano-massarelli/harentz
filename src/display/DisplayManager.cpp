@@ -32,6 +32,7 @@ int DisplayManager::screenHeight()
 
 DisplayManager::DisplayManager(const std::string& title, int displayWidth, int displayHeight)
 {
+    GPU_SetPreInitFlags(GPU_INIT_ENABLE_VSYNC);
     m_screen = GPU_Init(displayWidth, displayHeight, GPU_DEFAULT_INIT_FLAGS);
 
     m_eventManager = new EventManager{};
@@ -58,8 +59,9 @@ void DisplayManager::startMainLoop()
         m_eventManager->dispatchEvents();
 
         renderDelta = elapsedTimer.get() - lastTime;
-        float sleepTime = (1000.0f/FPS_CAP) - renderDelta;
-        if (sleepTime > 0) SDL_Delay(sleepTime);
+        // it is ok to enable this on pc but it creates weird effects on android
+        //float sleepTime = (1000.0f/FPS_CAP) - renderDelta;
+        //if (sleepTime > 0) SDL_Delay(sleepTime);
 
         /* changes current scene if needed (m_nextScene != nullptr) */
         if (m_nextScene != nullptr) {

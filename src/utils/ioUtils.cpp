@@ -1,10 +1,26 @@
 #include "ioUtils.h"
+#include "constants.h"
 #include <SDL.h>
 
-std::stringstream readFile(const std::string& path) {
-    std::stringstream ss;
-    SDL_RWops *rw = SDL_RWFromFile(path.c_str(), "r");
+std::string pathWithPrefDir(const std::string& path, const std::string& org, const std::string& app)
+{
+    std::stringstream pathWithPrefDir;
+    char* prefDir = SDL_GetPrefPath(org.c_str(), app.c_str());
+    pathWithPrefDir << prefDir << path;
 
+    SDL_free(prefDir);
+    return pathWithPrefDir.str();
+}
+
+std::stringstream readFile(const std::string& path, bool usePrefDir)
+{
+    std::string filePath{path};
+    if (usePrefDir)
+        filePath = pathWithPrefDir(path, ORG_NAME, APP_NAME);
+
+    SDL_RWops *rw = SDL_RWFromFile(filePath .c_str(), "r");
+
+    std::stringstream ss;
     // Cannot open the file
     if (rw == nullptr) {
         ss.clear(std::ios::badbit);
@@ -35,10 +51,19 @@ std::stringstream readFile(const std::string& path) {
     return ss;
 }
 
-bool writeFile(const std::string& path, const std::string& content)
+bool writeFile(const std::string& path, const std::string& content, bool usePrefDir)
 {
-    SDL_RWops* rw = SDL_RWFromFile(path.c_str(), "w");
+    std::string filePath = path;
+    if (usePrefDir)
+        filePath = pathWithPrefDir(path, ORG_NAME, APP_NAME);
+
+    SDL_RWops* rw = SDL_RWFromFile(filePath.c_str(), "w");
+    if (rw == nullptr) {
+        SDL_Log("Cannot write to %s", filePath.c_str());
+        return false;
+    }
     SDL_RWwrite(rw, content.c_str(), sizeof(char), content.length());
     SDL_RWclose(rw);
+    return true;
 }
 

@@ -42,6 +42,7 @@ class GameScene : public Scene
 
         bool m_paused = true; ///< true when the application is paused (e.g. put in bg in android)
         bool m_gameOver = false;
+        std::shared_ptr<LinearTransition<float>> m_resumeCountDown;
 
     public:
         GameScene();

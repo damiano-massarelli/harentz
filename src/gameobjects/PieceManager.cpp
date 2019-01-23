@@ -14,8 +14,8 @@
 
 const float PieceManager::GENERATE_INITIAL_INTERVAL = 1000.0f;
 const float PieceManager::GENERATE_MIN_INTERVAL = 430.0f;
-const float PieceManager::INITIAL_SPEED = 1600.0f;
-const float PieceManager::FINAL_SPEED = 2900.0f;
+const float PieceManager::INITIAL_SPEED = 2000.0f;
+const float PieceManager::FINAL_SPEED = 3500.0f;
 const float PieceManager::DEFAULT_FINAL_TIME = 90 * 1000.0f; // a minute and a half
 
 const std::vector<std::string> PieceManager::m_pieceNames{"I-side", "I-up", "J", "J-up", "L", "L-up", "O-side", "O-up",

@@ -103,6 +103,8 @@ void GameScene::onResume(const EventStatus& status)
     // do not resume if game is over
     if (status != EventStatus::DID || m_gameOver) return;
 
+    if (m_resumeCountDown) // stops the previous on resume countdown if exists
+        m_resumeCountDown->cancel();
     startResumeCountdown(3);
 }
 
@@ -111,19 +113,20 @@ void GameScene::startResumeCountdown(int countdown)
     if (countdown < 0) {
         m_paused = false;
         setMessage("");
+        m_resumeCountDown = nullptr;
         return;
     };
     if (countdown == 0) {
         setMessage("Go!");
         AudioManager::getInstance()->playSound("resources/sound/beepHigh.wav");\
         AudioManager::getInstance()->playMusic("resources/sound/base.mp3", -1);
-    }else {
+    } else {
         setMessage(std::to_string(countdown));
         AudioManager::getInstance()->playSound("resources/sound/beepLow.wav");
     }
 
     // the duration of this transition is 1s if the countdown is different from 0, 0.45 if is 0
-    LinearTransition<float>::create(0.0f, 1.0f, nullptr, (countdown == 0 ? 450.0f : 1000.0f),
+    m_resumeCountDown = LinearTransition<float>::create(0.0f, 1.0f, nullptr, (countdown == 0 ? 450.0f : 1000.0f),
                                     [this, countdown](){
                                         this->startResumeCountdown(countdown-1);
                                     },

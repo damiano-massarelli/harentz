@@ -16,7 +16,7 @@ LocalLeaderboardScene::LocalLeaderboardScene(int score) : m_lastScore{score}
 
 std::vector<int> LocalLeaderboardScene::loadScore() const
 {
-    std::stringstream savedScore = readFile("data/scores");
+    std::stringstream savedScore = readFile("scores.ldb", true);
     if (savedScore.bad()) // not saved scores yet
         return std::vector<int>{};
     return split<int>(savedScore.str(), ',', [](std::string& str) { return std::stoi(str); });
@@ -29,7 +29,7 @@ void LocalLeaderboardScene::saveScore(const std::vector<int>& scores)
         if (it != scores.begin()) toSave << ",";
         toSave << *it;
     }
-    writeFile("data/scores", toSave.str());
+    writeFile("scores.ldb", toSave.str(), true);
 }
 
 void LocalLeaderboardScene::onShow(GPU_Target* screen)
