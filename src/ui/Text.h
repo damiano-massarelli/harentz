@@ -55,13 +55,6 @@ class Text : public AbstractRenderable
           * the coordinates for that glyph */
         void goThroughText(std::function<void(const CharData*, GPU_Rect*, float, float)> func = nullptr);
 
-        /** \brief renders the text on an image
-          * \return an image containing the text, the caller is responsible for freeing the image
-          * this is useful if transformation are to be applied to the rendered text
-          *
-          * not supported now due to a `bug` in sdl_gpu */
-        GPU_Image* renderToImage();
-
         virtual void render() override;
 
         virtual ~Text();

@@ -15,13 +15,13 @@ void AbstractTransition::onEnterFrame(float elapsed)
     float f = m_elapsed/m_totalDuration;
     if (f >= 1.0f) { // this transition is over, remove it
         f = 1.0f;
-        cancel();
+        m_ended = true;
     }
 
     onUpdate(f);
 
     /* If the transitions is complete, onComplete callback is called */
-    if (isCancelled() && m_onCompleteCallback != nullptr)
+    if (m_ended && m_onCompleteCallback != nullptr)
         m_onCompleteCallback();
 
 }
@@ -31,9 +31,14 @@ void AbstractTransition::cancel()
     m_cancelled = true;
 }
 
-bool AbstractTransition::isCancelled()
+bool AbstractTransition::isCancelled() const
 {
     return m_cancelled;
+}
+
+bool AbstractTransition::isEnded() const
+{
+    return m_ended;
 }
 
 AbstractTransition::~AbstractTransition()

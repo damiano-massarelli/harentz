@@ -7,10 +7,17 @@
 #include "randomUtils.h"
 #include "AudioManager.h"
 
+std::map<MalusPiece::Behavior, SDL_Color> MalusPiece::behavior2color{
+    {Behavior::WIREFRAME_ONLY, SDL_Color{254, 242, 0, 255}},
+    {Behavior::SPEED_UP, SDL_Color{255, 148, 0, 255}},
+    {Behavior::INVERT_COMMANDS, SDL_Color{238, 28, 37, 255}}
+};
+
 MalusPiece::MalusPiece(Renderer* renderer) : BonusMalusPiece{renderer}
 {
     m_behavior = static_cast<Behavior>(randRangeInt(0, static_cast<int>(Behavior::COUNT)));
-    setFillColor(SDL_Color{255, 0, 0, 255});
+
+    setFillColor(behavior2color[m_behavior]);
 }
 
 void MalusPiece::handleCollision(int collidedCubeIndex)

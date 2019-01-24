@@ -1,5 +1,6 @@
 #include "AudioManager.h"
 #include <SDL.h>
+#include <string>
 
 void onChannelFinish(int channel) {
     AudioManager::getInstance()->detachChannel(channel);

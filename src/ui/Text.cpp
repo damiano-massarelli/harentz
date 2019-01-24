@@ -63,22 +63,6 @@ void Text::render()
                   });
 }
 
-
-GPU_Image* Text::renderToImage()
-{
-    GPU_Image* textImage = GPU_CreateImage(getWidth(), getHeight(), GPU_FORMAT_RGBA);
-    GPU_GetTarget(textImage);
-    GPU_Camera cam = GPU_GetCamera(textImage->target);
-    cam.zoom_x *= DisplayManager::screenWidth()/getWidth();
-    cam.zoom_y *= -DisplayManager::screenHeight()/getHeight();
-    GPU_SetCamera(textImage->target, &cam);
-    goThroughText([this, textImage](const CharData* d, GPU_Rect* glyphRect, float x, float y) {
-                    GPU_Blit(this->m_glyphTextures[d->pageIndex], glyphRect, textImage->target, x, y);
-                    //GPU_BlitScale(this->m_glyphTextures[d->pageIndex], glyphRect, textImage->target, x, y, 15, -1);
-                  });
-    return textImage;
-}
-
 void Text::setX(float x)
 {
     m_x = x;

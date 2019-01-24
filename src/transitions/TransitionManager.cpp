@@ -49,11 +49,12 @@ void TransitionManager::onEvent(SDL_Event e)
 {
     float elapsed = *(static_cast<Uint32*>(e.user.data1));
     for (auto it = m_tag2transition.begin(); it != m_tag2transition.end(); ) {
-        it->second->onEnterFrame(elapsed);
-        if (it->second->isCancelled()) // This transitions has expired, remove it
+        if (it->second->isCancelled() || it->second->isEnded()) { // This transitions has expired or was removed, remove it
             it = m_tag2transition.erase(it);
-        else
-            ++it;
+            continue; // check if different from end
+        }
+        it->second->onEnterFrame(elapsed);
+        ++it;
     }
 }
 

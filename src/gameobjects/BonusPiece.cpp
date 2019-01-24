@@ -8,11 +8,18 @@
 #include "constants.h"
 #include "AudioManager.h"
 
+// static members
+std::map<BonusPiece::Behavior, SDL_Color> BonusPiece::behavior2color{
+    {Behavior::ADD_LIFE, SDL_Color{0, 245, 5, 255}},
+    {Behavior::SLOW_DOWN, SDL_Color{0, 166, 82, 255}},
+    {Behavior::DESTROY_ALL, SDL_Color{1, 168, 158, 255}},
+};
+
 BonusPiece::BonusPiece(Renderer* renderer) : BonusMalusPiece{renderer}
 {
     m_behavior = static_cast<Behavior>(randRangeInt(0, static_cast<int>(Behavior::COUNT)));
 
-    setFillColor(SDL_Color{0, 255, 0, 255});
+    setFillColor(behavior2color[m_behavior]);
 }
 
 void BonusPiece::handleCollision(int collidedCubeIndex)

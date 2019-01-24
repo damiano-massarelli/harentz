@@ -2,6 +2,8 @@
 #define MALUSPIECE_H
 #include "Renderer.h"
 #include "BonusMalusPiece.h"
+#include <map>
+#include <SDL.h>
 
 class MalusPiece : public BonusMalusPiece
 {
@@ -12,6 +14,7 @@ class MalusPiece : public BonusMalusPiece
             INVERT_COMMANDS,
             COUNT
         };
+        static std::map<Behavior, SDL_Color> behavior2color;
 
         Behavior m_behavior;
 

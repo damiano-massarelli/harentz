@@ -12,7 +12,8 @@ class AbstractTransition
         float m_totalDuration{500.0f}; ///< total desired duration for this transition
         std::function<void()> m_onCompleteCallback; ///< this function is called when the transition is over
 
-        bool m_cancelled{false};
+        bool m_cancelled{false}; ///< true if the user canceled it
+        bool m_ended{false};     ///< true if the transition terminated on its own
 
     protected:
         AbstractTransition(float durationMS, std::function<void()> onComplete = nullptr);
@@ -24,7 +25,9 @@ class AbstractTransition
 
         void cancel();
 
-        bool isCancelled();
+        bool isCancelled() const;
+
+        bool isEnded() const;
 
         virtual ~AbstractTransition();
 };

@@ -2,6 +2,8 @@
 #define BONUSPIECE_H
 #include "Renderer.h"
 #include "BonusMalusPiece.h"
+#include <map>
+#include <SDL.h>
 
 /** \brief a bonus piece */
 class BonusPiece : public BonusMalusPiece
@@ -13,6 +15,7 @@ class BonusPiece : public BonusMalusPiece
             DESTROY_ALL,
             COUNT
         };
+        static std::map<Behavior, SDL_Color> behavior2color; ///< maps a behavior to a color
 
         Behavior m_behavior;
 
