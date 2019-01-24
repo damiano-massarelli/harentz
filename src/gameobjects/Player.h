@@ -17,8 +17,7 @@ class Player : public Piece, public EventListener
         bool m_invertedCommands = false;
         bool m_invincible = false;
 
-        std::unique_ptr<EventListenerCrumb> m_keydownListenerCrumb; ///< crumb for key events (only for debugging)
-        std::unique_ptr<EventListenerCrumb> m_touchListenerCrumb; ///< crumb for touch events
+        std::unique_ptr<EventListenerCrumb> m_interactionCrumb; ///< crumb for interaction with user
         std::shared_ptr<LinearTransition<float>> m_horizontalTransition;
 
     public:

@@ -28,8 +28,11 @@ void MalusPiece::handleCollision(int collidedCubeIndex)
     GameScene* gameScene = static_cast<GameScene*>(DisplayManager::getInstance()->getCurrentScene());
 
     if (m_behavior == Behavior::WIREFRAME_ONLY) {
+        gameScene->setMessage("Outline", BONUS_MALUS_TEXT_DURATION);
         for (auto& piece : gameScene->getPieceManager()->getPieces())
             piece->setFillColor(SDL_Color{0, 0, 0, 0});
+        gameScene->getPieceManager()->setWireframeOnly(true);
+        LinearTransition<int>::create(0, 0, nullptr, 5000.0f, [gameScene](){gameScene->getPieceManager()->setWireframeOnly(false);}, "game");
     }
 
     else if (m_behavior == Behavior::INVERT_COMMANDS) {

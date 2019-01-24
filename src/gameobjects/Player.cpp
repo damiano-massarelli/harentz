@@ -8,8 +8,8 @@
 // "C" is the file containing the definition of a single cube
 Player::Player(Renderer* renderer, const Mat4& rotationMatrix) : Piece{renderer, "C"}
 {
-    m_keydownListenerCrumb = DisplayManager::getInstance()->getEventManager().addListenerFor(SDL_KEYDOWN, this, true);
-    m_touchListenerCrumb = DisplayManager::getInstance()->getEventManager().addListenerFor(SDL_FINGERDOWN, this, true);
+    m_interactionCrumb = DisplayManager::getInstance()->getEventManager().addListenerFor(SDL_KEYDOWN, this, true);
+    DisplayManager::getInstance()->getEventManager().addListenerFor(SDL_FINGERDOWN, m_interactionCrumb.get());
     m_currentLane = NUMBER_OF_LANES/2; // current lane is the central lane
 
     // center the player cube in the central lane
@@ -25,7 +25,7 @@ Player::Player(Renderer* renderer, const Mat4& rotationMatrix) : Piece{renderer,
 void Player::onEvent(SDL_Event e)
 {
     int direction = 0;
-    if (e.type == SDL_KEYDOWN) { // Should always be KEYDOWN but you never know
+    if (e.type == SDL_KEYDOWN) { // debugging on pc
         if (e.key.keysym.sym == SDLK_RIGHT)
             direction = 1;
         else if (e.key.keysym.sym == SDLK_LEFT)

@@ -8,6 +8,7 @@
 #include "collisionDetection.h"
 #include "BonusPiece.h"
 #include "MalusPiece.h"
+#include "Bullet.h"
 #include "constants.h"
 #include "randomUtils.h"
 #include "lerpUtils.h"
@@ -44,6 +45,8 @@ void PieceManager::generatePiece(float deltaMS, GameScene* gameScene)
         // Place and rotate the piece
         piece->setPosition(Point3{piece->xForLane(lane), m_spawnPoint.y, m_spawnPoint.z});
         piece->setTransformationMatrix(m_rotationMatrix);
+        if (m_wireframeOnly) // wireframe mode is on
+            piece->setFillColor(SDL_Color{0, 0, 0, 0});
 
         /* could generates a bonus or malus under the current piece */
         generateBonusMalus(piece.get(), lane, gameScene);
@@ -74,11 +77,24 @@ void PieceManager::generateBonusMalus(const Piece* piece, int pieceLane, GameSce
                                      m_spawnPoint.y,
                                      m_spawnPoint.z});
             bonusMalus->setTransformationMatrix(m_rotationMatrix);
+            if (m_wireframeOnly)
+                bonusMalus->setFillColor(SDL_Color{0, 0, 0, 0});
 
             gameScene->add(bonusMalus.get());
             m_pieces.push_back(std::move(bonusMalus));
         }
     }
+}
+
+void PieceManager::shootBullet(GameScene* gameScene)
+{
+    auto bullet = std::make_unique<Bullet>(m_renderer);
+    bullet->setPosition(gameScene->getPlayer()->getWorldPosition());
+    bullet->setTransformationMatrix(m_rotationMatrix);
+
+    gameScene->add(bullet.get());
+
+    m_bullets.push_back(std::move(bullet));
 }
 
 void PieceManager::update(float deltaMS, GameScene* gameScene)
@@ -117,6 +133,19 @@ void PieceManager::update(float deltaMS, GameScene* gameScene)
         else
             ++it;
     }
+
+    // updates the bullets
+    float bulletSpeed = 2000.0f * (deltaMS/1000);
+    for (auto it = m_bullets.begin(); it != m_bullets.end(); ) {
+        Point3 currPos = (*it)->getWorldPosition();
+        Point3 nextPos = currPos + ((m_rotationMatrix * Point3{0.0f, 0.0f, 1.0f}) * bulletSpeed);
+
+        (*it)->setPosition(nextPos);
+        if (nextPos.z > m_spawnPoint.z)
+            it = m_bullets.erase(it);
+        else
+            ++it;
+    }
 }
 
 void PieceManager::checkCollision(Piece* piece, Player* player)
@@ -127,6 +156,15 @@ void PieceManager::checkCollision(Piece* piece, Player* player)
 
     int collidedCubeIndex = -1;
     for (std::size_t i = 0; i < children.size(); i++) {
+        /* Collision with bullets */
+        for (auto bulletIt = m_bullets.begin(); bulletIt != m_bullets.end(); ) {
+            if (sphereDetection(children[i], (*bulletIt)->getChildren()[0], (Piece::getCubeSide()/2) * 0.5f)) {
+                piece->explodeCube(i);
+                bulletIt = m_bullets.erase(bulletIt);
+            } else
+                ++bulletIt;
+        }
+        /* Collision with player */
         if (sphereDetection(children[i], player->getChildren()[0], (Piece::getCubeSide()/2) * 0.9f)) { // Collision found return the index
             collidedCubeIndex = static_cast<int>(i);
         }
@@ -144,6 +182,11 @@ std::vector<std::unique_ptr<Piece>>& PieceManager::getPieces()
 void PieceManager::changeSpeed(float factor)
 {
     m_speedMultiplier = factor;
+}
+
+void PieceManager::setWireframeOnly(bool wireframeOnly)
+{
+    m_wireframeOnly = wireframeOnly;
 }
 
 PieceManager::~PieceManager()

@@ -12,8 +12,6 @@ BonusMalusPiece::BonusMalusPiece(Renderer* renderer) : Piece{renderer, "C"}
     /* Reduce the size of the piece */
     Mat4 scaleMatrix = scale(0.5, 0.5, 0.5);
     getChildren()[0]->setTransformationMatrix(scaleMatrix);
-
-    setFillColor(SDL_Color{0, 255, 0, 128});
 }
 
 void BonusMalusPiece::handleCollision(int collidedCubeIndex)

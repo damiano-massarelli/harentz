@@ -13,6 +13,7 @@ class BonusPiece : public BonusMalusPiece
             ADD_LIFE,
             SLOW_DOWN,
             DESTROY_ALL,
+            SHOOT,
             COUNT
         };
         static std::map<Behavior, SDL_Color> behavior2color; ///< maps a behavior to a color

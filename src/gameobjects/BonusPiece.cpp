@@ -13,6 +13,7 @@ std::map<BonusPiece::Behavior, SDL_Color> BonusPiece::behavior2color{
     {Behavior::ADD_LIFE, SDL_Color{0, 245, 5, 255}},
     {Behavior::SLOW_DOWN, SDL_Color{0, 166, 82, 255}},
     {Behavior::DESTROY_ALL, SDL_Color{1, 168, 158, 255}},
+    {Behavior::SHOOT, SDL_Color{0, 14, 248, 255}}
 };
 
 BonusPiece::BonusPiece(Renderer* renderer) : BonusMalusPiece{renderer}
@@ -57,6 +58,16 @@ void BonusPiece::handleCollision(int collidedCubeIndex)
                                         pieceManager->changeSpeed(f);
                                       }, 3500.0f, nullptr, "game");
         gameScene->setMessage("Slow", BONUS_MALUS_TEXT_DURATION);
+    }
+
+    else if (m_behavior == Behavior::SHOOT) {
+        // shoots 50 bullets in 10 seconds
+        LinearTransition<int>::create(0, 50, [last = -1, gameScene](int v) mutable {
+                                if (last != v) {
+                                    gameScene->getPieceManager()->shootBullet(gameScene);
+                                    last = v;
+                                }
+                              }, 10000, nullptr, "game");
     }
 
     /* Temporarily changes the color of the star effect */
