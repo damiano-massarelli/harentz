@@ -53,6 +53,15 @@ class AudioManager
           * there is no such thing as loadMusic */
         void playMusic(const std::string& fileName, int loops = 0);
 
+        /** \brief mutes all the sounds */
+        void muteAll();
+
+        void pauseMusic();
+
+        void resumeMusic();
+
+        void fadeOutMusic();
+
         void detachChannel(int channel);
 
         virtual ~AudioManager();

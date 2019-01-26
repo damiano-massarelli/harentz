@@ -74,6 +74,30 @@ void AudioManager::playMusic(const std::string& fileName, int loops)
     Mix_PlayMusic(music, loops);
 }
 
+void AudioManager::muteAll()
+{
+    Mix_Volume(-1, 0);
+    Mix_VolumeMusic(0);
+}
+
+void AudioManager::pauseMusic()
+{
+    if (Mix_PlayingMusic() && !Mix_PausedMusic())
+        Mix_PauseMusic();
+}
+
+void AudioManager::resumeMusic()
+{
+    if (Mix_PausedMusic())
+        Mix_ResumeMusic();
+}
+
+void AudioManager::fadeOutMusic()
+{
+    Mix_FadeOutMusic(1000);
+}
+
+
 AudioManager::~AudioManager()
 {
     Mix_HaltMusic();

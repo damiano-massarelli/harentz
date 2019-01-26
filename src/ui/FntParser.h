@@ -22,6 +22,9 @@ struct CharData {
 class FntParser
 {
     private:
+        // TODO: this cache is never emptied. This is not a problem if the app uses a limited amount of fonts
+        static std::map<std::string, FntParser> file2parsed; ///< a cache used to maintain already parsed fonts
+
         /* Regex for matching fnt lines */
         static std::regex COMMON_REG; ///< matches the "common" part
         static std::regex CHAR_REG; ///< matches the "char" part
@@ -55,6 +58,11 @@ class FntParser
         void parseKerning(const std::smatch& matches);
 
     public:
+        /** \brief loads a parser and puts it in the cache
+          * it is similar to the constructor but it also adds the font to a cache.
+          * The cache is only available when this method is used */
+        static FntParser load(const std::string& fontName);
+
         FntParser(const std::string& fontName);
 
         /** \brief returns the names of the files containing the glyph texture */

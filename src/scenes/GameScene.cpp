@@ -105,6 +105,7 @@ void GameScene::onResume(const EventStatus& status)
 
     if (m_resumeCountDown) // stops the previous on resume countdown if exists
         m_resumeCountDown->cancel();
+    AudioManager::getInstance()->pauseMusic();
     startResumeCountdown(3);
 }
 
@@ -170,6 +171,7 @@ void GameScene::incrementLives(int lives)
     if (m_lives < 0) {
         m_gameOver = true;
         m_player->explodeCube(0);
+        AudioManager::getInstance()->fadeOutMusic();
         // wait till the end of the explosion to change scene
         LinearTransition<int>::create(0, 0, nullptr, 750.0f, [this](){
                                         DisplayManager::getInstance()->setCurrentScene(new LocalLeaderboardScene{this->m_score});

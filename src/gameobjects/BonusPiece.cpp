@@ -66,6 +66,7 @@ void BonusPiece::handleCollision(int collidedCubeIndex)
                                 if (last != v) {
                                     gameScene->getPieceManager()->shootBullet(gameScene);
                                     last = v;
+                                    AudioManager::getInstance()->playSound("resources/sound/laser.wav");
                                 }
                               }, 10000, nullptr, "game");
     }

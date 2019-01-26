@@ -8,6 +8,20 @@ std::regex FntParser::NUM_OF_CHARS_REG("chars count=(\\d+)");
 std::regex FntParser::PAGE_REG("page\\s+id=(\\d+)\\s+file=\"(.*)\"");
 std::regex FntParser::KERNINGS_REG("kerning\\s+first=(\\d+)\\s+second=(\\d+)\\s+amount=(-?\\d+)");
 
+std::map<std::string, FntParser> FntParser::file2parsed; // cache
+
+FntParser FntParser::load(const std::string& fontName)
+{
+    auto res = file2parsed.find(fontName);
+    if (res != file2parsed.end())
+        return res->second;
+
+    FntParser parser{fontName};
+    file2parsed.insert(std::make_pair(fontName, parser));
+
+    return parser;
+}
+
 FntParser::FntParser(const std::string& fontName)
 {
     std::stringstream fontConfig = readFile((fontName + ".fnt").c_str());

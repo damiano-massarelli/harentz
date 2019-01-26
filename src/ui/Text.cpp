@@ -3,7 +3,7 @@
 
 #include <iostream>
 #include "DisplayManager.h"
-Text::Text(GPU_Target* screen, const std::string& fontName) : m_screen{screen}, m_fntParser{fontName}
+Text::Text(GPU_Target* screen, const std::string& fontName) : m_screen{screen}, m_fntParser{FntParser::load(fontName)}
 {
     const std::vector<std::string>& textureFilenames = m_fntParser.getTextureFileNames();
     m_glyphTextures.resize(textureFilenames.size());

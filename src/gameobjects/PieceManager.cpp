@@ -20,7 +20,7 @@ const float PieceManager::FINAL_SPEED = 3500.0f;
 const float PieceManager::DEFAULT_FINAL_TIME = 90 * 1000.0f; // a minute and a half
 
 const std::vector<std::string> PieceManager::m_pieceNames{"I-side", "I-up", "J", "J-up", "L", "L-up", "O-side", "O-up",
-                                                    "S", "T-down", "T-up", "Z"};
+                                                    "S", "T-down", "T-up", "Z", "J-down", "L-down"};
 
 PieceManager::PieceManager(Renderer* renderer, const Point3& spawnPoint, const Mat4& rotationMatrix) :
                     m_renderer{renderer}, m_spawnPoint{spawnPoint}, m_rotationMatrix{rotationMatrix}

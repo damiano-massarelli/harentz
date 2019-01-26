@@ -6,6 +6,7 @@
 #include "stringUtils.h"
 #include "Button.h"
 #include "GameScene.h"
+#include "FntParser.h"
 #include <string>
 #include <sstream>
 
@@ -36,8 +37,8 @@ void LocalLeaderboardScene::onShow(GPU_Target* screen)
 {
     Scene::onShow(screen);
     // credit button
-    m_creditsButton = std::make_unique<Button>(screen, "resources/font/invasion2000", "i", 20.0f, 20.0f);
-    m_creditsButton->setX(DisplayManager::screenWidth() - m_creditsButton->getWidth() - 10);
+    m_creditsButton = std::make_unique<Button>(screen, "resources/font/invasion2000", "credits", 20.0f, 20.0f);
+    m_creditsButton->setX((DisplayManager::screenWidth() - m_creditsButton->getWidth())/2);
     m_creditsButton->setY(DisplayManager::screenHeight() - m_creditsButton->getHeight() - 10);
     add(m_creditsButton.get());
 
@@ -56,7 +57,9 @@ void LocalLeaderboardScene::onShow(GPU_Target* screen)
                                   DisplayManager::getInstance()->setCurrentScene(new GameScene{});});
     add(m_playAgainButton.get());
 
-    int numOfScores = 10; // TODO compute this value
+    /* the number of scores that fit in the space between game over and play again */
+    int numOfScores = (m_playAgainButton->getY() - (m_gameOverText->getHeight() + 10 + m_gameOverText->getY())) / (FntParser::load("resources/font/invasion2000").getLineHeight() + 5);
+    numOfScores &= ~1; // rounds down to nearest even number
 
     auto scores = loadScore();
     scores.push_back(m_lastScore);
