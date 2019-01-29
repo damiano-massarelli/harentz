@@ -9,6 +9,7 @@
 #include <sstream>
 #include <string>
 #include <functional>
+#include <algorithm>
 
 std::shared_ptr<Shape> Piece::CUBE_SHAPE;
 
@@ -74,6 +75,8 @@ Piece::Piece(Renderer* renderer, const std::string& shape) : Transform{nullptr}
                 height = -height;
                 y = height - 1;
             }
+            m_verticalCubes = std::max(m_verticalCubes, height);
+
             for (; y < height; y++) {
                 Transform* cube = new Transform{Piece::getCubeShape()};
                 cube->setPosition(Point3{x * sideSize, (-y * sideSize) - sideSize/2, z * sideSize}); // -y: positive value in the file means the cube is higher
@@ -128,6 +131,11 @@ void Piece::explodeCube(int index)
 int Piece::getNumOfHorizontalCubes() const
 {
     return m_horizontalCubes;
+}
+
+int Piece::getNumOfVericalCubes() const
+{
+    return m_verticalCubes;
 }
 
 void Piece::handleCollision(int collidedCubeIndex)

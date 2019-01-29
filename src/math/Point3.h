@@ -28,6 +28,8 @@ Point3 operator-(const Point3& pt1, const Point3& pt2);
 
 Point3 operator+(const Point3& pt1, const Point3& pt2);
 
+Point3 operator+=(Point3& pt1, const Point3& pt2);
+
 Point3 operator*(const Point3& pt, float factor);
 
 float length(const Point3& pt);

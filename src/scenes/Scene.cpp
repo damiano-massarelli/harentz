@@ -27,29 +27,35 @@ void Scene::onEvent(SDL_Event event)
 
 void Scene::onEnterFrame(SDL_Event& e)
 {
-    // Clears the screen
-    GPU_ClearColor(m_screen, m_bgColor);
-
     if (e.type == EventManager::ENTER_FRAME_EVENT) {
+        // Clears the screen
+        GPU_ClearColor(m_screen, m_bgColor);
         for (auto& renderable : m_renderList)
             renderable->render();
+
+        onRenderingComplete();
+
+        for (auto& uiRenderable : m_uiRenderList)
+            uiRenderable->render();
+
+        // Render
+        GPU_Flip(m_screen);
     }
-
-    onRenderingComplete();
-
-    // Render
-    GPU_Flip(m_screen);
 }
 
-void Scene::add(AbstractRenderable* renderable)
+void Scene::add(AbstractRenderable* renderable, bool isUiElement)
 {
     renderable->setScene(this);
-    m_renderList.push_back(renderable);
+    if (isUiElement)
+        m_uiRenderList.push_back(renderable);
+    else
+        m_renderList.push_back(renderable);
 }
 
 void Scene::remove(AbstractRenderable* renderable)
 {
     m_renderList.erase(std::remove(m_renderList.begin(), m_renderList.end(), renderable), m_renderList.end());
+    m_uiRenderList.erase(std::remove(m_uiRenderList.begin(), m_uiRenderList.end(), renderable), m_uiRenderList.end());
 }
 
 void Scene::onShow(GPU_Target* screen)

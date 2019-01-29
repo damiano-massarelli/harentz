@@ -35,6 +35,14 @@ Point3 operator+(const Point3& pt1, const Point3& pt2)
     return Point3{pt1.x + pt2.x, pt1.y + pt2.y, pt1.z + pt2.z};
 }
 
+Point3 operator+=(Point3& pt1, const Point3& pt2)
+{
+    pt1.x += pt2.x;
+    pt1.y += pt2.y;
+    pt1.z += pt2.z;
+    return pt1;
+}
+
 float length(const Point3& pt)
 {
     return static_cast<float>(sqrt(dot(pt, pt)));

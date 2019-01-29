@@ -6,6 +6,7 @@
 #include "EventListenerCrumb.h"
 #include "LinearTransition.h"
 #include "Mat4.h"
+#include "Point3.h"
 #include <memory>
 
 class Player : public Piece, public EventListener
@@ -17,6 +18,10 @@ class Player : public Piece, public EventListener
         bool m_invertedCommands = false;
         bool m_invincible = false;
 
+        Point3 m_gravity;
+        Point3 m_velocity;
+        Point3 m_initialPosition;
+        Mat4 m_rotationMatrix;
         std::unique_ptr<EventListenerCrumb> m_interactionCrumb; ///< crumb for interaction with user
         std::shared_ptr<LinearTransition<float>> m_horizontalTransition;
 

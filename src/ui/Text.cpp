@@ -1,8 +1,7 @@
 #include "Text.h"
 #include "ioUtils.h"
+#include <sstream>
 
-#include <iostream>
-#include "DisplayManager.h"
 Text::Text(GPU_Target* screen, const std::string& fontName) : m_screen{screen}, m_fntParser{FntParser::load(fontName)}
 {
     const std::vector<std::string>& textureFilenames = m_fntParser.getTextureFileNames();
@@ -25,7 +24,8 @@ void Text::goThroughText(std::function<void(const CharData*, GPU_Rect*, float, f
     float ycur = m_y; /* The vertical cursor */
 
     int previousCharCode = -1;
-    for (char c : m_text) {
+    for (int i = 0; i < m_text.length(); ++i) {
+        char c = m_text[i];
         int charCode = static_cast<int>(c); // the code of this char
         if (c == ' ') {
             xcur += m_fntParser.getOffsetForSpace();
@@ -36,6 +36,24 @@ void Text::goThroughText(std::function<void(const CharData*, GPU_Rect*, float, f
             xcur = m_x;
             ycur += m_fntParser.getLineHeight();
             previousCharCode = charCode;
+        }
+        /* Set text color on the fly. \033 followed by 32 hex bits representing a color */
+        else if (c == '\033') {
+            Uint8 r;
+            Uint8 g;
+            Uint8 b;
+            Uint8 a;
+            Uint32 color;
+            std::stringstream ss;
+            ss << std::hex << m_text.substr(i+1, 8);
+            ss >> color;
+            r = (color & 0xFF000000) >> 24;
+            g = (color & 0x00FF0000) >> 16;
+            b = (color & 0x0000FF00) >> 8;
+            a = (color & 0X000000FF);
+            setColor(SDL_Color{r, g, b, a});
+            i += 8; // skip color declaration
+            continue;
         }
 
         const CharData* d = m_fntParser.getDataForChar(charCode);

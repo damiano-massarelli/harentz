@@ -7,11 +7,12 @@
 #include "AudioManager.h"
 
 #include "LocalLeaderboardScene.h"
+#include "CreditsScene.h"
 
 int main(int argc, char* argv[])
 {
     DisplayManager* displayManager = DisplayManager::create("Harentz", INITIAL_WIDTH, INITIAL_HEIGHT);
-    displayManager->setCurrentScene(new LocalLeaderboardScene{500});
+    displayManager->setCurrentScene(new CreditsScene{});
 
     // pre loaded sounds
     AudioManager* audio = AudioManager::getInstance();

@@ -21,6 +21,7 @@ class Piece : public Transform
         std::set<std::tuple<int, int, int>> m_cubeAtPosition; ///< an element is present if a cube is present at the given offset
 
         int m_horizontalCubes{0};
+        int m_verticalCubes{0};
 
         /** \brief reads the color of this piece from file.
           * \param shape the file containing the color is "resources/pieces/" + shape + ".color"
@@ -38,6 +39,8 @@ class Piece : public Transform
 
         /** \brief gets the number of cubes this piece is composed of */
         int getNumOfHorizontalCubes() const;
+
+        int getNumOfVericalCubes() const;
 
         /** \brief removes one of the cubes of this piece adding an explosion effect */
         void explodeCube(int index);

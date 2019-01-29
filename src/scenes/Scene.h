@@ -8,11 +8,12 @@
 
 class AbstractRenderable;
 
-/** \brief An class performing all the basic operations of a scene */
+/** \brief A class performing all the basic operations of a scene */
 class Scene : public EventListener
 {
     private:
-        std::vector<AbstractRenderable* > m_renderList;
+        std::vector<AbstractRenderable*> m_renderList;
+        std::vector<AbstractRenderable*> m_uiRenderList; ///< list of elements that are always drawn on top
         std::unique_ptr<EventListenerCrumb> m_enterFrameCrumb;
         std::unique_ptr<EventListenerCrumb> m_willEnterBgCrumb;
         std::unique_ptr<EventListenerCrumb> m_didEnterBgCrumb;
@@ -42,18 +43,18 @@ class Scene : public EventListener
 
         virtual void onEnterFrame(SDL_Event& e);
 
-        /** \brief this function is called when all the element of the scene have been rendered
-          * This function is sometimes required by those renderer that draws on the screen once
+        /** \brief this method is called when all the elements of the scene have been rendered
+          * This is sometimes required by those renderers that draw on the screen once
           * all their elements have been rendered (that is render is called on them) */
         virtual void onRenderingComplete() {};
 
-        /** \brief this function is called whenever the application is paused */
+        /** \brief this method is called whenever the application is paused */
         virtual void onPause(const EventStatus& status) {}
 
         /** \brief this method is called whenever the application is resumed */
         virtual void onResume(const EventStatus& status) {}
 
-        /** \brief this function is called before the scene is removed */
+        /** \brief this method is called before the scene is removed */
         virtual void onRemove() {};
 
         /** \brief method called when the scene is passed to the DisplayManager.
@@ -62,7 +63,7 @@ class Scene : public EventListener
         virtual void onShow(GPU_Target* screen);
 
         /** \brief adds a new object to the scene */
-        void add(AbstractRenderable* renderable);
+        void add(AbstractRenderable* renderable, bool isUiElement = false);
 
         /** \brief removes an object from the scene */
         void remove(AbstractRenderable* renderable);

@@ -7,6 +7,8 @@
 #include "LinearTransition.h"
 #include "LocalLeaderboardScene.h"
 #include "AudioManager.h"
+#include "InitialInstructions.h"
+#include "ioUtils.h"
 #include <sstream>
 
 GameScene::GameScene()
@@ -51,20 +53,31 @@ void GameScene::onShow(GPU_Target* screen)
     m_scoreText = std::make_unique<Text>(screen, "resources/font/invasion2000");
     m_scoreText->setText("score: 0");
     m_scoreText->setX(5);
-    add(m_scoreText.get());
+    add(m_scoreText.get(), true);
 
     m_livesText = std::make_unique<Text>(screen, "resources/font/invasion2000");
     m_livesText->setText("lives: " + std::to_string(m_lives));
     m_livesText->setX(5);
     m_livesText->setY(m_scoreText->getY() + m_scoreText->getHeight() + 5);
-    add(m_livesText.get());
+    add(m_livesText.get(), true);
 
     /* creates the text to use for the countdown (shared ptr so that it can be passed to a lambda without issues)*/
     m_messageText = std::make_unique<Text>(screen, "resources/font/invasion2000_50");
     m_messageText->setY(100);
-    add(m_messageText.get());
+    add(m_messageText.get(), true);
 
-    onResume(EventStatus::DID);
+    // first time playing: show little tutorial
+    if (readFile("firstTime", true).bad()) {
+        writeFile("firstTime", "", true);
+        std::shared_ptr<InitialInstructions> instructions = std::make_shared<InitialInstructions>(screen);
+        instructions->setOnOk([gameScene = this, instructions](Button* btn) mutable {
+                                gameScene->onResume(EventStatus::DID);
+                                instructions.reset();
+                              });
+        add(instructions.get(), true);
+    } else {
+        onResume(EventStatus::DID); // start game directly
+    }
 }
 
 void GameScene::onEnterFrame(SDL_Event& e)

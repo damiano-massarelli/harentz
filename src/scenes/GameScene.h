@@ -3,7 +3,6 @@
 #include "Scene.h"
 #include "Renderer.h"
 #include "Piece.h"
-#include <memory>
 #include "Ground.h"
 #include "Point3.h"
 #include "Mat4.h"
@@ -15,6 +14,7 @@
 #include <SDL_gpu.h>
 #include <vector>
 #include <iostream>
+#include <memory>
 
 class GameScene : public Scene
 {

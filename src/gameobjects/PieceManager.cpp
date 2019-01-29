@@ -1,8 +1,4 @@
 #include "PieceManager.h"
-#include <cstdlib>
-#include <ctime>
-#include <algorithm>
-#include <cmath>
 #include "constants.h"
 #include "GameScene.h"
 #include "collisionDetection.h"
@@ -12,6 +8,10 @@
 #include "constants.h"
 #include "randomUtils.h"
 #include "lerpUtils.h"
+#include <cstdlib>
+#include <ctime>
+#include <algorithm>
+#include <cmath>
 
 const float PieceManager::GENERATE_INITIAL_INTERVAL = 1000.0f;
 const float PieceManager::GENERATE_MIN_INTERVAL = 430.0f;
@@ -64,24 +64,26 @@ void PieceManager::generatePiece(float deltaMS, GameScene* gameScene)
 void PieceManager::generateBonusMalus(const Piece* piece, int pieceLane, GameScene* gameScene)
 {
     for (int i = 0; i < piece->getNumOfHorizontalCubes(); ++i) {
-        if (piece->cubeAt(i, 0, 0) == false && randRange(0.0f, 1.0f) <= 0.25f) { // checks if the piece is hollow at ground level
-            std::unique_ptr<Piece> bonusMalus;
+        for (int j = 0; j < std::min(piece->getNumOfVericalCubes(), 2); ++j) {
+            if (piece->cubeAt(i, j, 0) == false && randRange(0.0f, 1.0f) <= 0.15f) { // checks if the piece is hollow at level j and horizontal position i
+                std::unique_ptr<Piece> bonusMalus;
 
-            // bonus pieces are more likely than malus pieces
-            if (randRange(0.0f, 1.0f) >= 0.6f)
-                bonusMalus = std::make_unique<BonusPiece>(m_renderer);
-            else
-                bonusMalus = std::make_unique<MalusPiece>(m_renderer);
+                // bonus pieces are more likely than malus pieces
+                if (randRange(0.0f, 1.0f) >= 0.6f)
+                    bonusMalus = std::make_unique<BonusPiece>(m_renderer);
+                else
+                    bonusMalus = std::make_unique<MalusPiece>(m_renderer);
 
-            bonusMalus->setPosition(Point3{bonusMalus->xForLane(pieceLane + i),
-                                     m_spawnPoint.y,
-                                     m_spawnPoint.z});
-            bonusMalus->setTransformationMatrix(m_rotationMatrix);
-            if (m_wireframeOnly)
-                bonusMalus->setFillColor(SDL_Color{0, 0, 0, 0});
+                bonusMalus->setPosition(Point3{bonusMalus->xForLane(pieceLane + i),
+                                         m_spawnPoint.y,
+                                         m_spawnPoint.z} + m_rotationMatrix * Point3{0.0f, -Piece::getCubeSide()*j - Piece::getCubeSide()/4});
+                bonusMalus->setTransformationMatrix(m_rotationMatrix);
+                if (m_wireframeOnly)
+                    bonusMalus->setFillColor(SDL_Color{0, 0, 0, 0});
 
-            gameScene->add(bonusMalus.get());
-            m_pieces.push_back(std::move(bonusMalus));
+                gameScene->add(bonusMalus.get());
+                m_pieces.push_back(std::move(bonusMalus));
+            }
         }
     }
 }

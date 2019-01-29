@@ -77,7 +77,7 @@ class Renderer
           */
         void render(const Transform& toRender);
 
-        /** \brief Renders all the transforms passes to render on the screen */
+        /** \brief Renders all the transforms passed to render on the screen */
         void renderToScreen();
 
         /** \brief Sets the current point light for this renderer
