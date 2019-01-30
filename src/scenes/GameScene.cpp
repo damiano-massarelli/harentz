@@ -7,7 +7,6 @@
 #include "LinearTransition.h"
 #include "LocalLeaderboardScene.h"
 #include "AudioManager.h"
-#include "InitialInstructions.h"
 #include "ioUtils.h"
 #include <sstream>
 
@@ -66,10 +65,13 @@ void GameScene::onShow(GPU_Target* screen)
     m_messageText->setY(100);
     add(m_messageText.get(), true);
 
+    m_instructions = std::make_unique<Instructions>(screen, [this]() {this->onResume(EventStatus::DID);});
+    add(m_instructions.get(), true);
     // first time playing: show little tutorial
-    if (readFile("firstTime", true).bad()) {
+
+    /*if (readFile("firstTime", true).bad()) {
         writeFile("firstTime", "", true);
-        std::shared_ptr<InitialInstructions> instructions = std::make_shared<InitialInstructions>(screen);
+        std::shared_ptr<Instructions> instructions = std::make_shared<Instructions>(screen);
         instructions->setOnOk([gameScene = this, instructions](Button* btn) mutable {
                                 gameScene->onResume(EventStatus::DID);
                                 instructions.reset();
@@ -77,7 +79,7 @@ void GameScene::onShow(GPU_Target* screen)
         add(instructions.get(), true);
     } else {
         onResume(EventStatus::DID); // start game directly
-    }
+    }*/
 }
 
 void GameScene::onEnterFrame(SDL_Event& e)

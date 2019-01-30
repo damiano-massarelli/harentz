@@ -11,6 +11,7 @@
 #include "StarField.h"
 #include "Text.h"
 #include "constants.h"
+#include "Instructions.h"
 #include <SDL_gpu.h>
 #include <vector>
 #include <iostream>
@@ -33,6 +34,7 @@ class GameScene : public Scene
         std::unique_ptr<Text> m_scoreText; ///< the text containing the current score
         std::unique_ptr<Text> m_livesText; ///< the text containing the current number of lives
         std::unique_ptr<Text> m_messageText; ///< the text containing messages to show to the player (e.g countdown)
+        std::unique_ptr<Instructions> m_instructions; ///< instructions shown to the player
 
         Point3 m_spawnPoint; ///< the point where new pieces are spawned, only y and z are relevant.
         Mat4 m_rotationMatrix; ///< the matrix used by all the rotated objects

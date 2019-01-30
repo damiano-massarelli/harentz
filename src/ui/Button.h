@@ -3,6 +3,7 @@
 #include "AbstractRenderable.h"
 #include "Text.h"
 #include "EventListenerCrumb.h"
+#include "memoryUtils.h"
 #include <SDL_gpu.h>
 #include <memory>
 #include <functional>
@@ -10,12 +11,6 @@
 class Button : public AbstractRenderable, public EventListener
 {
     private:
-        struct ImageDeleter {
-            void operator()(GPU_Image* image) {
-                GPU_FreeImage(image);
-            }
-        };
-        using imageUniquePtr = std::unique_ptr<GPU_Image, ImageDeleter>;
         std::unique_ptr<EventListenerCrumb> m_eventCrumb;
         std::unique_ptr<Text> m_text;
 
@@ -26,7 +21,8 @@ class Button : public AbstractRenderable, public EventListener
         float m_paddingX = 5.0f;
         float m_paddingY = 5.0f;
 
-        imageUniquePtr m_image; ///< the image displayed by the button
+        imageUniquePtr m_image;
+
         GPU_Target* m_screen;
 
         std::string m_fontName;
