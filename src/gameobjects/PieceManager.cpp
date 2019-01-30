@@ -18,17 +18,18 @@ const float PieceManager::GENERATE_MIN_INTERVAL = 430.0f;
 const float PieceManager::INITIAL_SPEED = 2000.0f;
 const float PieceManager::FINAL_SPEED = 3500.0f;
 const float PieceManager::DEFAULT_FINAL_TIME = 90 * 1000.0f; // a minute and a half
+const float PieceManager::BULLET_SPEED = 2000.0f;
 
 const std::vector<std::string> PieceManager::m_pieceNames{"I-side", "I-up", "J", "J-up", "L", "L-up", "O-side", "O-up",
                                                     "S", "T-down", "T-up", "Z", "J-down", "L-down"};
 
-PieceManager::PieceManager(Renderer* renderer, const Point3& spawnPoint, const Mat4& rotationMatrix) :
-                    m_renderer{renderer}, m_spawnPoint{spawnPoint}, m_rotationMatrix{rotationMatrix}
+PieceManager::PieceManager(GameScene* gameScene, Renderer* renderer, const Point3& spawnPoint, const Mat4& rotationMatrix) :
+                    m_gameScene{gameScene}, m_renderer{renderer}, m_spawnPoint{spawnPoint}, m_rotationMatrix{rotationMatrix}
 {
     std::srand(std::time(nullptr)); // initializes random values
 }
 
-void PieceManager::generatePiece(float deltaMS, GameScene* gameScene)
+void PieceManager::generatePiece(float deltaMS)
 {
     m_elapsedFromLast += deltaMS;
     float cappedElapsed = std::min(m_totalElapsed, m_finalTime); // capped
@@ -49,19 +50,19 @@ void PieceManager::generatePiece(float deltaMS, GameScene* gameScene)
             piece->setFillColor(SDL_Color{0, 0, 0, 0});
 
         /* could generates a bonus or malus under the current piece */
-        generateBonusMalus(piece.get(), lane, gameScene);
+        generateBonusMalus(piece.get(), lane);
 
         m_elapsedFromLast = 0.0f; // reset elapsed time
 
         // Adds the piece to the scene
-        gameScene->add(piece.get());
+        m_gameScene->add(piece.get());
 
         // Adds the piece to the list
         m_pieces.push_back(std::move(piece));
     }
 }
 
-void PieceManager::generateBonusMalus(const Piece* piece, int pieceLane, GameScene* gameScene)
+void PieceManager::generateBonusMalus(const Piece* piece, int pieceLane)
 {
     for (int i = 0; i < piece->getNumOfHorizontalCubes(); ++i) {
         for (int j = 0; j < std::min(piece->getNumOfVericalCubes(), 2); ++j) {
@@ -81,31 +82,31 @@ void PieceManager::generateBonusMalus(const Piece* piece, int pieceLane, GameSce
                 if (m_wireframeOnly)
                     bonusMalus->setFillColor(SDL_Color{0, 0, 0, 0});
 
-                gameScene->add(bonusMalus.get());
+                m_gameScene->add(bonusMalus.get());
                 m_pieces.push_back(std::move(bonusMalus));
             }
         }
     }
 }
 
-void PieceManager::shootBullet(GameScene* gameScene)
+void PieceManager::shootBullet()
 {
     auto bullet = std::make_unique<Bullet>(m_renderer);
-    bullet->setPosition(gameScene->getPlayer()->getWorldPosition());
+    bullet->setPosition(m_gameScene->getPlayer()->getWorldPosition());
     bullet->setTransformationMatrix(m_rotationMatrix);
 
-    gameScene->add(bullet.get());
+    m_gameScene->add(bullet.get());
 
     m_bullets.push_back(std::move(bullet));
 }
 
-void PieceManager::update(float deltaMS, GameScene* gameScene)
+void PieceManager::update(float deltaMS)
 {
     m_totalElapsed += deltaMS; // updates total elapsed time
     float cappedElapsed = std::min(m_totalElapsed, m_finalTime); // capped
 
     /* Generate a new piece if necessary */
-    generatePiece(deltaMS, gameScene);
+    generatePiece(deltaMS);
 
     float speed = lerp(INITIAL_SPEED, FINAL_SPEED, cappedElapsed/m_finalTime) * m_speedMultiplier;
     speed *= (deltaMS/1000); // speed is fps independent
@@ -119,15 +120,15 @@ void PieceManager::update(float deltaMS, GameScene* gameScene)
         /* Adds score if the piece has gone behind the player
          * The score added is the result of SCORE_PER_PIECE multiplied by the
          * number of cubes composing the piece */
-        float playerZ = gameScene->getPlayer()->getWorldPosition().z;
+        float playerZ = m_gameScene->getPlayer()->getWorldPosition().z;
         if (currPos.z > playerZ && nextPos.z < playerZ)
-            gameScene->incrementScore(SCORE_PER_PIECE * (*it)->getChildren().size());
+            m_gameScene->incrementScore(SCORE_PER_PIECE * (*it)->getChildren().size());
 
         // Updates the position
         (*it)->setPosition(nextPos);
 
         // Checks collisions
-        checkCollision((*it).get(), gameScene->getPlayer());
+        checkCollision((*it).get(), m_gameScene->getPlayer());
 
         // Removes pieces that are too far away
         if (nextPos.z <= -200.0f)
@@ -137,7 +138,7 @@ void PieceManager::update(float deltaMS, GameScene* gameScene)
     }
 
     // updates the bullets
-    float bulletSpeed = 2000.0f * (deltaMS/1000);
+    float bulletSpeed = BULLET_SPEED * (deltaMS/1000);
     for (auto it = m_bullets.begin(); it != m_bullets.end(); ) {
         Point3 currPos = (*it)->getWorldPosition();
         Point3 nextPos = currPos + ((m_rotationMatrix * Point3{0.0f, 0.0f, 1.0f}) * bulletSpeed);
@@ -163,6 +164,7 @@ void PieceManager::checkCollision(Piece* piece, Player* player)
             if (sphereDetection(children[i], (*bulletIt)->getChildren()[0], (Piece::getCubeSide()/2) * 0.5f)) {
                 piece->explodeCube(i);
                 bulletIt = m_bullets.erase(bulletIt);
+                m_gameScene->incrementScore(3*SCORE_PER_PIECE);
             } else
                 ++bulletIt;
         }
@@ -195,4 +197,3 @@ PieceManager::~PieceManager()
 {
 
 }
-

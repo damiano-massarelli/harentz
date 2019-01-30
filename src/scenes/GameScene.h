@@ -57,6 +57,8 @@ class GameScene : public Scene
 
         virtual void onResume(const EventStatus& status) override;
 
+        bool isPaused() const;
+
         /** \brief A recursive function that displays a countdown text
           * when the countdown is over the game is resumed ( \sa m_paused)
           * The recursive call is delayed using a LinearTransition */

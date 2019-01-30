@@ -1,4 +1,5 @@
 #include "AudioManager.h"
+#include "LinearTransition.h"
 #include <SDL.h>
 #include <string>
 
@@ -80,16 +81,35 @@ void AudioManager::muteAll()
     Mix_VolumeMusic(0);
 }
 
+void AudioManager::setVolumeMusic(float volume)
+{
+    m_volume = volume;
+    Mix_VolumeMusic(static_cast<int>(MIX_MAX_VOLUME * volume));
+}
+
 void AudioManager::pauseMusic()
 {
     if (Mix_PlayingMusic() && !Mix_PausedMusic())
         Mix_PauseMusic();
 }
 
-void AudioManager::resumeMusic()
+void AudioManager::resumeMusic(float fadeInMs)
 {
-    if (Mix_PausedMusic())
+    if (Mix_PausedMusic()) {
         Mix_ResumeMusic();
+        if (fadeInMs > 0.0f)
+            LinearTransition<float>::create(0.0f, m_volume, [this](float v) {this->setVolumeMusic(v);}, fadeInMs, nullptr);
+    }
+}
+
+bool AudioManager::isPausedMusic() const
+{
+    return Mix_PausedMusic();
+}
+
+bool AudioManager::isStoppedMusic() const
+{
+    return !static_cast<bool>(Mix_PlayingMusic());
 }
 
 void AudioManager::fadeOutMusic()

@@ -30,6 +30,7 @@ class AudioManager
         std::map<int, chunkUniquePtr> m_channel2sound;
         std::map<std::string, chunkUniquePtr> m_cachedSounds;
         musicUniquePtr m_currentMusic;
+        float m_volume = 1.0f;
 
         void attachChannel(int channel, Mix_Chunk* chunk);
 
@@ -58,7 +59,15 @@ class AudioManager
 
         void pauseMusic();
 
-        void resumeMusic();
+        void resumeMusic(float fadeInMs = 0);
+
+        bool isPausedMusic() const;
+
+        bool isStoppedMusic() const;
+
+        /** \brief sets the volume of the music.
+          * \param volume the percentage of volume. between 0 and 1 */
+        void setVolumeMusic(float volume);
 
         void fadeOutMusic();
 

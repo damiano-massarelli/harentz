@@ -45,7 +45,7 @@ void GameScene::onShow(GPU_Target* screen)
     add(m_player.get());
 
     // Piece manager
-    m_pieceManager = std::make_unique<PieceManager>(m_3dRenderer.get(), m_spawnPoint, m_rotationMatrix);
+    m_pieceManager = std::make_unique<PieceManager>(this, m_3dRenderer.get(), m_spawnPoint, m_rotationMatrix);
 
     m_starFieldEffect = std::make_unique<StarField>(screen);
     add(m_starFieldEffect.get());
@@ -94,7 +94,7 @@ void GameScene::onEnterFrame(SDL_Event& e)
     m_scoreText->setText("score: " + std::to_string(m_score));
 
     // Moves all the pieces towards the player
-    m_pieceManager->update(delta, this);
+    m_pieceManager->update(delta);
 }
 
 void GameScene::onRenderingComplete()
@@ -103,11 +103,17 @@ void GameScene::onRenderingComplete()
     m_effectRenderer->renderToScreen();
 }
 
+bool GameScene::isPaused() const
+{
+    return m_paused;
+}
+
 void GameScene::onPause(const EventStatus& status)
 {
     if (status == EventStatus::WILL) {
         m_paused = true; // stops the gameplay until the app is resumed
         m_starFieldEffect->update(0.0f); // stops the starfield effect
+        AudioManager::getInstance()->pauseMusic();
     }
 }
 
@@ -115,10 +121,8 @@ void GameScene::onResume(const EventStatus& status)
 {
     // do not resume if game is over
     if (status != EventStatus::DID || m_gameOver) return;
-
     if (m_resumeCountDown) // stops the previous on resume countdown if exists
         m_resumeCountDown->cancel();
-    AudioManager::getInstance()->pauseMusic();
     startResumeCountdown(3);
 }
 
@@ -130,13 +134,17 @@ void GameScene::startResumeCountdown(int countdown)
         m_resumeCountDown = nullptr;
         return;
     };
+    AudioManager* audioMng = AudioManager::getInstance();
     if (countdown == 0) {
         setMessage("Go!");
-        AudioManager::getInstance()->playSound("resources/sound/beepHigh.wav");\
-        AudioManager::getInstance()->playMusic("resources/sound/base.mp3", -1);
+        audioMng->playSound("resources/sound/beepHigh.wav");
+        if (audioMng->isPausedMusic() && !audioMng->isStoppedMusic())
+            audioMng->resumeMusic(1000.0f);
+        else
+            audioMng->playMusic("resources/sound/base.mp3", -1);
     } else {
         setMessage(std::to_string(countdown));
-        AudioManager::getInstance()->playSound("resources/sound/beepLow.wav");
+        audioMng->playSound("resources/sound/beepLow.wav");
     }
 
     // the duration of this transition is 1s if the countdown is different from 0, 0.45 if is 0

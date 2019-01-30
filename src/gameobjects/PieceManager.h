@@ -22,6 +22,7 @@ class PieceManager
         static const float INITIAL_SPEED; ///< initial speed of pieces, pixels per second
         static const float FINAL_SPEED; ///< final speed for pieces, pixels per second
         static const float DEFAULT_FINAL_TIME; ///< the time at which speed = FINAL_SPPED and a piece is generated every GENERATE_MIN_INTERVAL (can be changed, \sa m_finalTime)
+        static const float BULLET_SPEED; ///< speed of the bullets
 
         float m_finalTime = DEFAULT_FINAL_TIME; ///< the score at which speed = FINAL_SPPED
         float m_speedMultiplier = 1.0f;
@@ -29,6 +30,7 @@ class PieceManager
         float m_elapsedFromLast = 0.0f; ///< time elapsed from the last generated piece
         float m_totalElapsed = 0.0; ///< the total elapsed time used to determine the current speed and generation time.
 
+        GameScene* m_gameScene = nullptr;
         Renderer* m_renderer = nullptr; ///< the renderer used by the pieces
         const Point3 m_spawnPoint;
         const Mat4 m_rotationMatrix;
@@ -39,10 +41,10 @@ class PieceManager
 
         /** \brief generates a new piece if enough time is elapsed
           * \param deltaMS ms elapsed since last frame */
-        void generatePiece(float deltaMS, GameScene* gameScene);
+        void generatePiece(float deltaMS);
 
         /** \brief generates a bonus/malus under a piece if it is has holes */
-        void generateBonusMalus(const Piece* piece, int pieceLane, GameScene* gameScene);
+        void generateBonusMalus(const Piece* piece, int pieceLane);
 
         /** \brief checks collision between a piece and the player */
         void checkCollision(Piece* piece, Player* player);
@@ -51,10 +53,10 @@ class PieceManager
         // Lists all the available pieces
         static const std::vector<std::string> m_pieceNames;
 
-        PieceManager(Renderer* renderer, const Point3& spawnPoint, const Mat4& rotationMatrix);
+        PieceManager(GameScene* gameScene, Renderer* renderer, const Point3& spawnPoint, const Mat4& rotationMatrix);
 
         /** \brief moves the pieces using the current speed and creates new ones if necessary */
-        void update(float deltaMS, GameScene* gameScene);
+        void update(float deltaMS);
 
         /** \brief multiplies the current speed by a factor
           * \param factor the factor to use */
@@ -63,7 +65,7 @@ class PieceManager
         /** \brief returns a vector of the currently used pieces */
         std::vector<std::unique_ptr<Piece>>& getPieces();
 
-        void shootBullet(GameScene *gameScene);
+        void shootBullet();
 
         /** \brief if set to true the new generated pieces will be in wireframe mode */
         void setWireframeOnly(bool wireframeOnly);

@@ -14,13 +14,26 @@ static int eventFilterFunction(void* eventManager, SDL_Event* event) {
         evtManager->dispatchToListeners(*event);
     }
 
+    /* simulates pause and resume when p and r are pressed on the keyboard. Only for debugging */
+    if (event->type == SDL_KEYDOWN) {
+        if (event->key.keysym.sym == SDLK_p)
+            event->type = SDL_APP_WILLENTERBACKGROUND;
+        if (event->key.keysym.sym == SDLK_r)
+            event->type = SDL_APP_WILLENTERFOREGROUND;
+    } else if (event->type == SDL_KEYUP) {
+        if (event->key.keysym.sym == SDLK_p)
+            event->type = SDL_APP_DIDENTERBACKGROUND;
+        if (event->key.keysym.sym == SDLK_r)
+            event->type = SDL_APP_DIDENTERFOREGROUND;
+    }
+
     return 1;
 }
 
 
 EventManager::EventManager()
 {
-    SDL_AddEventWatch(eventFilterFunction, this);
+    SDL_SetEventFilter(eventFilterFunction, this);
 }
 
 std::unique_ptr<EventListenerCrumb> EventManager::addListenerFor(SDL_EventType event, EventListener* listener, bool wantCrumb)

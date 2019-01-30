@@ -63,8 +63,8 @@ void BonusPiece::handleCollision(int collidedCubeIndex)
     else if (m_behavior == Behavior::SHOOT) {
         // shoots 50 bullets in 10 seconds
         LinearTransition<int>::create(0, 50, [last = -1, gameScene](int v) mutable {
-                                if (last != v) {
-                                    gameScene->getPieceManager()->shootBullet(gameScene);
+                                if (last != v && !gameScene->isPaused()) { // do not create new bullets if the game is paused
+                                    gameScene->getPieceManager()->shootBullet();
                                     last = v;
                                     AudioManager::getInstance()->playSound("resources/sound/laser.wav");
                                 }
