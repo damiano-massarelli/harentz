@@ -10,7 +10,7 @@
 Player::Player(Renderer* renderer, const Mat4& rotationMatrix) : Piece{renderer, "C"}, m_rotationMatrix{rotationMatrix}
 {
     m_interactionCrumb = DisplayManager::getInstance()->getEventManager().addListenerFor(SDL_KEYDOWN, this, true);
-    DisplayManager::getInstance()->getEventManager().addListenerFor(SDL_FINGERUP, m_interactionCrumb.get());
+    DisplayManager::getInstance()->getEventManager().addListenerFor(SDL_FINGERDOWN, m_interactionCrumb.get());
     DisplayManager::getInstance()->getEventManager().addListenerFor(EventManager::ENTER_FRAME_EVENT, m_interactionCrumb.get());
     m_currentLane = NUMBER_OF_LANES/2; // current lane is the central lane
 
@@ -57,7 +57,7 @@ void Player::onEvent(SDL_Event e)
             m_velocity = m_rotationMatrix * Point3{0.0f, -1.1f, 0.0f};
         else // unknown key
             return;
-    } else if(e.type == SDL_FINGERUP) {
+    } else if(e.type == SDL_FINGERDOWN) {
         if (e.tfinger.x > 0.67f)
             direction = 1;
         else if (e.tfinger.x < 0.33f)

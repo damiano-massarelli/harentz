@@ -6,13 +6,10 @@
 #include "constants.h"
 #include "AudioManager.h"
 
-#include "LocalLeaderboardScene.h"
-#include "CreditsScene.h"
-
 int main(int argc, char* argv[])
 {
     DisplayManager* displayManager = DisplayManager::create("Harentz", INITIAL_WIDTH, INITIAL_HEIGHT);
-    displayManager->setCurrentScene(new CreditsScene{});
+    displayManager->setCurrentScene(new GameScene{});
 
     // pre loaded sounds
     AudioManager* audio = AudioManager::getInstance();

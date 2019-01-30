@@ -7,6 +7,7 @@
 #include "Button.h"
 #include "GameScene.h"
 #include "FntParser.h"
+#include "CreditsScene.h"
 #include <string>
 #include <sstream>
 
@@ -40,6 +41,7 @@ void LocalLeaderboardScene::onShow(GPU_Target* screen)
     m_creditsButton = std::make_unique<Button>(screen, "resources/font/invasion2000", "credits", 20.0f, 20.0f);
     m_creditsButton->setX((DisplayManager::screenWidth() - m_creditsButton->getWidth())/2);
     m_creditsButton->setY(DisplayManager::screenHeight() - m_creditsButton->getHeight() - 10);
+    m_creditsButton->setOnClick([](Button* btn){DisplayManager::getInstance()->setCurrentScene(new CreditsScene{});});
     add(m_creditsButton.get());
 
     // game over text
@@ -62,7 +64,8 @@ void LocalLeaderboardScene::onShow(GPU_Target* screen)
     numOfScores &= ~1; // rounds down to nearest even number
 
     auto scores = loadScore();
-    scores.push_back(m_lastScore);
+    if (m_lastScore > 0)
+        scores.push_back(m_lastScore);
     std::sort(scores.begin(), scores.end(), [](int a, int b) {return b < a;});
     scores.resize(numOfScores);    // shows only the first tot scores
     saveScore(scores);
