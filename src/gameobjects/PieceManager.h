@@ -3,13 +3,13 @@
 #include <vector>
 #include <memory>
 #include <array>
+#include <string>
 #include "Piece.h"
 #include "Player.h"
 #include "Renderer.h"
 #include "Point3.h"
 #include "Bullet.h"
 #include "Mat4.h"
-#include <string>
 
 class GameScene;
 
@@ -17,18 +17,15 @@ class GameScene;
 class PieceManager
 {
     private:
-        static const float GENERATE_INITIAL_INTERVAL; ///< Initial piece generation interval
-        static const float GENERATE_MIN_INTERVAL; ///< min piece generation interval
-        static const float INITIAL_SPEED; ///< initial speed of pieces, pixels per second
-        static const float FINAL_SPEED; ///< final speed for pieces, pixels per second
-        static const float DEFAULT_FINAL_TIME; ///< the time at which speed = FINAL_SPPED and a piece is generated every GENERATE_MIN_INTERVAL (can be changed, \sa m_finalTime)
+        static const std::vector<float> GENERATE_TIME_INTERVALS;
+        static const std::vector<float> SPEED_INTERVALS;
+        static const std::vector<float> TIME_INTERVALS;
         static const float BULLET_SPEED; ///< speed of the bullets
 
-        float m_finalTime = DEFAULT_FINAL_TIME; ///< the score at which speed = FINAL_SPPED
         float m_speedMultiplier = 1.0f;
 
         float m_elapsedFromLast = 0.0f; ///< time elapsed from the last generated piece
-        float m_totalElapsed = 0.0; ///< the total elapsed time used to determine the current speed and generation time.
+        float m_totalElapsed = 0.0f; ///< the total elapsed time used to determine the current speed and generation time.
 
         GameScene* m_gameScene = nullptr;
         Renderer* m_renderer = nullptr; ///< the renderer used by the pieces

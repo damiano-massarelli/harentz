@@ -28,7 +28,6 @@ Instructions::Instructions(GPU_Target* screen, std::function<void()> onInstructi
         m_imageArrow = imageUniquePtr{GPU_LoadImage("resources/images/arrow.png")};
 
         LinearTransition<Uint8>::create(0, 255, [this](Uint8 a) {
-                                        SDL_Log("%d", (int)a);
                                         GPU_SetRGBA(this->m_imageSeparator.get(), 255, 255, 255, a);
                                         GPU_SetRGBA(this->m_imageArrow.get(), 255, 255, 255, a);
                                     },

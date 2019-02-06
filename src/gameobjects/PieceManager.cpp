@@ -12,14 +12,12 @@
 #include <ctime>
 #include <algorithm>
 #include <cmath>
+#include <limits>
 
-const float PieceManager::GENERATE_INITIAL_INTERVAL = 1000.0f;
-const float PieceManager::GENERATE_MIN_INTERVAL = 430.0f;
-const float PieceManager::INITIAL_SPEED = 2000.0f;
-const float PieceManager::FINAL_SPEED = 3500.0f;
-const float PieceManager::DEFAULT_FINAL_TIME = 90 * 1000.0f; // a minute and a half
+const std::vector<float> PieceManager::GENERATE_TIME_INTERVALS{1000.0f, 430.0f, 430.0f, 400.0f};
+const std::vector<float> PieceManager::SPEED_INTERVALS{2000.0f, 3500.0f, 3500.0f, 4125.0f};
+const std::vector<float> PieceManager::TIME_INTERVALS{0.0f, 90 * 1000.0f, 180 * 1000.0f, 270 * 1000.f};
 const float PieceManager::BULLET_SPEED = 2000.0f;
-
 const std::vector<std::string> PieceManager::m_pieceNames{"I-side", "I-up", "J", "J-up", "L", "L-up", "O-side", "O-up",
                                                     "S", "T-down", "T-up", "Z", "J-down", "L-down"};
 
@@ -32,8 +30,7 @@ PieceManager::PieceManager(GameScene* gameScene, Renderer* renderer, const Point
 void PieceManager::generatePiece(float deltaMS)
 {
     m_elapsedFromLast += deltaMS;
-    float cappedElapsed = std::min(m_totalElapsed, m_finalTime); // capped
-    float generationInterval = lerp(GENERATE_INITIAL_INTERVAL, GENERATE_MIN_INTERVAL, cappedElapsed/m_finalTime) / m_speedMultiplier;
+    float generationInterval = lerpIntervals(TIME_INTERVALS, GENERATE_TIME_INTERVALS, m_totalElapsed) / m_speedMultiplier;
 
     std::unique_ptr<Piece> piece;
     if (m_elapsedFromLast > generationInterval) {
@@ -103,12 +100,13 @@ void PieceManager::shootBullet()
 void PieceManager::update(float deltaMS)
 {
     m_totalElapsed += deltaMS; // updates total elapsed time
-    float cappedElapsed = std::min(m_totalElapsed, m_finalTime); // capped
 
     /* Generate a new piece if necessary */
     generatePiece(deltaMS);
 
-    float speed = lerp(INITIAL_SPEED, FINAL_SPEED, cappedElapsed/m_finalTime) * m_speedMultiplier;
+    float speed = lerpIntervals(TIME_INTERVALS, SPEED_INTERVALS, m_totalElapsed) * m_speedMultiplier;
+    SDL_Log("total elapsed %f speed %f", m_totalElapsed/1000, speed);
+
     speed *= (deltaMS/1000); // speed is fps independent
 
     if (speed > 100000.0f || std::isnan(speed)) return; // sometimes (e.g first frame) this value can be too high, ignore it

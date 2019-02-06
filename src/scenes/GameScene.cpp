@@ -8,6 +8,7 @@
 #include "LocalLeaderboardScene.h"
 #include "AudioManager.h"
 #include "ioUtils.h"
+#include "jniUtils.h"
 #include <sstream>
 
 GameScene::GameScene()
@@ -67,19 +68,6 @@ void GameScene::onShow(GPU_Target* screen)
 
     m_instructions = std::make_unique<Instructions>(screen, [this]() {this->onResume(EventStatus::DID);});
     add(m_instructions.get(), true);
-    // first time playing: show little tutorial
-
-    /*if (readFile("firstTime", true).bad()) {
-        writeFile("firstTime", "", true);
-        std::shared_ptr<Instructions> instructions = std::make_shared<Instructions>(screen);
-        instructions->setOnOk([gameScene = this, instructions](Button* btn) mutable {
-                                gameScene->onResume(EventStatus::DID);
-                                instructions.reset();
-                              });
-        add(instructions.get(), true);
-    } else {
-        onResume(EventStatus::DID); // start game directly
-    }*/
 }
 
 void GameScene::onEnterFrame(SDL_Event& e)
@@ -197,6 +185,9 @@ void GameScene::incrementLives(int lives)
         AudioManager::getInstance()->fadeOutMusic();
         // wait till the end of the explosion to change scene
         LinearTransition<int>::create(0, 0, nullptr, 750.0f, [this](){
+                                        jniCallVoidMethodNoArgs("showAd");
+
+
                                         DisplayManager::getInstance()->setCurrentScene(new LocalLeaderboardScene{this->m_score});
                                       }, "game");
 
