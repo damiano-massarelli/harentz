@@ -9,6 +9,7 @@ const std::string APP_NAME = "harentz";
 /** Gameplay constants */
 static constexpr int NUMBER_OF_LANES = 5;
 static constexpr int SCORE_PER_PIECE = 10;
+static constexpr int BULLET_HIT_MULTIPLIER = 3;
 
 static constexpr int INITIAL_WIDTH = 410;
 static constexpr int INITIAL_HEIGHT = 700;

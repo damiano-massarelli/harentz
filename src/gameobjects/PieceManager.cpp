@@ -12,7 +12,6 @@
 #include <ctime>
 #include <algorithm>
 #include <cmath>
-#include <limits>
 
 const std::vector<float> PieceManager::GENERATE_TIME_INTERVALS{1000.0f, 430.0f, 430.0f, 400.0f};
 const std::vector<float> PieceManager::SPEED_INTERVALS{2000.0f, 3500.0f, 3500.0f, 4125.0f};
@@ -105,7 +104,6 @@ void PieceManager::update(float deltaMS)
     generatePiece(deltaMS);
 
     float speed = lerpIntervals(TIME_INTERVALS, SPEED_INTERVALS, m_totalElapsed) * m_speedMultiplier;
-    SDL_Log("total elapsed %f speed %f", m_totalElapsed/1000, speed);
 
     speed *= (deltaMS/1000); // speed is fps independent
 
@@ -154,26 +152,25 @@ void PieceManager::checkCollision(Piece* piece, Player* player)
     /* The collision must be checked with the cube contained in the player
      * its position is different from that of the player itself */
     const std::vector<Transform*>& children = piece->getChildren();
+    const Transform* playerCube = (player->getChildren().size() == 0 ? nullptr : player->getChildren()[0]);
 
-    int collidedCubeIndex = -1;
-    for (std::size_t i = 0; i < children.size(); i++) {
+    for (int cubeIndex = children.size() - 1; cubeIndex >= 0; --cubeIndex) {
+        /* Collision with player */
+        if (sphereDetection(children[cubeIndex], playerCube, (Piece::getCubeSide() / 2) * 0.9f)) { // Collision found return the index
+            piece->handleCollision(cubeIndex);
+            break;
+        }
         /* Collision with bullets */
-        for (auto bulletIt = m_bullets.begin(); bulletIt != m_bullets.end(); ) {
-            if (sphereDetection(children[i], (*bulletIt)->getChildren()[0], (Piece::getCubeSide()/2) * 0.5f)) {
-                piece->explodeCube(i);
+        for (auto bulletIt = m_bullets.begin(); bulletIt != m_bullets.end();) {
+            if (sphereDetection(children[cubeIndex], (*bulletIt)->getChildren()[0], (Piece::getCubeSide() / 2) * 0.5f)) {
+                piece->explodeCube(cubeIndex);
                 bulletIt = m_bullets.erase(bulletIt);
-                m_gameScene->incrementScore(3*SCORE_PER_PIECE);
+                m_gameScene->incrementScore(BULLET_HIT_MULTIPLIER * SCORE_PER_PIECE);
+                break; // cannot check collision with already removed child
             } else
                 ++bulletIt;
         }
-        /* Collision with player */
-        if (sphereDetection(children[i], player->getChildren()[0], (Piece::getCubeSide()/2) * 0.9f)) { // Collision found return the index
-            collidedCubeIndex = static_cast<int>(i);
-        }
     }
-    if (collidedCubeIndex == -1) return; // not found
-
-    piece->handleCollision(collidedCubeIndex);
 }
 
 std::vector<std::unique_ptr<Piece>>& PieceManager::getPieces()

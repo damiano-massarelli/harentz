@@ -187,7 +187,6 @@ void GameScene::incrementLives(int lives)
         LinearTransition<int>::create(0, 0, nullptr, 750.0f, [this](){
                                         jniCallVoidMethodNoArgs("showAd");
 
-
                                         DisplayManager::getInstance()->setCurrentScene(new LocalLeaderboardScene{this->m_score});
                                       }, "game");
 

@@ -67,6 +67,7 @@ void DisplayManager::startMainLoop()
         if (m_nextScene != nullptr) {
             if (m_currentScene != nullptr) {
                 m_currentScene->onRemove();
+
                 delete m_currentScene;
             }
             m_currentScene = m_nextScene;

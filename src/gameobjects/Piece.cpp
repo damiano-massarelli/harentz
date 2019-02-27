@@ -93,7 +93,7 @@ Piece::Piece(Renderer* renderer, const std::string& shape) : Transform{nullptr}
     SDL_Color finalColor = readPieceColor(shape);
     setFillColor(finalColor);
     // Changes the opacity of this object, from 0 to what is specified in finalColor
-    LinearTransition<int>::create(0, static_cast<int>(finalColor.a),
+    m_appearTransition = LinearTransition<int>::create(0, static_cast<int>(finalColor.a),
                              [this](int alpha) {
                                 SDL_Color current = this->getFillColor();
                                 current.a = alpha;
@@ -155,5 +155,5 @@ bool Piece::cubeAt(int x, int y, int z) const
 
 Piece::~Piece()
 {
-    //dtor
+    m_appearTransition->cancel();
 }

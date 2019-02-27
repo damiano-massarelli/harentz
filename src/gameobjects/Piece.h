@@ -3,6 +3,7 @@
 #include "Renderer.h"
 #include "Shape.h"
 #include "Transform.h"
+#include "LinearTransition.h"
 #include <vector>
 #include <memory>
 #include <SDL.h>
@@ -27,6 +28,8 @@ class Piece : public Transform
           * \param shape the file containing the color is "resources/pieces/" + shape + ".color"
           * \return the read color */
         SDL_Color readPieceColor(const std::string& shape);
+
+        std::shared_ptr<LinearTransition<int>> m_appearTransition;
 
     public:
         /** \brief returns the size of a side of the cube */
