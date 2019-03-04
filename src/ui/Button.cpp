@@ -4,11 +4,12 @@
 #include <algorithm>
 
 Button::Button(GPU_Target* screen, const std::string& font, const std::string& text, float paddingX, float paddingY,
-               const SDL_Color& upColor, const SDL_Color& downColor) : m_screen{screen}, m_fontName{font},
+               const SDL_Color& upColor, const SDL_Color& downColor, const SDL_Color& textColor) : m_screen{screen}, m_fontName{font},
                m_paddingX{paddingX}, m_paddingY{paddingY}, m_upColor{upColor}, m_downColor{downColor}
 {
     m_text = std::make_unique<Text>(screen, font);
     m_text->setText(text);
+    m_text->setColor(textColor);
 
     // listeners for finger  up down and mouse up down
     EventManager& evtManager = DisplayManager::getInstance()->getEventManager();

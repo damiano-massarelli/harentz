@@ -17,7 +17,9 @@ Instructions::Instructions(GPU_Target* screen, std::function<void()> onInstructi
         m_explanationText->setX((DisplayManager::screenWidth() - m_explanationText->getWidth())/2);
         m_explanationText->setY(DisplayManager::screenHeight()/2 - m_explanationText->getHeight());
 
-        m_okButton = std::make_unique<Button>(screen, "resources/font/invasion2000", "got it.", 10.0f, 10.0f);
+        m_okButton = std::make_unique<Button>(screen, "resources/font/invasion2000", "tap to play", 50.0f, 50.0f,
+                                              SDL_Color{0, 0, 0, 0}, SDL_Color{0, 0, 0, 0}, SDL_Color{213, 48, 241, 255});
+
         m_okButton->setX((DisplayManager::screenWidth() - m_okButton->getWidth())/2);
         m_okButton->setY(m_explanationText->getY() + m_explanationText->getHeight() + 10);
         m_okButton->setOnClick([this](Button* btn) {

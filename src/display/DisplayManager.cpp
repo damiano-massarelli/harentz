@@ -7,9 +7,9 @@
 // Static variable definition.
 std::unique_ptr<DisplayManager> DisplayManager::instance;
 
-DisplayManager* DisplayManager::create(const std::string& title, int displayWidth, int displayHeight) {
+DisplayManager* DisplayManager::create(const std::string& title, int displayWidth, int displayHeight, bool fitScreen) {
     if (!instance)
-        instance = std::unique_ptr<DisplayManager>(new DisplayManager{title, displayWidth, displayHeight});
+        instance = std::unique_ptr<DisplayManager>(new DisplayManager{title, displayWidth, displayHeight, fitScreen});
 
     return instance.get();
 }
@@ -30,8 +30,14 @@ int DisplayManager::screenHeight()
 }
 
 
-DisplayManager::DisplayManager(const std::string& title, int displayWidth, int displayHeight)
+DisplayManager::DisplayManager(const std::string& title, int displayWidth, int displayHeight, bool fitScreen)
 {
+    SDL_Init(SDL_INIT_VIDEO); // so that it is possible to call SDL_GetDisplayMode
+    SDL_DisplayMode mode;
+    if (SDL_GetDisplayMode(0, 0, &mode) == 0 && fitScreen) {
+        displayHeight = static_cast<int>((mode.h / static_cast<float>(mode.w)) * displayWidth);
+    }
+
     GPU_SetPreInitFlags(GPU_INIT_ENABLE_VSYNC);
     m_screen = GPU_Init(displayWidth, displayHeight, GPU_DEFAULT_INIT_FLAGS);
 

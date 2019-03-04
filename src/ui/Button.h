@@ -32,7 +32,8 @@ class Button : public AbstractRenderable, public EventListener
 
     public:
         Button(GPU_Target* screen, const std::string& font, const std::string& text = "", float paddingX = 5.0f, float paddingY = 5.0f,
-               const SDL_Color& upColor = SDL_Color{241, 48, 173, 255}, const SDL_Color& downColor = SDL_Color{213, 48, 241, 255});
+               const SDL_Color& upColor = SDL_Color{241, 48, 173, 255}, const SDL_Color& downColor = SDL_Color{213, 48, 241, 255},
+               const SDL_Color& textColor = SDL_Color{255, 255, 255, 255});
 
         virtual void render() override;
 

@@ -8,7 +8,11 @@
 
 int main(int argc, char* argv[])
 {
-    DisplayManager* displayManager = DisplayManager::create("Harentz", INITIAL_WIDTH, INITIAL_HEIGHT);
+    bool fitScreen = false;
+    #ifdef __ANDROID__
+        fitScreen = true;
+    #endif // __ANDROID__
+    DisplayManager* displayManager = DisplayManager::create("Harentz", INITIAL_WIDTH, INITIAL_HEIGHT, fitScreen);
     displayManager->setCurrentScene(new GameScene{});
 
     // pre loaded sounds

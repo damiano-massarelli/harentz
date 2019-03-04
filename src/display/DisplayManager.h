@@ -27,11 +27,11 @@ class DisplayManager : public EventListener
 
         bool m_quit{false}; ///< true if should quit main loop
 
-        DisplayManager(const std::string& title, int displayWidth, int displayHeight);
+        DisplayManager(const std::string& title, int displayWidth, int displayHeight, bool fitScreen);
 
 
     public:
-        static DisplayManager* create(const std::string& title, int displayWidth, int displayHeight);
+        static DisplayManager* create(const std::string& title, int displayWidth, int displayHeight, bool fitScreen = false);
         static DisplayManager* getInstance();
 
         static int screenWidth();
