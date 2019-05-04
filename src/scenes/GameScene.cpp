@@ -52,12 +52,13 @@ void GameScene::onShow(GPU_Target* screen)
 
     m_scoreText = std::make_unique<Text>(screen, "resources/font/invasion2000");
     m_scoreText->setText("score: 0");
-    m_scoreText->setX(5);
+    m_scoreText->setX(15);
+    m_scoreText->setY(15);
     add(m_scoreText.get(), true);
 
     m_livesText = std::make_unique<Text>(screen, "resources/font/invasion2000");
     m_livesText->setText("lives: " + std::to_string(m_lives));
-    m_livesText->setX(5);
+    m_livesText->setX(15);
     m_livesText->setY(m_scoreText->getY() + m_scoreText->getHeight() + 5);
     add(m_livesText.get(), true);
 

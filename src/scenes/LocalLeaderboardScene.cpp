@@ -42,8 +42,7 @@ void LocalLeaderboardScene::onShow(GPU_Target* screen)
     m_creditsButton->setX((DisplayManager::screenWidth() - m_creditsButton->getWidth())/2);
     m_creditsButton->setY(DisplayManager::screenHeight() - m_creditsButton->getHeight() - 10);
     m_creditsButton->setOnClick([](Button* btn){DisplayManager::getInstance()->setCurrentScene(new CreditsScene{});});
-    //add(m_creditsButton.get()); this button is disabled until android renders the screen decently
-
+    add(m_creditsButton.get());
     // game over text
     m_gameOverText = std::make_unique<Text>(screen, "resources/font/invasion2000_50");
     m_gameOverText->setText("game over");
@@ -52,8 +51,8 @@ void LocalLeaderboardScene::onShow(GPU_Target* screen)
     add(m_gameOverText.get());
 
     // play again button
-    m_playAgainButton = std::make_unique<Button>(screen, "resources/font/invasion2000_50", "play again", 20, 20,
-                                                SDL_Color{0, 0, 0, 0}, SDL_Color{0, 0, 0, 0}, SDL_Color{213, 48, 241, 255});
+    m_playAgainButton = std::make_unique<Button>(screen, "resources/font/invasion2000_50", "play again", 15.0f);
+
     m_playAgainButton->setX((DisplayManager::screenWidth() - m_playAgainButton->getWidth())/2);
     m_playAgainButton->setY(DisplayManager::screenHeight() - m_playAgainButton->getHeight()*2);
     m_playAgainButton->setOnClick([](Button* btn){
