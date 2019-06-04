@@ -13,12 +13,21 @@
 #include <algorithm>
 #include <cmath>
 
-const std::vector<float> PieceManager::GENERATE_TIME_INTERVALS{1000.0f, 430.0f, 430.0f, 400.0f};
-const std::vector<float> PieceManager::SPEED_INTERVALS{2000.0f, 3500.0f, 3500.0f, 4125.0f};
-const std::vector<float> PieceManager::TIME_INTERVALS{0.0f, 90 * 1000.0f, 180 * 1000.0f, 270 * 1000.f};
+const std::vector<float> PieceManager::GENERATE_TIME_INTERVALS{900.0f, 500.0f, 500.0f, 350.0f};
+const std::vector<float> PieceManager::SPEED_INTERVALS{1500.0f, 3500.0f, 3500.0f, 5100.0f};
+const std::vector<float> PieceManager::TIME_INTERVALS{0.0f, 25 * 1000.0f, 55 * 1000.0f, 105 * 1000.f};
 const float PieceManager::BULLET_SPEED = 2000.0f;
 const std::vector<std::string> PieceManager::m_pieceNames{"I-side", "I-up", "J", "J-up", "L", "L-up", "O-side", "O-up",
                                                     "S", "T-down", "T-up", "Z", "J-down", "L-down"};
+
+bool checkPieceCollision(const Piece* p1, const Piece* p2, int offset) {
+    for (int i = 0; i < p1->getNumOfHorizontalCubes(); ++i)
+        for (int j = 0; j < p1->getNumOfVericalCubes(); ++j)
+            if (p1->cubeAt(i, j, 0) && p2->cubeAt(i - offset, j, 0))
+                return true;
+
+    return false;
+}
 
 PieceManager::PieceManager(GameScene* gameScene, Renderer* renderer, const Point3& spawnPoint, const Mat4& rotationMatrix) :
                     m_gameScene{gameScene}, m_renderer{renderer}, m_spawnPoint{spawnPoint}, m_rotationMatrix{rotationMatrix}
@@ -32,12 +41,37 @@ void PieceManager::generatePiece(float deltaMS)
     float generationInterval = lerpIntervals(TIME_INTERVALS, GENERATE_TIME_INTERVALS, m_totalElapsed) / m_speedMultiplier;
 
     std::unique_ptr<Piece> piece;
+    std::unique_ptr<Piece> piece2;
     if (m_elapsedFromLast > generationInterval) {
         int pieceIndex = randRangeInt(0, m_pieceNames.size());
         piece = std::make_unique<Piece>(m_renderer, m_pieceNames[pieceIndex]);
 
         // Selects a lane for the piece
         int lane = randRangeInt(0, NUMBER_OF_LANES - piece->getNumOfHorizontalCubes() + 1);
+
+        bool secondPieceGenerated = false;
+
+        if (m_totalElapsed > TIME_INTERVALS[3]) {
+            int piece2Index = randRangeInt(0, m_pieceNames.size());
+            piece2 = std::make_unique<Piece>(m_renderer, m_pieceNames[piece2Index]);
+
+            // Selects a lane for the second piece
+            int lane2 = randRangeInt(0, NUMBER_OF_LANES - piece2->getNumOfHorizontalCubes() + 1);
+
+            if (!checkPieceCollision(piece.get(), piece2.get(), lane2 - lane)) {
+                secondPieceGenerated = true;
+                piece2->setPosition(Point3{piece2->xForLane(lane2), m_spawnPoint.y, m_spawnPoint.z});
+                piece2->setTransformationMatrix(m_rotationMatrix);
+                if (m_wireframeOnly) // wireframe mode is on
+                    piece2->setFillColor(SDL_Color{0, 0, 0, 0});
+
+                // Adds the piece to the scene
+                m_gameScene->add(piece2.get());
+
+                // Adds the piece to the list
+                m_pieces.push_back(std::move(piece2));
+            }
+        }
 
         // Place and rotate the piece
         piece->setPosition(Point3{piece->xForLane(lane), m_spawnPoint.y, m_spawnPoint.z});
@@ -46,7 +80,8 @@ void PieceManager::generatePiece(float deltaMS)
             piece->setFillColor(SDL_Color{0, 0, 0, 0});
 
         /* could generates a bonus or malus under the current piece */
-        generateBonusMalus(piece.get(), lane);
+        if (!secondPieceGenerated)
+            generateBonusMalus(piece.get(), lane);
 
         m_elapsedFromLast = 0.0f; // reset elapsed time
 

@@ -46,8 +46,8 @@ void Ground::computeRotation()
 
     // computes the rotation matrix so that once the ground is translated down (-screenHeight/2)
     // it points towards the point whose y is depthY
-    float angle = asin((depthY - m_screenHeight/2) / Ground::GROUND_DEPTH);
-    m_rotationMatrix = rotation(-angle, 0.0f, 0.0f);
+    //float angle = asin((depthY - m_screenHeight/2) / Ground::GROUND_DEPTH);
+    m_rotationMatrix = rotation(0.4f, 0.0f, 0.0f);
 }
 
 const Mat4& Ground::getRotationMatrix() const

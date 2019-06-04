@@ -6,7 +6,7 @@ const jwt = require("jsonwebtoken");
 const config = require('../config');
 
 const generateToken = user => {
-    const token = jwt.sign(user.toJSON(), config.JWT_SECRET, {expiresIn: '15m'});
+    const token = jwt.sign(user.toJSON(), config.JWT_SECRET);
     const { iat, exp } = jwt.decode(token);
     return {iat, exp, token};
 }
@@ -28,7 +28,7 @@ module.exports = server => {
             next();
         } catch (err) {
             console.log(`Unauthorized login access ${username}`);
-            return next(new errors.UnauthorizedError());
+            return next(new errors.UnauthorizedError("Wrong username or password"));
         }
     });
 
@@ -41,8 +41,8 @@ module.exports = server => {
         try {
             const {username} = req.body;
 
-            if (!username || username.length < 4) 
-                return next(new errors.BadRequestError('Username should contain at least four characters'));
+            if (!username || username.length < 4 || username.length > 30) 
+                return next(new errors.BadRequestError('Username should contain at least four and up to thirty characters'));
 
             // Check whether the username is already in use
             const alreadyExists = await User.findOne({username}, {_id: 1});
@@ -73,9 +73,11 @@ module.exports = server => {
             const {username, password} = req.body;
             let sessionUsername = null;
             if (req.headers && req.headers.authorization) {
-                // removes the jwt prefix
-                const decoded = jwt.decode(req.headers.authorization.substr(4));
-                sessionUsername = decoded.username
+                try {
+                    // removes the jwt prefix
+                    const decoded = jwt.decode(req.headers.authorization.substr(4));
+                    sessionUsername = decoded.username
+                } catch (err) {}
             }
 
             // Check whether the username is already in use
@@ -121,10 +123,16 @@ module.exports = server => {
      */
     server.put('/updateScore', async (req, res, next) => {
         try {
-            const submittedScore = req.body.score;
+            const {score, hmac} = req.body;
+
+            if (!auth.checkHmac(score, hmac)) 
+                return next(new errors.UnauthorizedError("Mhm, what are you trying to do?"));
+            
+
+            const scoreInt = parseInt(score);
             await User.findOneAndUpdate({username: req.user.username,
-                                             bestScore: { $lt: submittedScore }}, {bestScore: submittedScore});
-            res.send(200);
+                                             bestScore: { $lt: scoreInt }}, {bestScore: scoreInt});
+            res.send({});
             next();
         } catch (err) {
             console.log(err);
@@ -137,19 +145,13 @@ module.exports = server => {
      */
     server.get('/leaderboard', async (req, res, next) => {
         try {
-            let current = null;
             let rank = 1;
             const leaderboard = await User.find({}, {username: 1, bestScore: 1, updatedAt: 1})
                 .sort({bestScore: -1});
 
             const leaderboardWithRank = leaderboard.map(doc => {
                 const data = doc.toObject();
-                if (current === null) 
-                    current = doc.bestScore;
-                if (doc.bestScore !== current) {
-                    current = doc.bestScore;
-                    rank += 1;
-                }
+                rank += 1;
                 data.rank = rank;
                 return data;
             });

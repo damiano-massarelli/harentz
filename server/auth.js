@@ -1,6 +1,8 @@
 const bcrypt = require('bcryptjs');
 const mongoose = require('mongoose');
 const User = mongoose.model('User');
+const crypto = require('crypto')
+const config = require('./config');
 
 exports.auth = (username, password) => {
     return new Promise(async (resolve, reject) => {
@@ -21,4 +23,11 @@ exports.auth = (username, password) => {
             reject('Authentication faild');
         }
     });
+}
+
+exports.checkHmac = (score, hmac) => {
+    let hash = crypto.createHmac('SHA256', config.SCORE_SECRET).update(score).digest('base64');
+    hmac = hmac.trim();
+    hash = hash.trim();
+    return hash === hmac;
 }

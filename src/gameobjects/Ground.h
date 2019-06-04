@@ -16,7 +16,7 @@ class Ground : public Transform
         void computeRotation();
 
     public:
-        static constexpr float GROUND_DEPTH = 4500.0f;
+        static constexpr float GROUND_DEPTH = 5500.0f;
 
         Ground(Renderer* renderer, int screenWidth, int screenHeight, int numOfLanes = 5);
 
